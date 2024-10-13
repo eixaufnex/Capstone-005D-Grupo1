@@ -75,8 +75,8 @@ CREATE TABLE USUARIO (
     id_usuario INT IDENTITY(1,1) PRIMARY KEY NOT NULL, --PK
 	email VARCHAR(50) UNIQUE NOT NULL,
     user_password VARCHAR(50) NOT NULL,  
-    rol VARCHAR(50) NOT NULL,
-    estado INT NOT NULL,
+    rol VARCHAR(50) NOT NULL DEFAULT 'Usuario',
+    estado INT NOT NULL DEFAULT 1,
     fecha_registro DATE NOT NULL
 );
 
@@ -216,17 +216,17 @@ SELECT * FROM USUARIO;
 --	POBLADO DE TABLAS.
 --USUARIO
 INSERT INTO USUARIO(  email, user_password, rol, estado, fecha_registro)
-VALUES( 'emailprueba1@gmail.com', '123456', 'Admin', 1,CONVERT(VARCHAR,GETDATE(), 103)); --USUARIO 1
+VALUES( 'emailprueba1@gmail.com', '123456', 'Admin', 1,GETDATE()); --USUARIO 1
 INSERT INTO USUARIO(  email, user_password,rol, estado, fecha_registro)
-VALUES( 'emailprueba2@gmail.com', '654321', 'Cliente', 1,CONVERT(VARCHAR,GETDATE(), 103)); --USUARIO 2
+VALUES( 'emailprueba2@gmail.com', '654321', 'Cliente', 1,GETDATE()); --USUARIO 2
 INSERT INTO USUARIO(  email, user_password, rol, estado, fecha_registro)
-VALUES( 'emailprueba3@gmail.com', '567452', 'Cliente', 1,CONVERT(VARCHAR,GETDATE(), 103)); --USUARIO 3
+VALUES( 'emailprueba3@gmail.com', '567452', 'Cliente', 1,GETDATE()); --USUARIO 3
 INSERT INTO USUARIO(  email, user_password, rol, estado, fecha_registro)
-VALUES( 'emailprueba4@gmail.com', '123433', 'Cliente', 1,CONVERT(VARCHAR,GETDATE(), 103)); --USUARIO 4
+VALUES( 'emailprueba4@gmail.com', '123433', 'Cliente', 1,GETDATE()); --USUARIO 4
 INSERT INTO USUARIO(  email, user_password, rol, estado, fecha_registro)
-VALUES( 'emailprueba5@gmail.com', '123445', 'Cliente', 1,CONVERT(VARCHAR,GETDATE(), 103)); --USUARIO 5
+VALUES( 'emailprueba5@gmail.com', '123445', 'Cliente', 1,GETDATE()); --USUARIO 5
 INSERT INTO USUARIO(  email, user_password, rol, estado, fecha_registro)
-VALUES('emailprueba6@gmail.com', '31242412', 'Cliente', 1,CONVERT(VARCHAR,GETDATE(), 103)); --USUARIO 6
+VALUES('emailprueba6@gmail.com', '31242412', 'Cliente', 1,GETDATE()); --USUARIO 6
 
 
 --PERFIL
