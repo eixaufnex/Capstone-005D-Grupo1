@@ -8,10 +8,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _IdiomaScreenState();
+  State<HomeScreen> createState() => _HomeScreenState ();
 }
 
-class _IdiomaScreenState extends State<HomeScreen> {
+class _HomeScreenState  extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -48,60 +48,72 @@ class _IdiomaScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+  
+  
     return Scaffold(
      
-     body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 100.0,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text('HOME'),
-              background: Container(
-                color: Colors.white,
-                child: Center(
-                  child: Text('',
-                  style: TextStyle(color: Colors.white, fontSize: 30)
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-
-          SliverToBoxAdapter(
-              child: Container(
-                padding: EdgeInsets.all(8.0), // Padding alrededor del GridView
-                child: GridView.count(
-                  physics: NeverScrollableScrollPhysics(), // Evita el scroll interno
-                  shrinkWrap: true, // Ajusta el tamaño del GridView al contenido
-                  crossAxisCount: 2, // Dos columnas
-                  mainAxisSpacing: 8.0, // Espacio vertical entre los bloques
-                  crossAxisSpacing: 8.0, // Espacio horizontal entre los bloques
-                  children: [
-                    Colors.red,
-                    Colors.green,
-                    Colors.yellow,
-                    Colors.blue,
-                    Colors.orange,
-                    Colors.purple,
-                    Colors.yellow,
-                    Colors.blue,
-                    Colors.orange,
-                    Colors.purple,
-
-                  ].map((color) => Container(
-                    height: 60, // Mantener la altura de cada bloque
-                    color: color,
-                  )).toList(),
-                ),
-              ),
-            ),
-        ],
 
       
-      ),
+
+      
+
+
+
+
+
+
+    //  body: CustomScrollView(
+    //     slivers: [
+    //       SliverAppBar(
+    //         expandedHeight: 100.0,
+    //         floating: false,
+    //         pinned: true,
+    //         flexibleSpace: FlexibleSpaceBar(
+    //           title: Text('HOME'),
+    //           background: Container(
+    //             color: Colors.white,
+    //             child: Center(
+    //               child: Text('',
+    //               style: TextStyle(color: Colors.white, fontSize: 30)
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+
+
+    //       SliverToBoxAdapter(
+    //           child: Container(
+    //             padding: EdgeInsets.all(8.0), // Padding alrededor del GridView
+    //             child: GridView.count(
+    //               physics: NeverScrollableScrollPhysics(), // Evita el scroll interno
+    //               shrinkWrap: true, // Ajusta el tamaño del GridView al contenido
+    //               crossAxisCount: 2, // Dos columnas
+    //               mainAxisSpacing: 8.0, // Espacio vertical entre los bloques
+    //               crossAxisSpacing: 8.0, // Espacio horizontal entre los bloques
+    //               children: [
+    //                 Colors.red,
+    //                 Colors.green,
+    //                 Colors.yellow,
+    //                 Colors.blue,
+    //                 Colors.orange,
+    //                 Colors.purple,
+    //                 Colors.yellow,
+    //                 Colors.blue,
+    //                 Colors.orange,
+    //                 Colors.purple,
+
+    //               ].map((color) => Container(
+    //                 height: 60, // Mantener la altura de cada bloque
+    //                 color: color,
+    //               )).toList(),
+    //             ),
+    //           ),
+    //         ),
+    //     ],
+
+      
+    //   ),
     
       
       

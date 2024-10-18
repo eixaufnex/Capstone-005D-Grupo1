@@ -8,10 +8,10 @@ class RutinaScreen extends StatefulWidget {
   const RutinaScreen({super.key});
 
   @override
-  State<RutinaScreen> createState() => _IdiomaScreenState();
+  State<RutinaScreen> createState() => _RutinaScreenState ();
 }
 
-class _IdiomaScreenState extends State<RutinaScreen> {
+class _RutinaScreenState  extends State<RutinaScreen> {
   int _selectedIndex = 1;
 
   void _onItemTapped(int index) {

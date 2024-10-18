@@ -8,10 +8,10 @@ class PublicacionesScreen extends StatefulWidget {
   const PublicacionesScreen({super.key});
 
   @override
-  State<PublicacionesScreen> createState() => _IdiomaScreenState();
+  State<PublicacionesScreen> createState() => _PublicacionesScreenState (); //cambiar el tema idioma
 }
 
-class _IdiomaScreenState extends State<PublicacionesScreen> {
+class _PublicacionesScreenState  extends State<PublicacionesScreen> {
   int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
