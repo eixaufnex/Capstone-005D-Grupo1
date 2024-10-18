@@ -51,8 +51,201 @@ class _HomeScreenState  extends State<HomeScreen> {
   
   
     return Scaffold(
-     
+      
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Column(
+                children: [
+                  
+                // bienvenida
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Hola, @usuario!', 
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Text('DD/MM/YYYY',
+                        style: TextStyle(color: Colors.blue[700]),
+              
+                        ),
+                        SizedBox(
+                          height: 8,
+              
+                        )
+                      ],
+                    ),
+              
+                    //notificacion
+                    Container(
+                      decoration: BoxDecoration(color: Colors.blue[600],
+                      borderRadius: BorderRadius.circular(15)
+                      ),
+                      padding: EdgeInsets.all(12),
+                      child: Icon(
+                        Icons.notifications,
+                        color: Colors.black,),
+                    )
+                    ],
+                  ),
+              
+              
+                  //Separacion entre bienvenida y busqueda
+                  SizedBox(
+                    height: 25,
+                  ),
+              
+              
+                  //barra de busqueda
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blue[600],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Icon(Icons.search,
+                        color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text('Busqueda...',
+                        style: TextStyle(
+                          color: Colors.white
+                        ),)
+                      ],
+                    ),
+                  ),
+              
+                  SizedBox(
+                    height: 25,
+                  ),
+              
+                  //Como te encuentras hoy 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('¿Cómo te sientes hoy?', 
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      Icon(Icons.more_horiz)
+                    ],
+                  ),
+              
+                  SizedBox(
+                    height: 25,
+                  ),
+              
+                  //emojis 
+              
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      //triste
+                      Column(
+                        children: [
+                          Emojis(emojis: '☹'),
+                          SizedBox(height: 8,),
+                          Text('Triste',
+                          style: TextStyle(color: Colors.black),)
+                        ],
+                      ),
+              
+                      //normal
+                      Column(
+                        children: [
+                          Emojis(emojis: '😐'),
+                          SizedBox(height: 8,),
+                          Text('Normal',
+                          style: TextStyle(color: Colors.black),)
+                        ],
+                      ),
+              
+                     //bien
+                      Column(
+                        children: [
+                          Emojis(emojis: '😊'),
+                          SizedBox(height: 8,),
+                          Text('Bien',
+                          style: TextStyle(color: Colors.black),)
+                        ],
+                      ),
+              
+                      //super bien
+                      Column(
+                        children: [
+                          Emojis(emojis: '🥳'),
+                          SizedBox(height: 8,),
+                          Text('Superbién',
+                          style: TextStyle(color: Colors.black),)
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
 
+            SizedBox(height: 25,),
+
+            Expanded(
+              child: ClipRRect(
+                // borderRadius: BorderRadius.circular(50),
+                child: Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Container(
+                    color: Colors.grey[100],
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Recomendado', 
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                              Icon(Icons.more_horiz)
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+
+                          Expanded(
+                            child: ListView(
+                              children: [
+                                Listarecomendaciones(),
+                                Listarecomendaciones(),
+                                Listarecomendaciones(),
+                              ],
+                            ),
+                          ),
+
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       
 
       
@@ -184,16 +377,111 @@ class _HomeScreenState  extends State<HomeScreen> {
 }
 
 
- Widget _colorBlock(Color color) {
+Widget _colorBlock(Color color) {
+   return Container(
+     height: 100, // Altura del bloque
+     color: color,
+     margin: EdgeInsets.symmetric(vertical: 10), // Espacio entre bloques
+     child: Center(
+       child: Text(
+         color.toString(),
+         style: TextStyle(color: Colors.white, fontSize: 24),
+      ),
+    ),
+  );
+}
+
+
+class Emojis extends StatelessWidget{
+
+  final String emojis;
+
+  const Emojis({
+    Key? key,
+    required this.emojis
+  }) : super(key:key);
+
+  @override
+  Widget build(BuildContext context){
     return Container(
-      height: 100, // Altura del bloque
-      color: color,
-      margin: EdgeInsets.symmetric(vertical: 10), // Espacio entre bloques
+      decoration: BoxDecoration(
+        color: Colors.blue[600],
+        borderRadius: BorderRadius.circular(20)
+      ),
+      padding: EdgeInsets.all(12),
       child: Center(
         child: Text(
-          color.toString(),
-          style: TextStyle(color: Colors.white, fontSize: 24),
+          emojis,
+          style: TextStyle(
+            fontSize: 28
+          
+          ),
         ),
       ),
     );
   }
+}
+
+
+
+class Listarecomendaciones extends StatelessWidget{
+  const Listarecomendaciones({Key? key}) : super(key:key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Container(
+        padding: EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.lightBlue,
+          borderRadius: BorderRadius.circular(20)
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    color: Colors.red,
+                    
+                    child: Icon(
+                      Icons.favorite,
+                      color: Colors.white,),
+                    ),
+                ),
+                SizedBox(width: 12,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Recomendación N°1', 
+                      style: TextStyle( 
+                        color: Colors.white, 
+                        fontWeight:FontWeight.bold, 
+                        fontSize: 16
+                      ),
+                    ),
+                    Text(
+                      '10 Ejercicios',  
+                      style: TextStyle( 
+                        color: Colors.white60, 
+                        fontWeight:FontWeight.bold, 
+                        fontSize: 14
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Icon(Icons.more_horiz)
+          ],
+        )
+      ),
+    );
+  }
+  
+}

@@ -48,16 +48,14 @@ class _RutinaScreenState extends State<RutinaScreen> {
     final List<Color> tileColors = [Colors.white, Colors.grey.shade200];
     
     return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text('Selecciona tu rutina', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold))),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(padding: EdgeInsets.only(top: 50)),
-            const Text(
-              'Selecciona tu rutina',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
