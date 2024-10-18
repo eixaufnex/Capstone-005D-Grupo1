@@ -8,163 +8,104 @@ class RutinaScreen extends StatefulWidget {
   const RutinaScreen({super.key});
 
   @override
-  State<RutinaScreen> createState() => _RutinaScreenState ();
+  State<RutinaScreen> createState() => _RutinaScreenState();
 }
 
-class _RutinaScreenState  extends State<RutinaScreen> {
+class _RutinaScreenState extends State<RutinaScreen> {
   int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
+    setState(() {
+      _selectedIndex = index;
+    });
 
-  //Direccionar a Home
-  if (index == 0) { 
+    // Dirección a otras pantallas
+    if (index == 0) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
-  }   //Direccionar a Publicaciones
-  else if (index == 2){
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } else if (index == 2) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  PublicacionesScreen()),
-    );
-  } //Direccionar a Ejercicios
-  else if (index == 3){
+        context,
+        MaterialPageRoute(builder: (context) => PublicacionesScreen()),
+      );
+    } else if (index == 3) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  Lista_EjercicioScreen()),
-    );
-  } //Direccionar a Perfil
-  else if (index == 4){
+        context,
+        MaterialPageRoute(builder: (context) => Lista_EjercicioScreen()),
+      );
+    } else if (index == 4) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  PerfilScreen()),
-    );
+        context,
+        MaterialPageRoute(builder: (context) => PerfilScreen()),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
+    final List<Color> tileColors = [Colors.white, Colors.grey.shade200];
+    
     return Scaffold(
-
-      
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding( padding: const EdgeInsets.only(top: 50)),
-            const Text('Selecciona tu rutina',
-            
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
+            const Padding(padding: EdgeInsets.only(top: 50)),
+            const Text(
+              'Selecciona tu rutina',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const  SizedBox(height: 20,),
-            //lista 1
-            ListTile(
-              leading: const Icon(Icons.sports_gymnastics_sharp),
-              title: const Text('Rutina 1'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 12, 
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12), 
+                    decoration: BoxDecoration(
+                      color: tileColors[index % 2], 
+                      borderRadius: BorderRadius.circular(15), 
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        index % 3 == 0
+                            ? Icons.sports_gymnastics_sharp
+                            : (index % 3 == 1
+                                ? Icons.sports_kabaddi_rounded
+                                : Icons.fitness_center_outlined),
+                      ),
+                      title: Text('Rutina ${index + 1}'),
+                      trailing: const Icon(Icons.arrow_forward_ios_outlined), 
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Proximamente')),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-            //lista 2
-            ListTile(
-              leading: const Icon(Icons.sports_kabaddi_rounded),
-              title: const Text('Rutina 2'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-            //lista 3
-            ListTile(
-              leading: const Icon(Icons.fitness_center_outlined),
-              title: const Text('Rutina 3'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-            //lista 4
-            ListTile(
-              leading: const Icon(Icons.sports_gymnastics_sharp),
-              title: const Text('Rutina 4'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-            //lista 5
-            ListTile(
-              leading: const Icon(Icons.sports_kabaddi_rounded),
-              title: const Text('Rutina 5'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-            //lista 6
-            ListTile(
-              leading: const Icon(Icons.fitness_center_outlined),
-              title: const Text('Rutina 6'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-            //lista 7
-            ListTile(
-              leading: const Icon(Icons.sports_gymnastics_sharp),
-              title: const Text('Rutina 7'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-            //lista 8
-            ListTile(
-              leading: const Icon(Icons.sports_kabaddi_rounded),
-              title: const Text('Rutina 8'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-            //lista 9
-            ListTile(
-              leading: const Icon(Icons.fitness_center_outlined),
-              title: const Text('Rutina 9'),
-              onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Proximamente')),
-                );
-              },
-            ),
-
           ],
-        ),      
+        ),
       ),
-
-
-
-      // navbar
+      
+      // Navbar
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0), 
+        padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white, 
+            color: Colors.white,
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
@@ -176,40 +117,38 @@ class _RutinaScreenState  extends State<RutinaScreen> {
           ),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.transparent, 
-            elevation: 0, 
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             selectedItemColor: Colors.red,
-            unselectedItemColor: Colors.black, 
+            unselectedItemColor: Colors.black,
             showSelectedLabels: true,
             showUnselectedLabels: true,
             items: [
-              //Home
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_filled),
                 label: 'Home',
                 backgroundColor: Colors.transparent,
               ),
-              //Rutinas
               BottomNavigationBarItem(
                 icon: Icon(Icons.view_list_rounded),
                 label: 'Rutinas',
                 backgroundColor: Colors.transparent,
               ),
-              //Publicaciones
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                offset: Offset(0, 10), // Ajusta el valor según lo que necesites
-                child: Icon(Icons.add_circle, size: 45)),
+                  offset: Offset(0, 10),
+                  child: Icon(Icons.add_circle, size: 45),
+                ),
                 label: '',
                 backgroundColor: Colors.transparent,
-              ),//Lista Ejercicios
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.fitness_center_rounded),
                 label: 'Ejercicios',
                 backgroundColor: Colors.transparent,
-              ),//Perfil
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
                 label: 'Perfil',
@@ -222,5 +161,3 @@ class _RutinaScreenState  extends State<RutinaScreen> {
     );
   }
 }
-
-
