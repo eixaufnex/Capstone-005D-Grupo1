@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Importar Firebase Auth
+
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -126,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
                                 child: Text('Ingresar', style: TextStyle(color: Colors.white)),
                               ),
-                              onPressed: () {
+                              onPressed: () async{
                                 
                                 // Verificar que los campos no estén vacíos
                                 if (txtCorreo.text.isEmpty || txtPassword.text.isEmpty) {

@@ -15,7 +15,6 @@ import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart
 
 
 
-
 class MobileMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
