@@ -4,16 +4,10 @@ import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/login_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/register_screen.dart';
-// import 'package:seguimiento_deportes/mobile_vs/screens/idioma_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
-
-
-
-
-
 
 class MobileMain extends StatelessWidget {
   @override
@@ -28,7 +22,7 @@ class MobileMain extends StatelessWidget {
         title: 'Material App',
         routes: {
           'login': (_) => LoginScreen(),
-          'registro' : (_) => RegisterScreen(),
+          'registro': (_) => RegisterScreen(),
           'home': (_) => HomeScreen(),
           'rutinas': (_) => RutinaScreen(),
           'list_ejercicios': (_) => Lista_EjercicioScreen(),
@@ -36,10 +30,8 @@ class MobileMain extends StatelessWidget {
           'publicaciones': (_) => PublicacionesScreen(),
           // 'idioma' : (_) => IdiomaScreen(),
         },
-        initialRoute: 'login', // despues cambiar a pantall introduccion
+        initialRoute: 'login', // Después cambiar a pantalla de introducción
       ),
     );
   }
 }
-
-

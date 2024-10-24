@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importar Firebase Auth
-
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,8 +9,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Instancia de Firebase Auth
   final txtCorreo = TextEditingController();
   final txtPassword = TextEditingController();
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -24,10 +22,52 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  Future<void> _login() async {
+    // Verificar que los campos no estén vacíos
+    if (txtCorreo.text.isEmpty || txtPassword.text.isEmpty) {
+      _showDialog('Campos vacíos', 'Por favor, complete todos los campos.');
+      return; // Salir de la función si hay campos vacíos
+    }
+
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: txtCorreo.text.trim(),
+        password: txtPassword.text.trim(),
+      );
+
+      // Si el inicio de sesión es exitoso, redirigir al usuario
+      Navigator.pushReplacementNamed(context, 'home');
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+      _showDialog('Intentelo de nuevo!', _errorMessage ?? 'Email o Password incorrectos.');
+    }
+  }
+
+  void _showDialog(String title, String content) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final usuarioProvider = Provider.of<Usuario_provider>(context);
 
     return Scaffold(
       body: SizedBox(
@@ -35,27 +75,22 @@ class _LoginScreenState extends State<LoginScreen> {
         height: double.infinity,
         child: Stack(
           children: [
-            
-            
             // ZONA DE LOGO
             Container(
               width: double.infinity,
-              height: size.height * 0.40,
+              height: size.height * 0.35,
               padding: EdgeInsets.only(top: 50),
               child: Image.asset('assets/logo1.png', height: 455),
             ),
-            
-            
             // ZONA DE DATOS
             Column(
               children: [
-                SizedBox(height: 390),
+                SizedBox(height: 355),
                 Container(
                   padding: EdgeInsets.only(top: 0),
                   margin: EdgeInsets.symmetric(horizontal: 70),
-                  // color: Colors.blue,
                   width: double.infinity,
-                  height: 398,
+                  height: 370,
                   child: Column(
                     children: [
                       Form(
@@ -125,62 +160,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                               disabledColor: Colors.grey,
                               color: Colors.black,
+                              onPressed: _login,
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
                                 child: Text('Ingresar', style: TextStyle(color: Colors.white)),
                               ),
-                              onPressed: () async{
-                                
-                                // Verificar que los campos no estén vacíos
-                                if (txtCorreo.text.isEmpty || txtPassword.text.isEmpty) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text('Campos vacíos'),
-                                        content: Text('Por favor, complete todos los campos.'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text('Aceptar'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                  return; // Salir de la función si hay campos vacíos
-                                }
-
-                                // Comprobar si el usuario existe en la lista y si la contraseña es correcta
-                                var usuarios = usuarioProvider.usuarios;
-                                if (usuarios.where((e) => e.email == txtCorreo.text).isNotEmpty &&
-                                    usuarios.where((e) => e.userPassword == txtPassword.text).isNotEmpty) {
-                                  Navigator.pushReplacementNamed(context, 'home');
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text('Intentelo de nuevo!'),
-                                        content: Text('Email o Password incorrectos.'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text('Aceptar'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                  print('No es el correo');
-                                }
-                              },
                             ),
-
 
                             // BOTON NO TIENES CUENTA?
                             SizedBox(height: 0),
@@ -205,12 +190,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            
 
                             //SEPARACION ----OR----
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10), // Margen izquierdo y derecho
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -230,11 +214,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: Divider(
                                       thickness: 2,
                                       color: Colors.black,
-                                      ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
+                            ),
 
 
                             SizedBox(height: 15),
@@ -303,10 +287,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-
-
-
-
                           ],
                         ),
                       )
@@ -320,7 +300,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // BOTON LOG IN
             Column(
               children: [
-                SizedBox(height: 320),
+                SizedBox(height: 290),
                 Padding(
                   padding: EdgeInsets.only(left: 62),
                   child: InkWell(
@@ -361,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // BOTON SIGN UP
             Column(
               children: [
-                SizedBox(height: 320),
+                SizedBox(height: 290),
                 Padding(
                   padding: EdgeInsets.only(right: 62),
                   child: Align(
@@ -401,8 +381,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ],
             ),
-
-
           ],
         ),
       ),

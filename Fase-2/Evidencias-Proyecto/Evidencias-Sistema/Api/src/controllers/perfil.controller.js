@@ -35,31 +35,29 @@ export const createPerfil = async (req, res) => {
         //Verificar si el perfil ya existe
         const existingPerfil = await pool
             .request()
-            .input('username', sql.VarChar, req.body.username)
-            .query("SELECT COUNT(*) AS count FROM PERFIL WHERE username = @username");
+            .input('id_perfil', sql.Int, req.body.id_perfil)
+            .query("SELECT COUNT(*) AS count FROM PERFIL WHERE id_perfil = @id_perfil");
         
         if (existingPerfil.recordset[0].count > 0){
-            return res.status(400).json({ message: 'El Username ya está en uso'});
+            return res.status(400).json({ message: 'El id_perfil ya está en uso'});
         }
 
         // Si no existe, proceder a crear el nuevo Perfil
         const result = await pool
             .request()
-            .input('username', sql.VarChar, req.body.username)
             .input('nombre', sql.VarChar, req.body.nombre)
             .input('apellido', sql.VarChar, req.body.apellido)
             .input('tipo_nivel', sql.VarChar, req.body.tipo_nivel)
             .input('foto_perfil', sql.Image, req.body.foto_perfil)
             .input('biografia', sql.Text, req.body.biografia)
             .input('id_usuario', sql.Int, req.body.id_usuario)
-            .query("INSERT INTO PERFIL (username, nombre, apellido, tipo_nivel, foto_perfil, biografia, id_usuario) VALUES (@username, @nombre, @apellido, @tipo_nivel, @foto_perfil, @biografia, @id_usuario); SELECT SCOPE_IDENTITY() AS id;"
+            .query("INSERT INTO PERFIL ( nombre, apellido, tipo_nivel, foto_perfil, biografia, id_usuario) VALUES ( @nombre, @apellido, @tipo_nivel, @foto_perfil, @biografia, @id_usuario); SELECT SCOPE_IDENTITY() AS id;"
             );
 
         console.log(result);
         
         res.status(201).json({
             id_perfil: result.recordset[0].id,
-            username: req.body.username,
             nombre: req.body.nombre,
             apellido: req.body.apellido,
             tipo_nivel: req.body.tipo_nivel,
@@ -83,7 +81,6 @@ export const updatePerfil = async (req, res) => {
     const pool = await getConnection()
     const result = await pool.request()
         .input('id_perfil', sql.Int, id)
-        .input('username', sql.VarChar, req.body.username)
         .input('nombre', sql.VarChar, req.body.nombre)
         .input('apellido', sql.VarChar, req.body.apellido)
         .input('tipo_nivel', sql.VarChar, req.body.tipo_nivel)
@@ -91,7 +88,7 @@ export const updatePerfil = async (req, res) => {
         .input('biografia', sql.Text, req.body.biografia)
         .input('id_usuario', sql.Int, req.body.id_usuario)
         .query(
-            "UPDATE PERFIL SET username = @username, nombre = @nombre, apellido = @apellido, tipo_nivel = @tipo_nivel, foto_perfil = @foto_perfil, biografia = @biografia, id_usuario = @id_usuario  WHERE id_perfil = @id_perfil"
+            "UPDATE PERFIL SET  nombre = @nombre, apellido = @apellido, tipo_nivel = @tipo_nivel, foto_perfil = @foto_perfil, biografia = @biografia, id_usuario = @id_usuario  WHERE id_perfil = @id_perfil"
         );
 
 
@@ -101,7 +98,6 @@ export const updatePerfil = async (req, res) => {
 
     } res.json({
         id_perfil: req.params.id,
-        username: req.body.username,
         nombre: req.body.nombre,
         apellido: req.body.apellido,
         tipo_nivel: req.body.tipo_nivel,

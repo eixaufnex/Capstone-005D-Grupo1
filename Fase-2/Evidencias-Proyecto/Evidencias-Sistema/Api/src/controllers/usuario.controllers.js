@@ -38,30 +38,30 @@ export const createUsuario = async (req, res) => {
         // Verificar si el correo ya existe
         const existingUser = await pool
             .request()
-            .input('email', sql.VarChar, req.body.email)
-            .query("SELECT COUNT(*) AS count FROM USUARIO WHERE email = @email");
+            .input('username', sql.VarChar, req.body.username)
+            .query("SELECT COUNT(*) AS count FROM USUARIO WHERE username = @username");
 
         if (existingUser.recordset[0].count > 0) {
-            return res.status(400).json({ message: 'El correo ya está en uso' });
+            return res.status(400).json({ message: 'El username ya está en uso' });
         }
 
         // Si no existe, proceder a crear el nuevo usuario
         const result = await pool
             .request()
-            .input('email', sql.VarChar, req.body.email)
-            .input('user_password', sql.VarChar, req.body.user_password)
+            .input('firebase_id', sql.VarChar, req.body.firebase_id)
+            .input('username', sql.VarChar, req.body.username)
             .input('rol', sql.VarChar, rol)
             .input('estado', sql.Int, estado)
             .query(
-                "INSERT INTO USUARIO (email, user_password, rol, estado, fecha_registro) VALUES (@email, @user_password, @rol, @estado, GETDATE()); SELECT SCOPE_IDENTITY() AS id;"
+                "INSERT INTO USUARIO (firebase_id, username, rol, estado, fecha_registro) VALUES (@firebase_id, @username, @rol, @estado, GETDATE()); SELECT SCOPE_IDENTITY() AS id;"
             );
 
         console.log(result);
 
         res.status(201).json({
             id: result.recordset[0].id,
-            email: req.body.email,
-            user_password: req.body.user_password,
+            firebase_id: req.body.firebase_id,
+            username: req.body.username,
             rol: rol,
             estado: estado
         });
@@ -81,11 +81,11 @@ export const updateUsuario = async (req, res) =>{
     const pool = await getConnection()
     const result = await pool.request()
         .input('id_usuario', sql.Int, req.params.id)
-        .input('email', sql.VarChar, req.body.email)
-        .input('user_password', sql.VarChar, req.body.user_password)
+        .input('firebase_id', sql.VarChar, req.body.firebase_id)
+        .input('username', sql.VarChar, req.body.username)
         .input('rol', sql.VarChar, req.body.rol)
         .input('estado', sql.Int, req.body.estado)
-        .query("UPDATE USUARIO SET email = @email, user_password = @user_password, rol = @rol, estado = @estado WHERE id_usuario = @id_usuario")
+        .query("UPDATE USUARIO SET firebase_id = @firebase_id, username = @username, rol = @rol, estado = @estado WHERE id_usuario = @id_usuario")
 
 
     console.log(result)
@@ -94,8 +94,8 @@ export const updateUsuario = async (req, res) =>{
     }
     res.json({  
         id_usuario: req.params.id,
-        email: req.body.email, 
-        user_password: req.body.user_password, 
+        firebase_id: req.body.firebase_id, 
+        username: req.body.username, 
         rol: req.body.rol, 
         estado: req.body.estado} );
 };

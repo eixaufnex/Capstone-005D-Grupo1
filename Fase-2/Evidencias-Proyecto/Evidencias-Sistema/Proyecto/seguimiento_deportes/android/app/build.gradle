@@ -1,7 +1,7 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // El plugin de Flutter debe ir después de los plugins de Android y Kotlin
     id "dev.flutter.flutter-gradle-plugin"
     id 'com.google.gms.google-services' // Asegúrate de que este sea el último
 }
@@ -17,7 +17,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "1.8"
     }
 
     defaultConfig {
@@ -30,23 +30,24 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug // Mantén esto como está para debug
+            // Cambia este bloque si vas a firmar la app para producción
+            // Para debug está bien usar el signingConfig debug
+            signingConfig = signingConfigs.debug
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    // Import the Firebase BoM
+    // Importa el Firebase BoM (Bill of Materials) para gestionar versiones de Firebase
     implementation platform('com.google.firebase:firebase-bom:33.5.0')
 
-    // TODO: Add the dependencies for Firebase products you want to use
-    implementation 'com.google.firebase:firebase-analytics'
-
-    // Añade otras dependencias de Firebase según sea necesario
-    // implementation 'com.google.firebase:firebase-auth' para la autenticación, por ejemplo
-
-    // Firebase Auth
-    implementation 'com.google.firebase:firebase-auth'
+    // Añade los productos de Firebase que vayas a usar
+    implementation 'com.google.firebase:firebase-analytics'  // Firebase Analytics
+    implementation 'com.google.firebase:firebase-auth'      // Firebase Authentication
+    // Agrega más dependencias según lo que necesites
+    // Por ejemplo, Firestore: implementation 'com.google.firebase:firebase-firestore'
 }
 
 flutter {
