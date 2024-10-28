@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -12,110 +11,24 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController txtCorreo = TextEditingController();
-  final TextEditingController txtUsername = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
   final TextEditingController txtConfirmPassword = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController txtUsername = TextEditingController(); // Controlador para el nombre de usuario
 
   @override
   void dispose() {
     txtCorreo.dispose();
-    txtUsername.dispose();
     txtPassword.dispose();
     txtConfirmPassword.dispose();
+    txtUsername.dispose(); // Dispose del controlador de nombre de usuario
     super.dispose();
-  }
-
-  Future<void> registerUser() async {
-    if (txtPassword.text == txtConfirmPassword.text) {
-      try {
-        // Crear un usuario en Firebase
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-          email: txtCorreo.text,
-          password: txtPassword.text,
-        );
-
-        // Obtener el ID de Firebase
-        String firebaseId = userCredential.user!.uid;
-
-        // Llamar al método para enviar el usuario a la base de datos SQL Server
-        final usuarioProvider = Provider.of<Usuario_provider>(context, listen: false);
-        bool usuarioCreado = await usuarioProvider.postUsuario(txtUsername.text, txtCorreo.text, firebaseId);
-
-        if (usuarioCreado) {
-          Navigator.pushReplacementNamed(context, 'home');
-        } else {
-          // Mostrar alerta si el usuario ya existe
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Error'),
-                content: Text('El correo ya está en uso.'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Aceptar'),
-                  ),
-                ],
-              );
-            },
-          );
-        }
-      } on FirebaseAuthException catch (e) {
-        // Manejar errores de Firebase
-        String message = 'Error desconocido.';
-        if (e.code == 'email-already-in-use') {
-          message = 'El correo ya está en uso.';
-        } else if (e.code == 'weak-password') {
-          message = 'La contraseña es muy débil.';
-        }
-
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Error'),
-              content: Text(message),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Aceptar'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } else {
-      // Mostrar alerta si las contraseñas no coinciden
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Las contraseñas no coinciden.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Aceptar'),
-              ),
-            ],
-          );
-        },
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final usuarioProvider = Provider.of<Usuario_provider>(context);
+
     return Scaffold(
       body: SizedBox(
         width: double.infinity,
@@ -137,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(top: 0),
                   margin: EdgeInsets.symmetric(horizontal: 70),
                   width: double.infinity,
-                  height: 325,
+                  height: 400, // Ajustado para incluir el nuevo campo
                   child: Column(
                     children: [
                       Form(
@@ -168,7 +81,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     : '  El valor ingresado no es un correo';
                               },
                             ),
-                            // USERNAME
+
+                            // NOMBRE DE USUARIO
+                            SizedBox(height: 10),
                             TextFormField(
                               controller: txtUsername,
                               autocorrect: false,
@@ -176,19 +91,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xff939393), width: 2)),
                                 focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2)),
-                                hintText: 'Ingrese su nombre de usuario',
-                                hintStyle: TextStyle(fontSize: 12),
-                                labelText: 'Username',
+                                hintText: 'Nombre de Usuario',
+                                labelText: 'Nombre de Usuario',
                                 labelStyle: TextStyle(color: Colors.black, fontSize: 14),
                                 prefixIcon: Icon(Icons.person_outline, color: Colors.black),
                               ),
                               validator: (value) {
                                 return (value != null && value.isNotEmpty)
                                     ? null
-                                    : '  El username no puede estar vacío';
+                                    : '  Ingresa un nombre de usuario';
                               },
                             ),
+
                             // PASSWORD
+                            SizedBox(height: 10),
                             TextFormField(
                               controller: txtPassword,
                               autocorrect: false,
@@ -208,7 +124,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     : '  6 o más caracteres';
                               },
                             ),
+
                             // RE-PASSWORD
+                            SizedBox(height: 10),
                             TextFormField(
                               controller: txtConfirmPassword,
                               autocorrect: false,
@@ -228,6 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     : '  6 o más caracteres';
                               },
                             ),
+
                             // Botón continuar
                             SizedBox(height: 20),
                             MaterialButton(
@@ -238,66 +157,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 padding: EdgeInsets.symmetric(horizontal: 75, vertical: 20),
                                 child: Text('Continuar', style: TextStyle(color: Colors.white)),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 // Verificar que los campos no estén vacíos
-                                if (txtCorreo.text.isEmpty || txtPassword.text.isEmpty || txtConfirmPassword.text.isEmpty) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text('Campos vacíos'),
-                                        content: Text('Por favor, complete todos los campos.'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text('Aceptar'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
+                                if (txtCorreo.text.isEmpty || txtPassword.text.isEmpty || txtConfirmPassword.text.isEmpty || txtUsername.text.isEmpty) {
+                                  _showError('Por favor, complete todos los campos.');
+                                  return; // Salir de la función si hay campos vacíos
+                                }
+
+                                // Validar que las contraseñas coincidan
+                                if (txtPassword.text != txtConfirmPassword.text) {
+                                  _showError('Las contraseñas no coinciden.');
+                                  return; // Salir si las contraseñas no coinciden
+                                }
+
+                                // Validar el formato del email
+                                if (!_isValidEmail(txtCorreo.text)) {
+                                  _showError('El email no es válido.');
                                   return;
                                 }
-                                registerUser();
+
+                                // Intentar registrar al usuario
+                                bool usuarioCreado = await usuarioProvider.postUsuario(
+                                  txtCorreo.text,
+                                  txtPassword.text,
+                                  txtUsername.text,
+                                );
+
+                                if (usuarioCreado) {
+                                  // Solo redirigir si el usuario fue creado exitosamente
+                                  Navigator.pushReplacementNamed(context, 'home');
+                                } else {
+                                  // Mostrar alerta si el usuario ya existe
+                                  _showError('El correo ya está en uso.');
+                                }
                               },
                             ),
-                            //BOTON YA TIENES UNA CUENTA?
-                              SizedBox(height: 0),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushReplacementNamed(context, 'login');
-                                },
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ), 
-                                    children: [
-                                      TextSpan(text: '¿Ya tienes una cuenta?'),
-                                      TextSpan(
-                                        text: ' Iniciar Sesión',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ],
+
+                            // BOTON YA TIENES UNA CUENTA?
+                            SizedBox(height: 0),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(context, 'login');
+                              },
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
+                                  children: [
+                                    TextSpan(text: '¿Ya tienes una cuenta?'),
+                                    TextSpan(
+                                      text: ' Iniciar Sesión',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-                   
+                ),
+              ],
+            ),
             // BOTON LOG IN
             Column(
               children: [
@@ -385,6 +313,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
         ),
       ),
-    ); 
+    );
+  }
+
+  // Método para mostrar errores
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Método para validar el email (opcional)
+  bool _isValidEmail(String email) {
+    String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+    RegExp regExp = RegExp(pattern);
+    return regExp.hasMatch(email);
   }
 }
+
+
+
+
+/*
+
+            
+             */

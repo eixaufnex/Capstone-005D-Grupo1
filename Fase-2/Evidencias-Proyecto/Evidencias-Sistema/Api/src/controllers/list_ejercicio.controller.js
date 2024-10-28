@@ -48,7 +48,7 @@ export const createList_ejercicio = async (req, res) => {
         const result = await pool
             .request()
             .input('nombre_ejercicio', sql.VarChar, req.body.nombre_ejercicio)
-            .input('imagen_ejercicio', sql.Image, req.body.imagen_ejercicio)
+            .input('imagen_ejercicio', sql.Text, req.body.imagen_ejercicio)
             .input('id_grupo_muscular', sql.Int, req.body.id_grupo_muscular)
             .query("INSERT INTO LISTA_EJERCICIO (nombre_ejercicio, imagen_ejercicio, id_grupo_muscular) VALUES (@nombre_ejercicio, @imagen_ejercicio, @id_grupo_muscular); SELECT SCOPE_IDENTITY() AS id;"
             );
@@ -77,7 +77,7 @@ export const updateList_ejercicio = async (req, res) => {
     const result = await pool.request()
         .input('id_lista_ejercicio', sql.Int, id)
         .input('nombre_ejercicio', sql.VarChar, req.body.nombre_ejercicio)
-        .input('imagen_ejercicio', sql.Image, req.body.imagen_ejercicio)
+        .input('imagen_ejercicio', sql.Text, req.body.imagen_ejercicio)
         .input('id_grupo_muscular', sql.Int, req.body.id_grupo_muscular)
         .query(
             "UPDATE LISTA_EJERCICIO SET nombre_ejercicio = @nombre_ejercicio, imagen_ejercicio = @imagen_ejercicio, id_grupo_muscular = @id_grupo_muscular WHERE id_lista_ejercicio = @id_lista_ejercicio"

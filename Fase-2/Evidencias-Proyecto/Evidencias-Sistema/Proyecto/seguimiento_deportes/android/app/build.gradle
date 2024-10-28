@@ -33,6 +33,7 @@ android {
             // Cambia este bloque si vas a firmar la app para producción
             // Para debug está bien usar el signingConfig debug
             signingConfig = signingConfigs.debug
+            shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

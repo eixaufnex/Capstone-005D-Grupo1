@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Auth
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
@@ -8,53 +9,64 @@ class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
 
   @override
-  State<PerfilScreen> createState() => _PerfilScreenState ();
+  State<PerfilScreen> createState() => _PerfilScreenState();
 }
 
-class _PerfilScreenState  extends State<PerfilScreen> {
+class _PerfilScreenState extends State<PerfilScreen> {
   int _selectedIndex = 4;
+  String? userEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    // Obtener el correo del usuario actual
+    User? user = FirebaseAuth.instance.currentUser;
+    setState(() {
+      userEmail = user?.email; // Almacena el correo en la variable
+    });
+  }
 
   void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
+    setState(() {
+      _selectedIndex = index;
+    });
 
-  //Direccionar a Home
-  if (index == 0) { 
+    //Direccionar a Home
+    if (index == 0) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
-  }  //Direccionar a Rutinas
-  else if (index == 1){
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } //Direccionar a Rutinas
+    else if (index == 1) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  RutinaScreen()),
-    );
-  } //Direccionar a Publicaciones
-  else if (index == 2){
+        context,
+        MaterialPageRoute(builder: (context) => RutinaScreen()),
+      );
+    } //Direccionar a Publicaciones
+    else if (index == 2) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  PublicacionesScreen()),
-    );
-  } //Direccionar a Ejercicios
-  else if (index == 3){
+        context,
+        MaterialPageRoute(builder: (context) => PublicacionesScreen()),
+      );
+    } //Direccionar a Ejercicios
+    else if (index == 3) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  Lista_EjercicioScreen()),
-    );
-  } 
-}
+        context,
+        MaterialPageRoute(builder: (context) => Lista_EjercicioScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
-    
-        title: Text('Perfil', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+        title: Text(
+          'Perfil',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
-        
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -64,75 +76,108 @@ class _PerfilScreenState  extends State<PerfilScreen> {
               SizedBox(
                 width: 120,
                 height: 120,
-                child: ClipRRect(borderRadius: BorderRadius.circular(100),
-                child: Image.asset('assets/miguelito.jpeg', )),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Image.asset('assets/miguelito.jpeg'),
+                ),
               ),
               const SizedBox(height: 10),
               Text('Nombre', style: Theme.of(context).textTheme.headlineSmall),
-              Text('correo@gmail.com', style: Theme.of(context).textTheme.bodySmall), //cada vez que inicie sesion alguien que aparezca su nombre y correo o user y correo
+              Text(userEmail ?? 'correo@gmail.com', style: Theme.of(context).textTheme.bodySmall), // Muestra el correo del usuario
               const SizedBox(height: 20),
-              SizedBox(width:130,
-              child: ElevatedButton(
-                onPressed: (){
-                  // Navigator.pushReplacementNamed(context, 'editar_perfil');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  side: BorderSide.none,
-                  shape: StadiumBorder()
-                ), 
-                child: const Text('Editar perfil', style: TextStyle(color:Colors.black)),
-                )
+              SizedBox(
+                width: 130,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigator.pushReplacementNamed(context, 'editar_perfil');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    side: BorderSide.none,
+                    shape: StadiumBorder(),
+                  ),
+                  child: const Text('Editar perfil', style: TextStyle(color: Colors.black)),
+                ),
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(height: 5),
               const Divider(),
               const SizedBox(height: 5),
 
               //menu perfil
-              perfil_widget(title: "Configuración", icon: Icons.settings, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'configuracion');
-              }),
-              perfil_widget(title: "Notificaciones", icon: Icons.notifications, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'notificaciones');
-              }),
-              perfil_widget(title: "Idioma", icon: Icons.language, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'idioma');
-              }),
-              perfil_widget(title: "Unidades", icon: Icons.build_rounded, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'unidades');
-              }),
-              perfil_widget(title: "Tema", icon: Icons.dark_mode, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'tema');
-              }),
-              perfil_widget(title: "Preguntas frecuentes", icon: Icons.flag, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'preguntas_frecuentes');
-              }),
-              perfil_widget(title: "Privacidad de datos", icon: Icons.security, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'privacidad');
-              }),
-              perfil_widget(title: "Sugerencias", icon: Icons.sentiment_satisfied_alt_rounded, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'sugerencias');
-              }),
-              perfil_widget(title: "Acerca de...", icon: Icons.info, onPress: (){
-                // Navigator.pushReplacementNamed(context, 'about');
-              }),
-
+              perfil_widget(
+                title: "Configuración",
+                icon: Icons.settings,
+                onPress: () {
+                  // Navigator.pushReplacementNamed(context, 'configuracion');
+                },
+              ),
+              perfil_widget(
+                title: "Notificaciones",
+                icon: Icons.notifications,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'notificaciones');
+                },
+              ),
+              perfil_widget(
+                title: "Idioma",
+                icon: Icons.language,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'idioma');
+                },
+              ),
+              perfil_widget(
+                title: "Unidades",
+                icon: Icons.build_rounded,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'unidades');
+                },
+              ),
+              perfil_widget(
+                title: "Tema    (Próximamente...)",
+                icon: Icons.dark_mode,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'tema');
+                },
+              ),
+              perfil_widget(
+                title: "Preguntas frecuentes",
+                icon: Icons.flag,
+                onPress: () {
+                  // Navigator.pushReplacementNamed(context, 'preguntas_frecuentes');
+                },
+              ),
+              perfil_widget(
+                title: "Privacidad de datos",
+                icon: Icons.security,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'privacidad');
+                },
+              ),
+              perfil_widget(
+                title: "Sugerencias",
+                icon: Icons.sentiment_satisfied_alt_rounded,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'sugerencias');
+                },
+              ),
+              perfil_widget(
+                title: "Acerca de...",
+                icon: Icons.info,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'about');
+                },
+              ),
             ],
           ),
         ),
-
       ),
-
-
-    
-
 
       // navbar
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0), 
+        padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white, 
+            color: Colors.white,
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
@@ -144,12 +189,12 @@ class _PerfilScreenState  extends State<PerfilScreen> {
           ),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.transparent, 
-            elevation: 0, 
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             selectedItemColor: Colors.red,
-            unselectedItemColor: Colors.black, 
+            unselectedItemColor: Colors.black,
             showSelectedLabels: true,
             showUnselectedLabels: true,
             items: [
@@ -168,16 +213,17 @@ class _PerfilScreenState  extends State<PerfilScreen> {
               //Publicaciones
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                offset: Offset(0, 10), // Ajusta el valor según lo que necesites
-                child: Icon(Icons.add_circle, size: 45)),
+                  offset: Offset(0, 10), // Ajusta el valor según lo que necesites
+                  child: Icon(Icons.add_circle, size: 45),
+                ),
                 label: '',
                 backgroundColor: Colors.transparent,
-              ),//Lista Ejercicios
+              ), //Lista Ejercicios
               BottomNavigationBarItem(
                 icon: Icon(Icons.fitness_center_rounded),
                 label: 'Ejercicios',
                 backgroundColor: Colors.transparent,
-              ),//Perfil
+              ), //Perfil
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
                 label: 'Perfil',
@@ -193,11 +239,11 @@ class _PerfilScreenState  extends State<PerfilScreen> {
 
 class perfil_widget extends StatelessWidget {
   const perfil_widget({
-    super.key, 
-    required this.title, 
-    required this.icon, 
-    required this.onPress, 
-    this.endIcon = true, 
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.onPress,
+    this.endIcon = true,
     this.textColor,
   });
 
@@ -212,24 +258,26 @@ class perfil_widget extends StatelessWidget {
     return ListTile(
       onTap: onPress,
       leading: Container(
-        width: 40, height: 40,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-          color: Colors.green.withOpacity(0.1)
+          color: Colors.green.withOpacity(0.1),
         ),
         child: Icon(icon, color: Colors.black),
       ),
-      title: Text(title, style: Theme.of(context).textTheme.bodySmall?.apply(color:textColor)),
-      trailing: endIcon? Container(
-        width: 30, height: 30,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: Colors.grey.withOpacity(0.1)
-        ),
-        child: Icon(Icons.arrow_forward_ios, color: Colors.black.withOpacity(.6)) ,
-      ) : null ,
+      title: Text(title, style: Theme.of(context).textTheme.bodySmall?.apply(color: textColor)),
+      trailing: endIcon
+          ? Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: Colors.grey.withOpacity(0.1),
+              ),
+              child: Icon(Icons.arrow_forward_ios, color: Colors.black.withOpacity(.6)),
+            )
+          : null,
     );
   }
 }
-
-

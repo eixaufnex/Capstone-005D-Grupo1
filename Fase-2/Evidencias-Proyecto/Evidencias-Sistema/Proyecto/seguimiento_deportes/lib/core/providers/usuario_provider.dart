@@ -1,80 +1,3 @@
-// import 'dart:convert';
-
-// import 'package:flutter/widgets.dart';
-// import 'package:seguimiento_deportes/core/models/usuario.dart';
-// import 'package:seguimiento_deportes/core/constants.dart';
-// import 'package:http/http.dart' as http;
-
-// const urlapi = url;
-
-// class Usuario_provider with ChangeNotifier{
-//     List<Usuario> usuarios = [];
-
-//     Usuario_provider(){
-//       getUsuarios();
-//     }
-
-
-//     getUsuarios() async{
-//         final url1 = Uri.http(urlapi,'usuario');
-//         final resp = await http.get(url1, headers: {
-//             "Access-Control-Allow-Origin": "*",
-//             "Access-Control-Allow-Credentials": "true",
-//             'Content-type': 'application/json',
-//             'Accept':'application/json'
-//             });
-//             final response = usuarioFromJson(resp.body);
-
-//             usuarios = response;
-//             notifyListeners();
-//     }
-
-//   // Método para crear un nuevo usuario
-//   Future<bool> postUsuario(String email, String password) async {
-//     final url = Uri.http(urlapi, 'usuario'); 
-
-//     try {
-//       final resp = await http.post(
-//         url,
-//         headers: {
-//           "Access-Control-Allow-Origin": "*",
-//           "Access-Control-Allow-Credentials": "true",
-//           'Content-type': 'application/json',
-//           'Accept': 'application/json'
-//         },
-//         body: jsonEncode({
-//           'email': email,
-//           'user_password': password,
-//         }),
-//       );
-  
-//       //Manejo de errores
-//       if (resp.statusCode == 201) {
-//         // Usuario creado correctamente
-//         print('Usuario creado exitosamente');
-//         return true;
-
-//       } else if (resp.statusCode == 400) {
-//         // Manejo del error si el correo ya existe
-//         print('Error: El correo ya está en uso');
-//         return false;
-
-//       } else {
-//         // Manejo de otros errores
-//         final errorResponse = jsonDecode(resp.body);
-//         print('Error al crear el usuario: ${errorResponse['message'] ?? errorResponse}');
-//         return false; 
-//       }
-
-//     } catch (e) {
-//       print('Error de conexión: $e');
-//       return false;
-//     }
-// }
-
-
-// }
-
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:seguimiento_deportes/core/models/usuario.dart';
@@ -91,7 +14,7 @@ class Usuario_provider with ChangeNotifier {
     getUsuarios();
   }
 
-  getUsuarios() async {
+  Future<void> getUsuarios() async {
     final url1 = Uri.http(urlapi, 'usuario');
     final resp = await http.get(url1, headers: {
       "Access-Control-Allow-Origin": "*",
@@ -105,57 +28,82 @@ class Usuario_provider with ChangeNotifier {
     notifyListeners();
   }
 
-
-  // Método para crear un nuevo usuario
-Future<bool> postUsuario(String email, String password, String username) async {
-  final url = Uri.http(urlapi, 'usuario');
+  Future<String> getUsername(String firebaseId) async {
+  final url = Uri.http(urlapi, 'usuario', {'firebase_id': firebaseId});
 
   try {
-    // Crear usuario en Firebase
-    UserCredential userCredential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    final resp = await http.get(url, headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": "true",
+      'Content-type': 'application/json',
+      'Accept': 'application/json'
+    });
 
-    // Obtener el ID de Firebase
-    String firebaseId = userCredential.user!.uid;
-
-    // Enviar el username y el firebaseId a tu servidor SQL
-    final resp = await http.post(
-      url,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": "true",
-        'Content-type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: jsonEncode({
-        'firebase_id': firebaseId,
-        'username': username,
-      }),
-    );
-
-    // Manejo de errores
-    if (resp.statusCode == 201) {
-      // Usuario creado correctamente
-      print('Usuario creado exitosamente');
-      return true;
-    } else if (resp.statusCode == 400) {
-      // Manejo del error si el correo ya existe
-      print('Error: El correo ya está en uso');
-      return false;
+    if (resp.statusCode == 200) {
+      final data = jsonDecode(resp.body);
+      // Asegúrate de que 'username' sea una clave válida en el objeto de respuesta
+      if (data is List && data.isNotEmpty) {
+        return data[0]['username'] ?? 'Usuario no encontrado'; // Asegúrate de acceder correctamente a la estructura
+      } else if (data is Map) {
+        return data['username'] ?? 'Usuario no encontrado';
+      } else {
+        return 'Formato de respuesta inesperado';
+      }
     } else {
-      // Manejo de otros errores
-      final errorResponse = jsonDecode(resp.body);
-      print('Error al crear el usuario: ${errorResponse['message'] ?? errorResponse}');
-      return false; 
+      print('Error al obtener el usuario: ${resp.statusCode}');
+      return 'Error al obtener el usuario';
     }
   } catch (e) {
     print('Error de conexión: $e');
-    return false;
+    return 'Error de conexión';
   }
 }
 
-}
+  // Método para crear un nuevo usuario
+  Future<bool> postUsuario(String email, String password, String username) async {
+    final url = Uri.http(urlapi, 'usuario');
 
+    try {
+      // Crear usuario en Firebase
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Obtener el ID de Firebase
+      String firebaseId = userCredential.user!.uid;
+
+      // Enviar el username y el firebaseId a tu servidor SQL
+      final resp = await http.post(
+        url,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": "true",
+          'Content-type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: jsonEncode({
+          'firebase_id': firebaseId,
+          'username': username,
+        }),
+      );
+
+      // Manejo de errores
+      if (resp.statusCode == 201) {
+        print('Usuario creado exitosamente');
+        return true;
+      } else if (resp.statusCode == 400) {
+        print('Error: El correo ya está en uso');
+        return false;
+      } else {
+        final errorResponse = jsonDecode(resp.body);
+        print('Error al crear el usuario: ${errorResponse['message'] ?? errorResponse}');
+        return false; 
+      }
+    } catch (e) {
+      print('Error de conexión: $e');
+      return false;
+    }
+  }
+}

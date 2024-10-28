@@ -6,16 +6,16 @@ String usuarioToJson(List<Usuario> data) => json.encode(List<dynamic>.from(data.
 
 class Usuario {
     int idUsuario;
-    String email;
-    String userPassword;
+    String firebase_id;
+    String username;
     String rol;
     int estado;
     DateTime fechaRegistro;
 
     Usuario({
         required this.idUsuario,
-        required this.email,
-        required this.userPassword,
+        required this.firebase_id,
+        required this.username,
         required this.rol,
         required this.estado,
         required this.fechaRegistro,
@@ -23,8 +23,8 @@ class Usuario {
 
     factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
         idUsuario: json["id_usuario"],
-        email: json["email"],
-        userPassword: json["user_password"],
+        firebase_id: json["firebase_id"],
+        username: json["username"],
         rol: json["rol"],
         estado: json["estado"],
         fechaRegistro: DateTime.parse(json["fecha_registro"]),
@@ -32,8 +32,8 @@ class Usuario {
 
     Map<String, dynamic> toJson() => {
         "id_usuario": idUsuario,
-        "email": email,
-        "user_password": userPassword,
+        "firebase_id": firebase_id,
+        "username": username,
         "rol": rol,
         "estado": estado,
         "fecha_registro": fechaRegistro.toIso8601String(),

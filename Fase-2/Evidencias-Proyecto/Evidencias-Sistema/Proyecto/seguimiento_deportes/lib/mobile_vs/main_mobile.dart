@@ -8,6 +8,13 @@ import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/notificaciones_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/idioma_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/unidades_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/tema_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/privacidad_datos_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/sugerencias_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/acerca_screen.dart';
 
 class MobileMain extends StatelessWidget {
   @override
@@ -28,7 +35,13 @@ class MobileMain extends StatelessWidget {
           'list_ejercicios': (_) => Lista_EjercicioScreen(),
           'perfil': (_) => PerfilScreen(),
           'publicaciones': (_) => PublicacionesScreen(),
-          // 'idioma' : (_) => IdiomaScreen(),
+          'notificaciones': (_) => NotificacionesScreen(),
+          'idioma' : (_) => IdiomaScreen(),
+          'unidades' : (_) => UnidadesScreen(),
+          'tema' : (_) => TemaScreen(),
+          'privacidad' : (_) => PrivacidadDatosScreen(),
+          'sugerencias' : (_) => SugerenciasScreen(),
+          'about' : (_) => AcercaScreen(),
         },
         initialRoute: 'login', // Después cambiar a pantalla de introducción
       ),

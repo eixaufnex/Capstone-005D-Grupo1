@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(top: 0),
                   margin: EdgeInsets.symmetric(horizontal: 70),
                   width: double.infinity,
-                  height: 370,
+                  height: 400,
                   child: Column(
                     children: [
                       Form(

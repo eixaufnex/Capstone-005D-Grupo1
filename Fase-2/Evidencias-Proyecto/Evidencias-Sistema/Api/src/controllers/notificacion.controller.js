@@ -46,7 +46,7 @@ export const createNotificacion = async (req, res) => {
         const result = await pool
             .request()
             .input('tipo_notificacion', sql.VarChar, req.body.tipo_notificacion)
-            .input('mensaje_notificacion', sql.VarChar, req.body.mensaje_notificacion)
+            .input('mensaje_notificacion', sql.Text, req.body.mensaje_notificacion)
             .input('fecha_notificacion', sql.Date, req.body.fecha_notificacion)
             .input('id_usuario', sql.Int, req.body.id_usuario)
             .query("INSERT INTO NOTIFICACION (tipo_notificacion, mensaje_notificacion, fecha_notificacion, id_usuario) VALUES (@tipo_notificacion, @mensaje_notificacion, @fecha_notificacion, @id_usuario); SELECT SCOPE_IDENTITY() AS id;"

@@ -50,6 +50,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
   }
 
   // Lista de ejercicios
+  //llamar a la bd
   final List<Map<String, String>> ejercicios = [
     {
       'title': 'Press banca',

@@ -1,57 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart'; // Importa la biblioteca intl
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen.dart';
+import 'package:seguimiento_deportes/core/providers/notificacion_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+  
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  String usuario = "Cargando..."; // Texto inicial mientras se carga el usuario
+  String fechaActual = ''; // Nueva variable para la fecha actual
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState ();
-}
+  void initState() {
+    super.initState();
+    _fetchUsername();
+    _setFechaActual(); // Llama a la función para establecer la fecha
+  }
 
-class _HomeScreenState  extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  void _setFechaActual() {
+    // Obtener la fecha actual
+    fechaActual = DateFormat('dd/MM/yyyy').format(DateTime.now());
+  }
+
+
+  Future<void> _fetchUsername() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      String username = await Provider.of<Usuario_provider>(context, listen: false)
+      
+          .getUsername(user.uid);
+      setState(() {
+        usuario = username; // Actualiza el nombre de usuario en la interfaz
+      });
+    }
+  }
+
 
   void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
+    setState(() {
+      _selectedIndex = index;
+    });
 
-  //Direccionar a Rutinas
-  if (index == 1){
+    // Direccionar a diferentes pantallas
+    if (index == 1) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  RutinaScreen()),
-    );
-  } //Direccionar a Publicaciones
-  else if (index == 2){
+        context,
+        MaterialPageRoute(builder: (context) => RutinaScreen()),
+      );
+    } else if (index == 2) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  PublicacionesScreen()),
-    );
-  } //Direccionar a Ejercicios
-  else if (index == 3){
+        context,
+        MaterialPageRoute(builder: (context) => PublicacionesScreen()),
+      );
+    } else if (index == 3) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  Lista_EjercicioScreen()),
-    );
-  } //Direccionar a Perfil
-  else if (index == 4){
+        context,
+        MaterialPageRoute(builder: (context) => Lista_EjercicioScreen()),
+      );
+    } else if (index == 4) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) =>  PerfilScreen()),
-    );
+        context,
+        MaterialPageRoute(builder: (context) => PerfilScreen()),
+      );
+    }
   }
+
+  void onEmojiSelected(String mood) async {
+  // Mostrar un Dialog con el estado seleccionado
+  String tipoNotificacion = mood; // Asignar el tipo de notificación
+  String mensaje = await getMensajeMotivacional(tipoNotificacion);
+  
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Dale con todo!"),
+        content: Text("Muchas gracias por compartirnos como te sientes. \n\n$mensaje"), // Mostrar mensaje de la notificación
+        actions: [
+          TextButton(
+            child: Text("Cerrar"),
+            onPressed: () {
+              Navigator.of(context).pop(); // Cerrar el dialog
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
+
+
 
   @override
   Widget build(BuildContext context) {
-  
-  
     return Scaffold(
-      
       body: SafeArea(
         child: Column(
           children: [
@@ -59,53 +114,44 @@ class _HomeScreenState  extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Column(
                 children: [
-                  
-                // bienvenida
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Hola, @usuario!', 
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold
+                  // Bienvenida
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hola, $usuario!',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text('DD/MM/YYYY',
-                        style: TextStyle(color: Colors.blue[700]),
-              
-                        ),
-                        SizedBox(
-                          height: 8,
-              
-                        )
-                      ],
-                    ),
-              
-                    //notificacion
-                    Container(
-                      decoration: BoxDecoration(color: Colors.blue[600],
-                      borderRadius: BorderRadius.circular(15)
+                          Text(
+                            fechaActual,
+                            style: TextStyle(color: Colors.blue[700]),
+                          ),
+                          SizedBox(height: 8),
+                        ],
                       ),
-                      padding: EdgeInsets.all(12),
-                      child: Icon(
-                        Icons.notifications,
-                        color: Colors.black,),
-                    )
+                      // Icono de notificación
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue[600],
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        padding: EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.notifications,
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
-              
-              
-                  //Separacion entre bienvenida y busqueda
-                  SizedBox(
-                    height: 25,
-                  ),
-              
-              
-                  //barra de busqueda
+                  SizedBox(height: 25),
+                  // Barra de búsqueda
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.blue[600],
@@ -114,98 +160,69 @@ class _HomeScreenState  extends State<HomeScreen> {
                     padding: EdgeInsets.all(12),
                     child: Row(
                       children: [
-                        Icon(Icons.search,
-                        color: Colors.white,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text('Busqueda...',
-                        style: TextStyle(
-                          color: Colors.white
-                        ),)
+                        Icon(Icons.search, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Busqueda...',
+                          style: TextStyle(color: Colors.white),
+                        )
                       ],
                     ),
                   ),
-              
-                  SizedBox(
-                    height: 25,
-                  ),
-              
-                  //Como te encuentras hoy 
+                  SizedBox(height: 25),
+                  // Cómo te sientes hoy
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('¿Cómo te sientes hoy?', 
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
+                      Text(
+                        '¿Cómo te sientes hoy?',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Icon(Icons.more_horiz)
+                      Icon(Icons.more_horiz),
                     ],
                   ),
-              
-                  SizedBox(
-                    height: 25,
-                  ),
-              
-                  //emojis 
-              
+                  SizedBox(height: 25),
+                  // Emojis
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      //triste
-                      Column(
-                        children: [
-                          Emojis(emojis: '☹'),
-                          SizedBox(height: 8,),
-                          Text('Triste',
-                          style: TextStyle(color: Colors.black),)
-                        ],
+                      // Triste
+                      EmojiColumn(
+                        emoji: '☹',
+                        label: 'Triste',
+                        onTap: () => onEmojiSelected('Triste'),
                       ),
-              
-                      //normal
-                      Column(
-                        children: [
-                          Emojis(emojis: '😐'),
-                          SizedBox(height: 8,),
-                          Text('Normal',
-                          style: TextStyle(color: Colors.black),)
-                        ],
+                      // Normal
+                      EmojiColumn(
+                        emoji: '😐',
+                        label: 'Normal',
+                        onTap: () => onEmojiSelected('Normal'),
                       ),
-              
-                     //bien
-                      Column(
-                        children: [
-                          Emojis(emojis: '😊'),
-                          SizedBox(height: 8,),
-                          Text('Bien',
-                          style: TextStyle(color: Colors.black),)
-                        ],
+                      // Bien
+                      EmojiColumn(
+                        emoji: '😊',
+                        label: 'Bien',
+                        onTap: () => onEmojiSelected('Bien'),
                       ),
-              
-                      //super bien
-                      Column(
-                        children: [
-                          Emojis(emojis: '🥳'),
-                          SizedBox(height: 8,),
-                          Text('Superbién',
-                          style: TextStyle(color: Colors.black),)
-                        ],
+                      // Super bien
+                      EmojiColumn(
+                        emoji: '🥳',
+                        label: 'Superbién',
+                        onTap: () => onEmojiSelected('Superbién'),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-
-            SizedBox(height: 25,),
-
+            SizedBox(height: 25),
+            // Contenido expandido
             Expanded(
               child: ClipRRect(
-                // borderRadius: BorderRadius.circular(50),
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),
                   child: Container(
@@ -216,15 +233,15 @@ class _HomeScreenState  extends State<HomeScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Recomendado', 
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-                              Icon(Icons.more_horiz)
+                              Text(
+                                'Recomendado',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                              Icon(Icons.more_horiz),
                             ],
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-
+                          SizedBox(height: 20),
                           Expanded(
                             child: ListView(
                               children: [
@@ -234,8 +251,6 @@ class _HomeScreenState  extends State<HomeScreen> {
                               ],
                             ),
                           ),
-
-
                         ],
                       ),
                     ),
@@ -246,78 +261,12 @@ class _HomeScreenState  extends State<HomeScreen> {
           ],
         ),
       ),
-      
-
-      
-
-
-
-
-
-
-    //  body: CustomScrollView(
-    //     slivers: [
-    //       SliverAppBar(
-    //         expandedHeight: 100.0,
-    //         floating: false,
-    //         pinned: true,
-    //         flexibleSpace: FlexibleSpaceBar(
-    //           title: Text('HOME'),
-    //           background: Container(
-    //             color: Colors.white,
-    //             child: Center(
-    //               child: Text('',
-    //               style: TextStyle(color: Colors.white, fontSize: 30)
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-
-
-    //       SliverToBoxAdapter(
-    //           child: Container(
-    //             padding: EdgeInsets.all(8.0), // Padding alrededor del GridView
-    //             child: GridView.count(
-    //               physics: NeverScrollableScrollPhysics(), // Evita el scroll interno
-    //               shrinkWrap: true, // Ajusta el tamaño del GridView al contenido
-    //               crossAxisCount: 2, // Dos columnas
-    //               mainAxisSpacing: 8.0, // Espacio vertical entre los bloques
-    //               crossAxisSpacing: 8.0, // Espacio horizontal entre los bloques
-    //               children: [
-    //                 Colors.red,
-    //                 Colors.green,
-    //                 Colors.yellow,
-    //                 Colors.blue,
-    //                 Colors.orange,
-    //                 Colors.purple,
-    //                 Colors.yellow,
-    //                 Colors.blue,
-    //                 Colors.orange,
-    //                 Colors.purple,
-
-    //               ].map((color) => Container(
-    //                 height: 60, // Mantener la altura de cada bloque
-    //                 color: color,
-    //               )).toList(),
-    //             ),
-    //           ),
-    //         ),
-    //     ],
-
-      
-    //   ),
-    
-      
-      
-
-
-      // navbar
+      // Navbar
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0), 
+        padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white, 
+            color: Colors.white,
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
@@ -329,44 +278,35 @@ class _HomeScreenState  extends State<HomeScreen> {
           ),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.transparent, 
-            elevation: 0, 
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             selectedItemColor: Colors.red,
-            unselectedItemColor: Colors.black, 
+            unselectedItemColor: Colors.black,
             showSelectedLabels: true,
             showUnselectedLabels: true,
             items: [
-              //Home
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_filled),
                 label: 'Home',
-                backgroundColor: Colors.transparent,
               ),
-              //Rutinas
               BottomNavigationBarItem(
                 icon: Icon(Icons.view_list_rounded),
                 label: 'Rutinas',
-                backgroundColor: Colors.transparent,
               ),
-              //Publicaciones
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                offset: Offset(0, 10), // Ajusta el valor según lo que necesites
-                child: Icon(Icons.add_circle, size: 45)),
+                    offset: Offset(0, 10), child: Icon(Icons.add_circle, size: 45)),
                 label: '',
-                backgroundColor: Colors.transparent,
-              ),//Lista Ejercicios
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.fitness_center_rounded),
                 label: 'Ejercicios',
-                backgroundColor: Colors.transparent,
-              ),//Perfil
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
                 label: 'Perfil',
-                backgroundColor: Colors.transparent,
               ),
             ],
           ),
@@ -376,56 +316,61 @@ class _HomeScreenState  extends State<HomeScreen> {
   }
 }
 
+class EmojiColumn extends StatelessWidget {
+  final String emoji;
+  final String label;
+  final VoidCallback onTap;
 
-Widget _colorBlock(Color color) {
-   return Container(
-     height: 100, // Altura del bloque
-     color: color,
-     margin: EdgeInsets.symmetric(vertical: 10), // Espacio entre bloques
-     child: Center(
-       child: Text(
-         color.toString(),
-         style: TextStyle(color: Colors.white, fontSize: 24),
-      ),
-    ),
-  );
-}
-
-
-class Emojis extends StatelessWidget{
-
-  final String emojis;
-
-  const Emojis({
+  const EmojiColumn({
     Key? key,
-    required this.emojis
-  }) : super(key:key);
+    required this.emoji,
+    required this.label,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Emojis(emojis: emoji),
+          SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Emojis extends StatelessWidget {
+  final String emojis;
+
+  const Emojis({Key? key, required this.emojis}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.blue[600],
-        borderRadius: BorderRadius.circular(20)
+        borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.all(12),
       child: Center(
         child: Text(
           emojis,
-          style: TextStyle(
-            fontSize: 28
-          
-          ),
+          style: TextStyle(fontSize: 28),
         ),
       ),
     );
   }
 }
 
-
-
-class Listarecomendaciones extends StatelessWidget{
-  const Listarecomendaciones({Key? key}) : super(key:key);
+class Listarecomendaciones extends StatelessWidget {
+  const Listarecomendaciones({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -435,7 +380,7 @@ class Listarecomendaciones extends StatelessWidget{
         padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: Colors.lightBlue,
-          borderRadius: BorderRadius.circular(20)
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -447,41 +392,38 @@ class Listarecomendaciones extends StatelessWidget{
                   child: Container(
                     padding: EdgeInsets.all(10),
                     color: Colors.red,
-                    
                     child: Icon(
                       Icons.favorite,
-                      color: Colors.white,),
+                      color: Colors.white,
                     ),
+                  ),
                 ),
-                SizedBox(width: 12,),
+                SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Recomendación N°1', 
-                      style: TextStyle( 
-                        color: Colors.white, 
-                        fontWeight:FontWeight.bold, 
-                        fontSize: 16
-                      ),
+                      'Recomendación N°1',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
                     ),
                     Text(
-                      '10 Ejercicios',  
-                      style: TextStyle( 
-                        color: Colors.white60, 
-                        fontWeight:FontWeight.bold, 
-                        fontSize: 14
-                      ),
+                      '10 Ejercicios',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
-            Icon(Icons.more_horiz)
+            Icon(
+              Icons.add, size: 40,
+              color: Colors.white,
+            ),
           ],
-        )
+        ),
       ),
     );
   }
-  
 }
