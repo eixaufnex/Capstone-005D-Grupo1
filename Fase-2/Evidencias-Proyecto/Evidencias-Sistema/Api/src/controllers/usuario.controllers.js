@@ -35,7 +35,7 @@ export const createUsuario = async (req, res) => {
     const estado = req.body.estado || 1;
 
     try {
-        // Verificar si el correo ya existe
+        // Verificar si el nombre de usuario ya existe
         const existingUser = await pool
             .request()
             .input('username', sql.VarChar, req.body.username)
@@ -43,6 +43,16 @@ export const createUsuario = async (req, res) => {
 
         if (existingUser.recordset[0].count > 0) {
             return res.status(400).json({ message: 'El username ya está en uso' });
+        }
+
+        // Verificar si el correo ya existe (opcional)
+        const existingEmail = await pool
+            .request()
+            .input('email', sql.VarChar, req.body.email) // Si tienes un campo de correo
+            .query("SELECT COUNT(*) AS count FROM USUARIO WHERE email = @email");
+
+        if (existingEmail.recordset[0].count > 0) {
+            return res.status(400).json({ message: 'El correo ya está en uso' });
         }
 
         // Si no existe, proceder a crear el nuevo usuario
@@ -70,6 +80,8 @@ export const createUsuario = async (req, res) => {
         res.status(500).json({ message: 'Error al crear el usuario' });
     }
 };
+
+
 
 
 

@@ -301,7 +301,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.fitness_center_rounded),
+                icon: Icon(Icons.line_axis_outlined),
+                // icon: Icon(Icons.fitness_center_rounded),
                 label: 'Ejercicios',
               ),
               BottomNavigationBarItem(
