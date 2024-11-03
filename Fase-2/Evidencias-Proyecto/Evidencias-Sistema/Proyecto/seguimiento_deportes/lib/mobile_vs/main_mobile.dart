@@ -26,7 +26,7 @@ class MobileMain extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Material App',
+        title: 'VitalityConnect',
         routes: {
           'login': (_) => LoginScreen(),
           'registro': (_) => RegisterScreen(),
