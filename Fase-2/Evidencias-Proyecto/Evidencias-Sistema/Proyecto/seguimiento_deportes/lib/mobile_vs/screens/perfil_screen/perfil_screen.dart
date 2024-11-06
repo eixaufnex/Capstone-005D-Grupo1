@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Auth
-import 'package:seguimiento_deportes/mobile_vs/screens/home_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -104,13 +104,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
               const SizedBox(height: 5),
 
               //menu perfil
-              perfil_widget(
-                title: "Configuración",
-                icon: Icons.settings,
-                onPress: () {
-                  // Navigator.pushReplacementNamed(context, 'configuracion');
-                },
-              ),
               perfil_widget(
                 title: "Notificaciones",
                 icon: Icons.notifications,
@@ -220,7 +213,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 backgroundColor: Colors.transparent,
               ), //Lista Ejercicios
               BottomNavigationBarItem(
-                icon: Icon(Icons.fitness_center_rounded),
+                icon: Icon(Icons.line_axis_outlined),
+                // icon: Icon(Icons.fitness_center_rounded),
                 label: 'Ejercicios',
                 backgroundColor: Colors.transparent,
               ), //Perfil

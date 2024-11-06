@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart'; // Importa la biblioteca intl
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/3_anadir_ejercicios_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 import 'package:seguimiento_deportes/core/providers/notificacion_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
@@ -58,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => RutinaScreen()),
+        // MaterialPageRoute(builder: (context) => AnadirEjerciciosScreen()),
       );
     } else if (index == 2) {
       Navigator.pushReplacement(

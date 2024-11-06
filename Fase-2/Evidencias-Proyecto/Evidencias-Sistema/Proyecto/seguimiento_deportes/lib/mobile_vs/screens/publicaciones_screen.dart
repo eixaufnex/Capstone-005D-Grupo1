@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/home_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 
 class PublicacionesScreen extends StatefulWidget {
   const PublicacionesScreen({super.key});
@@ -149,7 +149,8 @@ class _PublicacionesScreenState  extends State<PublicacionesScreen> {
                 backgroundColor: Colors.transparent,
               ),//Lista Ejercicios
               BottomNavigationBarItem(
-                icon: Icon(Icons.fitness_center_rounded),
+                icon: Icon(Icons.line_axis_outlined),
+                // icon: Icon(Icons.fitness_center_rounded),
                 label: 'Ejercicios',
                 backgroundColor: Colors.transparent,
               ),//Perfil

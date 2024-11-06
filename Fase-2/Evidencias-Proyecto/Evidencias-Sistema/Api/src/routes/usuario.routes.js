@@ -11,16 +11,16 @@ const router = Router()
 router.get("/usuario", getUsuarios);
 
 //Obtener usuario por id
-router.get("/usuario/:id", getUsuario);
+router.get("/usuario/:firebase_id", getUsuario);
 
 //Creando usuario
 router.post("/usuario", createUsuario);
 
 //Actualizando usuario
-router.put("/usuario/:id", updateUsuario);
+router.put("/usuario/:firebase_id", updateUsuario);
 
 //Eliminando usuario
-router.delete("/usuario/:id", deleteUsuario);
+router.delete("/usuario/:firebase_id", deleteUsuario);
 
 
 export default router;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/home_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 
 class Lista_EjercicioScreen extends StatefulWidget {
   const Lista_EjercicioScreen({super.key});
@@ -155,7 +155,8 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.fitness_center_rounded),
+                // icon: Icon(Icons.fitness_center_rounded),
+                icon: Icon(Icons.line_axis_outlined),
                 label: 'Ejercicios',
               ),
               BottomNavigationBarItem(

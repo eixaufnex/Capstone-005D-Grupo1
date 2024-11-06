@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import {getRutinas, 
-        getRutina, 
+        getRutina,
+        getRutinaXUsuario,
         createRutina, 
         updateRutina, 
         deleteRutina} from '../controllers/rutina.controller.js';
@@ -8,6 +9,8 @@ import {getRutinas,
 
 
      const router = Router()
+
+     router.get('/rutina/usuario/:firebase_id', getRutinaXUsuario);
 
      //Obtener todos las rutinas
      router.get("/rutina", getRutinas);

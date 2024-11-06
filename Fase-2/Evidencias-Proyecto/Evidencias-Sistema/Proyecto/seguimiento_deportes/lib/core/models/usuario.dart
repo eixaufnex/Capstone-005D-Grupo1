@@ -5,7 +5,6 @@ List<Usuario> usuarioFromJson(String str) => List<Usuario>.from(json.decode(str)
 String usuarioToJson(List<Usuario> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Usuario {
-    int idUsuario;
     String firebase_id;
     String username;
     String rol;
@@ -13,7 +12,6 @@ class Usuario {
     DateTime fechaRegistro;
 
     Usuario({
-        required this.idUsuario,
         required this.firebase_id,
         required this.username,
         required this.rol,
@@ -22,7 +20,6 @@ class Usuario {
     });
 
     factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
-        idUsuario: json["id_usuario"],
         firebase_id: json["firebase_id"],
         username: json["username"],
         rol: json["rol"],
@@ -31,7 +28,6 @@ class Usuario {
     );
 
     Map<String, dynamic> toJson() => {
-        "id_usuario": idUsuario,
         "firebase_id": firebase_id,
         "username": username,
         "rol": rol,
