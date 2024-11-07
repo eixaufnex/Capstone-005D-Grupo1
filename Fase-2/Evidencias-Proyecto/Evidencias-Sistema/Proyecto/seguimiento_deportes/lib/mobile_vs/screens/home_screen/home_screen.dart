@@ -1,65 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // Importa la biblioteca intl
+import 'package:intl/intl.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/3_anadir_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 import 'package:seguimiento_deportes/core/providers/notificacion_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
+// Importa tu pantalla de inicio de sesión
+import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-  
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  String usuario = "Cargando..."; // Texto inicial mientras se carga el usuario
-  String fechaActual = ''; // Nueva variable para la fecha actual
+  String usuario = "Cargando...";
+  String fechaActual = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
     _fetchUsername();
-    _setFechaActual(); // Llama a la función para establecer la fecha
+    _setFechaActual();
   }
 
   void _setFechaActual() {
-    // Obtener la fecha actual
     fechaActual = DateFormat('dd/MM/yyyy').format(DateTime.now());
   }
-
 
   Future<void> _fetchUsername() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      String username = await Provider.of<Usuario_provider>(context, listen: false)
-      
-          .getUsername(user.uid);
+      String username =
+          await Provider.of<Usuario_provider>(context, listen: false)
+              .getUsername(user.uid);
       setState(() {
-        usuario = username; // Actualiza el nombre de usuario en la interfaz
+        usuario = username;
       });
     }
   }
-
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
-    // Direccionar a diferentes pantallas
     if (index == 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => RutinaScreen()),
-        // MaterialPageRoute(builder: (context) => AnadirEjerciciosScreen()),
       );
     } else if (index == 2) {
       Navigator.pushReplacement(
@@ -79,36 +75,110 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _signOut() async {
+    await _auth.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
   void onEmojiSelected(String mood) async {
-  // Mostrar un Dialog con el estado seleccionado
-  String tipoNotificacion = mood; // Asignar el tipo de notificación
-  String mensaje = await getMensajeMotivacional(tipoNotificacion);
-  
+    String tipoNotificacion = mood;
+    String mensaje = await getMensajeMotivacional(tipoNotificacion);
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Dale con todo!"),
-        content: Text("Muchas gracias por compartirnos como te sientes. \n\n$mensaje"), // Mostrar mensaje de la notificación
-        actions: [
-          TextButton(
-            child: Text("Cerrar"),
-            onPressed: () {
-              Navigator.of(context).pop(); // Cerrar el dialog
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Dale con todo!"),
+          content: Text(
+              "Muchas gracias por compartirnos como te sientes. \n\n$mensaje"),
+          actions: [
+            TextButton(
+              child: Text("Cerrar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.white),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 40, // Tamaño de la imagen
+                      backgroundImage: AssetImage(
+                          'assets/miguelito.jpeg'), // Ruta de la imagen de perfil
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      '$usuario',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.list),
+              title: Text('Lista de ejercicios'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Lista_EjercicioScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.emoji_events),
+              title: Text('Logros'),
+              onTap: () {
+                // Acción para Logros
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.flag),
+              title: Text('Objetivos'),
+              onTap: () {
+                // Acción para Objetivos
+              },
+            ),
+            SizedBox(height: 280),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[200],
+                ),
+                onPressed: () async {
+                  await _signOut();
+                },
+                child: Text('Cerrar sesión',
+                    style: TextStyle(color: Colors.black)),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -116,10 +186,19 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Column(
                 children: [
-                  // Bienvenida
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Builder(
+                        builder: (context) {
+                          return IconButton(
+                            icon: Icon(Icons.menu),
+                            onPressed: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                          );
+                        },
+                      ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -135,10 +214,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             fechaActual,
                             style: TextStyle(color: Colors.blue[700]),
                           ),
-                          SizedBox(height: 8),
                         ],
                       ),
-                      // Icono de notificación
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.blue[600],
@@ -172,7 +249,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: 25),
-                  // Cómo te sientes hoy
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -188,29 +264,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SizedBox(height: 25),
-                  // Emojis
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Triste
                       EmojiColumn(
                         emoji: '☹',
                         label: 'Triste',
                         onTap: () => onEmojiSelected('Triste'),
                       ),
-                      // Normal
                       EmojiColumn(
                         emoji: '😐',
                         label: 'Normal',
                         onTap: () => onEmojiSelected('Normal'),
                       ),
-                      // Bien
                       EmojiColumn(
                         emoji: '😊',
                         label: 'Bien',
                         onTap: () => onEmojiSelected('Bien'),
                       ),
-                      // Super bien
                       EmojiColumn(
                         emoji: '🥳',
                         label: 'Superbién',
@@ -222,7 +293,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 25),
-            // Contenido expandido
             Expanded(
               child: ClipRRect(
                 child: Padding(
@@ -263,7 +333,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      // Navbar
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -299,12 +368,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                    offset: Offset(0, 10), child: Icon(Icons.add_circle, size: 45)),
+                    offset: Offset(0, 10),
+                    child: Icon(Icons.add_circle, size: 45)),
                 label: '',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.line_axis_outlined),
-                // icon: Icon(Icons.fitness_center_rounded),
                 label: 'Ejercicios',
               ),
               BottomNavigationBarItem(
@@ -318,6 +387,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+// Otras clases EmojiColumn, Emojis, Listarecomendaciones, etc.
 
 class EmojiColumn extends StatelessWidget {
   final String emoji;
@@ -421,7 +492,8 @@ class Listarecomendaciones extends StatelessWidget {
               ],
             ),
             Icon(
-              Icons.add, size: 40,
+              Icons.add,
+              size: 40,
               color: Colors.white,
             ),
           ],
