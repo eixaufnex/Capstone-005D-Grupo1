@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/4_seleccion_screen.dart';
 
 class AnadirEjerciciosScreen extends StatefulWidget {
-  const AnadirEjerciciosScreen({super.key});
+  final int rutinaId;
+  final String exerciseType;
+
+  const AnadirEjerciciosScreen({
+    Key? key,
+    required this.rutinaId,
+    required this.exerciseType,
+  }) : super(key: key);
 
   @override
   _AnadirEjerciciosScreenState createState() => _AnadirEjerciciosScreenState();
 }
 
 class _AnadirEjerciciosScreenState extends State<AnadirEjerciciosScreen> {
-  // Lista de días y su estado de selección
-  final List<String> days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  final List<String> days = [
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+    'Domingo'
+  ];
   final Map<String, bool> selectedDays = {
     'Lunes': false,
     'Martes': false,
@@ -20,17 +35,51 @@ class _AnadirEjerciciosScreenState extends State<AnadirEjerciciosScreen> {
     'Domingo': false,
   };
 
+  // Lista de ejercicios seleccionados que se visualizarán
+  List<Map<String, String>> ejercicios = [];
+
+  // Navega a la pantalla de selección y añade los ejercicios seleccionados
+  Future<void> _navigateAndAddExercises() async {
+    final selectedEjercicios = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SeleccionScreen(
+          rutinaId: widget.rutinaId,
+          exerciseType: widget.exerciseType,
+        ),
+      ),
+    );
+
+    // Añade los ejercicios seleccionados si hay retorno desde Screen 4
+    if (selectedEjercicios != null) {
+      setState(() {
+        for (var ejercicio in selectedEjercicios) {
+          ejercicios.add({
+            'id': ejercicio.idListaEjercicio.toString(),
+            'nombre': ejercicio.nombreEjercicio,
+          });
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nombre tipo ejercicio', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+        title: Text(
+          widget.exerciseType,
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'home');
+            Navigator.pushReplacementNamed(context, 'creacion');
           },
           color: Colors.black,
         ),
@@ -43,94 +92,80 @@ class _AnadirEjerciciosScreenState extends State<AnadirEjerciciosScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            const Text(
-              "los ejercicios de fuerza son... los ejercicios de fuerza son... los ejercicios de fuerza son...",
-              style: TextStyle(fontSize: 20),
+            Text(
+              "Ejercicios de ${widget.exerciseType}",
+              style: const TextStyle(fontSize: 20),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Nombre rutina',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 4, // Ajusta el número de elementos según necesites
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ListTile(
-                      leading: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF5ECE3), // Fondo color crema
-                          borderRadius: BorderRadius.circular(12), // Bordes redondeados
-                        ),
-                        child: const Icon(
-                          Icons.fitness_center,
-                          size: 30,
-                          color: Colors.black,
-                        ),
-                      ),
-                      title: Text(
-                        index == 0 ? 'Press banca' : 'Sentadilla',
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: const Text('03 Series | 12 Reps'),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          // Acción de editar
-
-                          Navigator.pushReplacementNamed(context, 'rutina_detalle');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: const Color(0xFFF5ECE3), // Color del fondo del botón
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text('Editar'),
-                      ),
-                    ),
-                  );
-                },
-              ),
+            Text(
+              'ID de Rutina: ${widget.rutinaId}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Selecciona los días de la semana',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: days.map((day) {
-                return FilterChip(
-                  label: Text(day),
-                  selected: selectedDays[day] ?? false,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      selectedDays[day] = selected;
-                    });
-                  },
-                  selectedColor: const Color(0xFFF5ECE3),
-                  checkmarkColor: Colors.black,
-                  labelStyle: TextStyle(color: selectedDays[day]! ? Colors.black : Colors.grey),
-                );
-              }).toList(),
+            Expanded(
+              child: ejercicios.isEmpty
+                  ? Center(
+                      child: Text(
+                        "Tienes que agregar tus ejercicios",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[600]),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: ejercicios.length,
+                      itemBuilder: (context, index) {
+                        final ejercicio = ejercicios[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF5ECE3),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.fitness_center,
+                                size: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                            title: Text(
+                              ejercicio['nombre'] ?? '',
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: const Text('00 Series | 00 Reps'),
+                            trailing: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                    context, 'rutina_detalle');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: const Color(0xFFF5ECE3),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: const Text('Editar'),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
             ),
             const SizedBox(height: 16),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, 'seleccion');
-                },
+                onPressed: _navigateAndAddExercises,
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
-                  backgroundColor: const Color(0xFFF5ECE3), // Color del fondo del botón
+                  backgroundColor: const Color(0xFFF5ECE3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

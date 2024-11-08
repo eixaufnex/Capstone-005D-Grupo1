@@ -14,7 +14,6 @@ class Rutina_provider with ChangeNotifier {
     _initializeUserRutinas();
   }
 
-  // Método para inicializar y obtener las rutinas del usuario autenticado
   Future<void> _initializeUserRutinas() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -24,7 +23,6 @@ class Rutina_provider with ChangeNotifier {
     }
   }
 
-  // Método para obtener las rutinas de un usuario específico usando firebaseId
   Future<void> getRutinaXUsuario(String firebase_id) async {
     final url = Uri.http(urlapi, 'rutina/usuario/$firebase_id');
     try {
@@ -48,10 +46,9 @@ class Rutina_provider with ChangeNotifier {
     }
   }
 
-  // Método para crear una nueva rutina
-  Future<bool> postRutina(
+  Future<int?> postRutina(
       String nombreRutina, String emoji, String firebase_id) async {
-    final url = Uri.http(urlapi, 'rutina'); // Actualiza aquí si es necesario
+    final url = Uri.http(urlapi, 'rutina');
     try {
       final resp = await http.post(
         url,
@@ -69,21 +66,21 @@ class Rutina_provider with ChangeNotifier {
       );
 
       if (resp.statusCode == 201) {
-        print('Rutina creada exitosamente');
+        final responseData = jsonDecode(resp.body);
+        int rutinaId = responseData['id_rutina']; // Asegúrate de que el servidor devuelve el ID
         await getRutinaXUsuario(firebase_id); // Refresca la lista de rutinas
-        return true;
+        return rutinaId;
       } else if (resp.statusCode == 400) {
         print('Error: La rutina ya existe');
-        return false;
+        return null;
       } else {
         final errorResponse = jsonDecode(resp.body);
-        print(
-            'Error al crear la rutina: ${errorResponse['message'] ?? errorResponse}');
-        return false;
+        print('Error al crear la rutina: ${errorResponse['message'] ?? errorResponse}');
+        return null;
       }
     } catch (e) {
       print('Error de conexión al crear rutina: $e');
-      return false;
+      return null;
     }
   }
 }

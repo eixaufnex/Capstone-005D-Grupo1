@@ -1,121 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seguimiento_deportes/core/providers/ejercicio_provider.dart';
 
-class SeleccionScreen extends StatelessWidget {
-  const SeleccionScreen({super.key});
+class SeleccionScreen extends StatefulWidget {
+  final int rutinaId;
+  final String exerciseType;
+
+  const SeleccionScreen({Key? key, required this.rutinaId, required this.exerciseType})
+      : super(key: key);
+
+  @override
+  _SeleccionScreenState createState() => _SeleccionScreenState();
+}
+
+class _SeleccionScreenState extends State<SeleccionScreen> {
+  final Map<int, bool> selectedExercises = {}; // Map para almacenar el estado de selección
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Lista de Ejercicios',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, 'anadir');
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {
-              // Acción de búsqueda
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Crea un nuevo ejercicio',
-                  style: TextStyle(fontSize: 16),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // Acción para agregar un nuevo ejercicio
-                  },
-                  icon: const Icon(Icons.add, color: Colors.black),
-                ),
-              ],
+    return ChangeNotifierProvider(
+      create: (_) => Ejercicio_Provider(),
+      child: Consumer<Ejercicio_Provider>(
+        builder: (context, ejercicioProvider, _) {
+          final principianteExercises = ejercicioProvider.getExercisesByDifficulty('Principiante');
+          final intermedioExercises = ejercicioProvider.getExercisesByDifficulty('Intermedio');
+          final avanzadoExercises = ejercicioProvider.getExercisesByDifficulty('Avanzado');
+
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Lista de Ejercicios', style: TextStyle(color: Colors.black)),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
-            Expanded(
-              child: ListView(
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 children: [
-                  _buildSection('Principiante', [
-                    _buildExerciseItem(
-                        Icons.accessibility_new, 'Flexiones', 'Pecho, Tríceps'),
-                    _buildExerciseItem(
-                        Icons.sports_mma, 'Sentadillas', 'Cuádriceps, Glúteos'),
-                  ]),
-                  _buildSection('Intermedio', [
-                    _buildExerciseItem(
-                        Icons.fitness_center, 'Plancha', 'Abdominales'),
-                    _buildExerciseItem(
-                        Icons.rotate_right, 'Giro Ruso', 'Oblicuos'),
-                  ]),
-                  _buildSection('Avanzado', [
-                    _buildExerciseItem(
-                        Icons.sports_gymnastics, 'Flexión Pike', 'Hombros'),
-                    _buildExerciseItem(
-                        Icons.accessibility, 'Hollow Hold', 'Abdomen Inferior'),
-                  ]),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _buildDifficultySection('Principiante', principianteExercises),
+                        _buildDifficultySection('Intermedio', intermedioExercises),
+                        _buildDifficultySection('Avanzado', avanzadoExercises),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _confirmSelection,
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: const Color(0xFFF5ECE3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text('Confirmar'),
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Acción para confirmar la selección
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: const Color(0xFFF5ECE3), // Color del texto
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text('Confirmar'),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSection(String title, List<Widget> exercises) {
+  Widget _buildDifficultySection(String title, List ejercicios) {
+    if (ejercicios.isEmpty) return const SizedBox(); // No mostrar si la lista está vacía
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        ...exercises,
+        ...ejercicios.map((ejercicio) => _buildExerciseItem(
+          id: ejercicio.idListaEjercicio,
+          emoji: ejercicio.emojiEjercicio ?? '🏋️',
+          name: ejercicio.nombreEjercicio,
+          muscleGroup: ejercicio.grupoMuscular,
+        )),
         const SizedBox(height: 16),
       ],
     );
   }
 
-  Widget _buildExerciseItem(IconData icon, String name, String muscles) {
+  Widget _buildExerciseItem({
+    required int id,
+    required String emoji,
+    required String name,
+    required String muscleGroup,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -130,7 +115,12 @@ class SeleccionScreen extends StatelessWidget {
                   color: const Color(0xFFF5ECE3),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, size: 24, color: Colors.black),
+                child: Center(
+                  child: Text(
+                    emoji,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
               ),
               const SizedBox(width: 12),
               Column(
@@ -138,11 +128,10 @@ class SeleccionScreen extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    muscles,
+                    muscleGroup,
                     style: TextStyle(fontSize: 14, color: Colors.teal[400]),
                   ),
                 ],
@@ -151,12 +140,26 @@ class SeleccionScreen extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {
-              // Acción para agregar el ejercicio
+              setState(() {
+                selectedExercises[id] = !(selectedExercises[id] ?? false);
+              });
             },
-            icon: const Icon(Icons.add, color: Colors.black),
+            icon: Icon(
+              selectedExercises[id] == true ? Icons.check : Icons.add,
+              color: selectedExercises[id] == true ? Colors.green : Colors.black,
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _confirmSelection() async {
+    final selectedIds = selectedExercises.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+
+    Navigator.pop(context, selectedIds); // Retorna los IDs seleccionados
   }
 }

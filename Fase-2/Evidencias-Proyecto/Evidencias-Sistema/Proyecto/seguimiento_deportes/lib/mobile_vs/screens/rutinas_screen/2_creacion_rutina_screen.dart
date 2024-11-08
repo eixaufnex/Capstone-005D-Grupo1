@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/3_anadir_ejercicios_screen.dart';
 
 class CreacionRutinaScreen extends StatelessWidget {
-  const CreacionRutinaScreen({super.key});
+  final int rutinaId;
+
+  const CreacionRutinaScreen({Key? key, required this.rutinaId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String? selectedExerciseType;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -37,11 +42,21 @@ class CreacionRutinaScreen extends StatelessWidget {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
-                  _buildExerciseOption('Fuerza', 'assets/pesas.jpeg'),
-                  _buildExerciseOption('Cardiovasculares', 'assets/cardiovascular.jpeg'),
-                  _buildExerciseOption('Flexibilidad', 'assets/flexibilidad.jpeg'),
-                  _buildExerciseOption('Deporte en equipo', 'assets/deporte.jpeg'),
-                  _buildExerciseOption('Elongacion', 'assets/elongacion.jpeg'),
+                  _buildExerciseOption('Fuerza', 'assets/pesas.jpeg', (type) {
+                    selectedExerciseType = type;
+                  }),
+                  _buildExerciseOption('Cardiovasculares', 'assets/cardiovascular.jpeg', (type) {
+                    selectedExerciseType = type;
+                  }),
+                  _buildExerciseOption('Flexibilidad', 'assets/flexibilidad.jpeg', (type) {
+                    selectedExerciseType = type;
+                  }),
+                  _buildExerciseOption('Deporte en equipo', 'assets/deporte.jpeg', (type) {
+                    selectedExerciseType = type;
+                  }),
+                  _buildExerciseOption('Elongacion', 'assets/elongacion.jpeg', (type) {
+                    selectedExerciseType = type;
+                  }),
                 ],
               ),
             ),
@@ -49,10 +64,25 @@ class CreacionRutinaScreen extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, 'anadir');
+                  if (selectedExerciseType != null) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AnadirEjerciciosScreen(
+                          rutinaId: rutinaId,
+                          exerciseType: selectedExerciseType!,
+                        ),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Seleccione un tipo de ejercicio')),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black, backgroundColor: Colors.grey[200],
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.grey[200],
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -70,24 +100,27 @@ class CreacionRutinaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExerciseOption(String title, String imagePath) {
-    return Column(
-      children: [
-        Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
+  Widget _buildExerciseOption(String title, String imagePath, Function(String) onTap) {
+    return GestureDetector(
+      onTap: () => onTap(title),
+      child: Column(
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          title,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-      ],
+          SizedBox(height: 10),
+          Text(
+            title,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
     );
   }
 }

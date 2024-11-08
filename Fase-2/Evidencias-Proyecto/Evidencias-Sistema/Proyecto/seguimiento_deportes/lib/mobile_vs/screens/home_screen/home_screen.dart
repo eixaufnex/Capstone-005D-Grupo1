@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/list_ejercicios_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/logros_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/objetivos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 import 'package:seguimiento_deportes/core/providers/notificacion_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
-// Importa tu pantalla de inicio de sesión
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -65,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Lista_EjercicioScreen()),
+        MaterialPageRoute(builder: (context) => GraficosScreen()),
       );
     } else if (index == 4) {
       Navigator.pushReplacement(
@@ -121,9 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      radius: 40, // Tamaño de la imagen
-                      backgroundImage: AssetImage(
-                          'assets/miguelito.jpeg'), // Ruta de la imagen de perfil
+                      radius: 40,
+                      backgroundImage: AssetImage('assets/miguelito.jpeg'),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -152,14 +153,16 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: Icon(Icons.emoji_events),
               title: Text('Logros'),
               onTap: () {
-                // Acción para Logros
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LogrosScreen()));
               },
             ),
             ListTile(
               leading: Icon(Icons.flag),
               title: Text('Objetivos'),
               onTap: () {
-                // Acción para Objetivos
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ObjetivosScreen()));
               },
             ),
             SizedBox(height: 280),
@@ -167,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: Colors.red[200],
                 ),
                 onPressed: () async {
                   await _signOut();
@@ -183,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(
                 children: [
                   Row(
@@ -199,27 +202,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Hola, $usuario!',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            fechaActual,
-                            style: TextStyle(color: Colors.blue[700]),
-                          ),
-                        ],
-                      ),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.blue[600],
+                          color: Color(0xFFF5ECE3),
                           borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: Colors.black12,
+                            width: 2,
+                          ),
                         ),
                         padding: EdgeInsets.all(12),
                         child: Icon(
@@ -229,28 +219,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 25),
-                  // Barra de búsqueda
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue[600],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        Icon(Icons.search, color: Colors.white),
-                        SizedBox(width: 10),
-                        Text(
-                          'Busqueda...',
-                          style: TextStyle(color: Colors.white),
-                        )
-                      ],
-                    ),
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '¡Hola, $usuario!',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        fechaActual,
+                        style:
+                            TextStyle(color: Colors.green[700], fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                   SizedBox(height: 25),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         '¿Cómo te sientes hoy?',
@@ -260,7 +251,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Icon(Icons.more_horiz),
                     ],
                   ),
                   SizedBox(height: 25),
@@ -373,8 +363,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.line_axis_outlined),
-                label: 'Ejercicios',
+                icon: Icon(Icons.stacked_line_chart_rounded),
+                label: 'Progreso',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
@@ -387,8 +377,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// Otras clases EmojiColumn, Emojis, Listarecomendaciones, etc.
 
 class EmojiColumn extends StatelessWidget {
   final String emoji;
@@ -429,8 +417,12 @@ class Emojis extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue[600],
+        color: Color(0xFFF5ECE3),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.black12,
+          width: 2,
+        ),
       ),
       padding: EdgeInsets.all(12),
       child: Center(
@@ -453,8 +445,12 @@ class Listarecomendaciones extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Colors.lightBlue,
+          color: Color(0xFFF5ECE3),
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.black12,
+            width: 2,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -479,13 +475,13 @@ class Listarecomendaciones extends StatelessWidget {
                     Text(
                       'Recomendación N°1',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16),
                     ),
                     Text(
                       '10 Ejercicios',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                     ),
                   ],
                 ),
@@ -494,7 +490,7 @@ class Listarecomendaciones extends StatelessWidget {
             Icon(
               Icons.add,
               size: 40,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ],
         ),

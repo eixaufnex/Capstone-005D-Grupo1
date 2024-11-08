@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 
@@ -31,11 +31,11 @@ class _PublicacionesScreenState  extends State<PublicacionesScreen> {
       context,
       MaterialPageRoute(builder: (context) =>  RutinaScreen()),
     );
-  }  //Direccionar a Ejercicios
+  }  //Direccionar a graficos
   else if (index == 3){
       Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) =>  Lista_EjercicioScreen()),
+      MaterialPageRoute(builder: (context) =>  GraficosScreen()),
     );
   } //Direccionar a Perfil
   else if (index == 4){
@@ -147,11 +147,10 @@ class _PublicacionesScreenState  extends State<PublicacionesScreen> {
                 child: Icon(Icons.add_circle, size: 45)),
                 label: '',
                 backgroundColor: Colors.transparent,
-              ),//Lista Ejercicios
+              ),//Rendimiento
               BottomNavigationBarItem(
-                icon: Icon(Icons.line_axis_outlined),
-                // icon: Icon(Icons.fitness_center_rounded),
-                label: 'Ejercicios',
+                icon: Icon(Icons.stacked_line_chart_rounded),
+                label: 'Progreso',
                 backgroundColor: Colors.transparent,
               ),//Perfil
               BottomNavigationBarItem(

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/logros_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/objetivos_screen.dart';
 
 class Lista_EjercicioScreen extends StatefulWidget {
   const Lista_EjercicioScreen({super.key});
@@ -17,40 +20,37 @@ const Map<String, IconData> iconMap = {
   'intermedio': Icons.battery_4_bar_rounded,
   'dificil': Icons.battery_alert_rounded,
 };
+
 class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
-  int _selectedIndex = 3;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String usuario = "Cargando...";
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsername();
+  }
 
-    // Direccionar a las diferentes pantallas
-    if (index == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    } else if (index == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => RutinaScreen()),
-      );
-    } else if (index == 2) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => PublicacionesScreen()),
-      );
-    } else if (index == 4) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => PerfilScreen()),
-      );
+  Future<void> _fetchUsername() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      String username = await Provider.of<Usuario_provider>(context, listen: false)
+          .getUsername(user.uid);
+      setState(() {
+        usuario = username;
+      });
     }
   }
 
+  Future<void> _signOut() async {
+    await _auth.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
   // Lista de ejercicios
-  //llamar a la bd
   final List<Map<String, String>> ejercicios = [
     {
       'title': 'Press banca',
@@ -86,7 +86,86 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Lista de ejercicios', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold))),
+        title: Text(
+          'Lista de ejercicios',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.white),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 40, // Tamaño de la imagen
+                      backgroundImage: AssetImage('assets/miguelito.jpeg'),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      usuario,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Inicio'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomeScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.emoji_events),
+              title: Text('Logros'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LogrosScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.flag),
+              title: Text('Objetivos'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ObjetivosScreen()));
+              },
+            ),
+            
+            SizedBox(height: 280),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[200],
+                ),
+                onPressed: () async {
+                  await _signOut();
+                },
+                child: Text('Cerrar sesión', style: TextStyle(color: Colors.black)),
+              ),
+            ),
+          ],
+        ),
       ),
       body: ListView.builder(
         itemCount: ejercicios.length,
@@ -94,7 +173,6 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
           final ejercicio = ejercicios[index];
           return GestureDetector(
             onTap: () {
-              // Navegar a la pantalla de detalles del ejercicio
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -111,61 +189,6 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
             ),
           );
         },
-      ),
-
-      //NAVBAR
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(50),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 2,
-                blurRadius: 5,
-              ),
-            ],
-          ),
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            selectedItemColor: Colors.red,
-            unselectedItemColor: Colors.black,
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_filled),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.view_list_rounded),
-                label: 'Rutinas',
-              ),
-              BottomNavigationBarItem(
-                icon: Transform.translate(
-                  offset: Offset(0, 10),
-                  child: Icon(Icons.add_circle, size: 45),
-                ),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                // icon: Icon(Icons.fitness_center_rounded),
-                icon: Icon(Icons.line_axis_outlined),
-                label: 'Ejercicios',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                label: 'Perfil',
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -290,7 +313,7 @@ class ListaEjercicios extends StatelessWidget {
   }
 }
 
-//Clase detalle ejercicio
+// Clase para detalles de ejercicio
 class EjercicioDetalleScreen extends StatelessWidget {
   final Map<String, String> ejercicio;
 
@@ -300,22 +323,66 @@ class EjercicioDetalleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(ejercicio['title']!),
+        title: Text(
+          ejercicio['title']!,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(ejercicio['imagen']!),
-            SizedBox(height: 20),
-            Text(
-              'Dificultad: ${ejercicio['dificultad']}',
-              style: TextStyle(fontSize: 24),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.network(
+                  ejercicio['imagen']!,
+                  width: double.infinity,
+                  height: 300,
+                  fit: BoxFit.contain,
+                ),
+                Icon(
+                  Icons.play_circle_outline,
+                  color: Colors.white,
+                  size: 50,
+                ),
+              ],
             ),
-            SizedBox(height: 10),
-            Text(
-              'Grupo: ${ejercicio['grupo']}',
-              style: TextStyle(fontSize: 24),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    ejercicio['title']!,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Dificultad: ${ejercicio['dificultad']}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blueAccent,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'The ${ejercicio['title']} is a popular exercise for targeting specific muscle groups like ${ejercicio['grupo']}. It’s a great way to build strength and improve balance.',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

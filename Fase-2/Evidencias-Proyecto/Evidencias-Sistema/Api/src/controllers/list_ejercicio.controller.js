@@ -5,10 +5,21 @@ import sql from 'mssql';
 
 //obtener todas las listas de ejercicios
 export const getList_ejercicios = async (req, res) => {
-    const pool = await getConnection()
-    const result = await pool.request().query('SELECT * FROM LISTA_EJERCICIO;')
-    res.json(result.recordset)
-
+    const pool = await getConnection();
+    const result = await pool.request().query(`
+        SELECT 
+            LE.id_lista_ejercicio,
+            LE.nombre_ejercicio,
+            LE.imagen_ejercicio,
+            LE.emoji_ejercicio,
+            LE.tipo_ejercicio,
+            LE.dificultad_ejercicio,
+            GM.id_grupo_muscular,
+            GM.grupo_musculo AS grupo_muscular
+        FROM LISTA_EJERCICIO LE
+        INNER JOIN GRUPO_MUSCULAR GM ON LE.id_grupo_muscular = GM.id_grupo_muscular;
+    `);
+    res.json(result.recordset);
 };
 
 
@@ -49,8 +60,11 @@ export const createList_ejercicio = async (req, res) => {
             .request()
             .input('nombre_ejercicio', sql.VarChar, req.body.nombre_ejercicio)
             .input('imagen_ejercicio', sql.Text, req.body.imagen_ejercicio)
+            .input('emoji_ejercicio', sql.NVarChar, req.body.emoji_ejercicio)
+            .input('tipo_ejercicio', sql.VarChar, req.body.tipo_ejercicio)
+            .input('dificultad_ejercicio', sql.VarChar, req.body.dificultad_ejercicio)
             .input('id_grupo_muscular', sql.Int, req.body.id_grupo_muscular)
-            .query("INSERT INTO LISTA_EJERCICIO (nombre_ejercicio, imagen_ejercicio, id_grupo_muscular) VALUES (@nombre_ejercicio, @imagen_ejercicio, @id_grupo_muscular); SELECT SCOPE_IDENTITY() AS id;"
+            .query("INSERT INTO LISTA_EJERCICIO (nombre_ejercicio, imagen_ejercicio, emoji_ejercicio, tipo_ejercicio, dificultad_ejercicio, id_grupo_muscular) VALUES (@nombre_ejercicio, @imagen_ejercicio, @emoji_ejercicio, @tipo_ejercicio, @dificultad_ejercicio, @id_grupo_muscular); SELECT SCOPE_IDENTITY() AS id;"
             );
 
         console.log(result);
@@ -59,6 +73,9 @@ export const createList_ejercicio = async (req, res) => {
             id_lista_ejercicio: result.recordset[0].id,
             nombre_ejercicio: req.body.nombre_ejercicio,
             imagen_ejercicio: req.body.imagen_ejercicio,
+            emoji_ejercicio: req.body.emoji_ejercicio,
+            tipo_ejercicio: req.body.tipo_ejercicio,
+            dificultad_ejercicio: req.body.dificultad_ejercicio,
             id_grupo_muscular: req.body.id_grupo_muscular
         });
     } catch (error){
@@ -78,9 +95,12 @@ export const updateList_ejercicio = async (req, res) => {
         .input('id_lista_ejercicio', sql.Int, id)
         .input('nombre_ejercicio', sql.VarChar, req.body.nombre_ejercicio)
         .input('imagen_ejercicio', sql.Text, req.body.imagen_ejercicio)
+        .input('emoji_ejercicio', sql.NVarChar, emoji_ejercicio)
+        .input('tipo_ejercicio', sql.VarChar, tipo_ejercicio)
+        .input('dificultad_ejercicio', sql.VarChar, dificultad_ejercicio)
         .input('id_grupo_muscular', sql.Int, req.body.id_grupo_muscular)
         .query(
-            "UPDATE LISTA_EJERCICIO SET nombre_ejercicio = @nombre_ejercicio, imagen_ejercicio = @imagen_ejercicio, id_grupo_muscular = @id_grupo_muscular WHERE id_lista_ejercicio = @id_lista_ejercicio"
+            "UPDATE LISTA_EJERCICIO SET nombre_ejercicio = @nombre_ejercicio, imagen_ejercicio = @imagen_ejercicio, emoji_ejercicio = @emoji_ejercicio, tipo_ejercicio = @tipo_ejercicio, dificultad_ejercicio = @dificultad_ejercicio, id_grupo_muscular = @id_grupo_muscular WHERE id_lista_ejercicio = @id_lista_ejercicio"
         );
 
 
@@ -92,6 +112,9 @@ export const updateList_ejercicio = async (req, res) => {
         id_lista_ejercicio: req.params.id,
         nombre_ejercicio: req.body.nombre_ejercicio,
         imagen_ejercicio: req.body.imagen_ejercicio,
+        emoji_ejercicio: req.body.emoji_ejercicio,
+        tipo_ejercicio: req.body.tipo_ejercicio,
+        dificultad_ejercicio: req.body.dificultad_ejercicio,
         id_grupo_muscular: req.body.id_grupo_muscular
     });
 };

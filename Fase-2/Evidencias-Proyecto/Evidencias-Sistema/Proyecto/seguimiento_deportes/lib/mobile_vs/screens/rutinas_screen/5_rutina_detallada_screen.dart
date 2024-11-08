@@ -5,7 +5,7 @@ class Series {
   int weight;
   int rpe;
 
-  Series({this.reps = 8, this.weight = 50, this.rpe = 7});
+  Series({this.reps = 0, this.weight = 0, this.rpe = 1});
 }
 
 class RutinaDetalladaScreen extends StatefulWidget {

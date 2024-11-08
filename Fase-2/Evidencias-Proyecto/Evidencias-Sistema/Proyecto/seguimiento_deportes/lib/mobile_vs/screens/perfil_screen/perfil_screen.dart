@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Auth
+import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 
@@ -49,11 +49,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
         context,
         MaterialPageRoute(builder: (context) => PublicacionesScreen()),
       );
-    } //Direccionar a Ejercicios
+    } //Direccionar a graficos
     else if (index == 3) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Lista_EjercicioScreen()),
+        MaterialPageRoute(builder: (context) => GraficosScreen()),
       );
     }
   }
@@ -64,7 +64,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
       appBar: AppBar(
         title: Text(
           'Perfil',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -83,7 +86,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
               ),
               const SizedBox(height: 10),
               Text('Nombre', style: Theme.of(context).textTheme.headlineSmall),
-              Text(userEmail ?? 'correo@gmail.com', style: Theme.of(context).textTheme.bodySmall), // Muestra el correo del usuario
+              Text(userEmail ?? 'correo@gmail.com',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall), // Muestra el correo del usuario
               const SizedBox(height: 20),
               SizedBox(
                 width: 130,
@@ -92,11 +98,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     // Navigator.pushReplacementNamed(context, 'editar_perfil');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    side: BorderSide.none,
+                    backgroundColor: Color(0xFFF5ECE3),
+                    side: BorderSide(
+                      color: Colors.black12,
+                      width: 1.5, 
+                    ),
                     shape: StadiumBorder(),
                   ),
-                  child: const Text('Editar perfil', style: TextStyle(color: Colors.black)),
+                  child: const Text('Editar perfil',
+                      style: TextStyle(color: Colors.black)),
                 ),
               ),
               const SizedBox(height: 5),
@@ -206,16 +216,16 @@ class _PerfilScreenState extends State<PerfilScreen> {
               //Publicaciones
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                  offset: Offset(0, 10), // Ajusta el valor según lo que necesites
+                  offset:
+                      Offset(0, 10), // Ajusta el valor según lo que necesites
                   child: Icon(Icons.add_circle, size: 45),
                 ),
                 label: '',
                 backgroundColor: Colors.transparent,
-              ), //Lista Ejercicios
+              ), //Rendimiento
               BottomNavigationBarItem(
-                icon: Icon(Icons.line_axis_outlined),
-                // icon: Icon(Icons.fitness_center_rounded),
-                label: 'Ejercicios',
+                icon: Icon(Icons.stacked_line_chart_rounded),
+                label: 'Progreso',
                 backgroundColor: Colors.transparent,
               ), //Perfil
               BottomNavigationBarItem(
@@ -260,7 +270,9 @@ class perfil_widget extends StatelessWidget {
         ),
         child: Icon(icon, color: Colors.black),
       ),
-      title: Text(title, style: Theme.of(context).textTheme.bodySmall?.apply(color: textColor)),
+      title: Text(title,
+          style:
+              Theme.of(context).textTheme.bodySmall?.apply(color: textColor)),
       trailing: endIcon
           ? Container(
               width: 30,
@@ -269,7 +281,8 @@ class perfil_widget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(100),
                 color: Colors.grey.withOpacity(0.1),
               ),
-              child: Icon(Icons.arrow_forward_ios, color: Colors.black.withOpacity(.6)),
+              child: Icon(Icons.arrow_forward_ios,
+                  color: Colors.black.withOpacity(.6)),
             )
           : null,
     );

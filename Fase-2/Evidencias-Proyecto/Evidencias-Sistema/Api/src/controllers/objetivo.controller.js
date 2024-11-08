@@ -33,7 +33,7 @@ export const getObjetivo = async (req, res) => {
 
 // Crear un objetivo
 export const createObjetivo = async (req, res) => {
-    const { tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_objetivo, fecha_limite, alcanzado, firebase_id } = req.body;
+    const { tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_inicial, valor_actual, valor_objetivo, fecha_limite, alcanzado, firebase_id } = req.body;
 
     try {
         const pool = await getConnection();
@@ -52,12 +52,14 @@ export const createObjetivo = async (req, res) => {
             .input('tipo_objetivo', sql.VarChar, tipo_objetivo)
             .input('nombre_objetivo', sql.VarChar, nombre_objetivo)
             .input('descripcion_objetivo', sql.Text, descripcion_objetivo)
+            .input('valor_inicial', sql.Int, valor_inicial)
+            .input('valor_actual', sql.Int, valor_actual)
             .input('valor_objetivo', sql.Int, valor_objetivo)
             .input('fecha_limite', sql.Date, fecha_limite)
             .input('alcanzado', sql.VarChar, alcanzado)
             .input('firebase_id', sql.VarChar, firebase_id)
             .query(
-                "INSERT INTO OBJETIVO (tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_objetivo, fecha_limite, alcanzado, firebase_id) VALUES (@tipo_objetivo, @nombre_objetivo, @descripcion_objetivo, @valor_objetivo, @fecha_limite, @alcanzado, @firebase_id); SELECT SCOPE_IDENTITY() AS id;"
+                "INSERT INTO OBJETIVO (tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_inicial, valor_actual, valor_objetivo, fecha_limite, alcanzado, firebase_id) VALUES (@tipo_objetivo, @nombre_objetivo, @descripcion_objetivo, @valor_inicial, @valor_actual, @valor_objetivo, @fecha_limite, @alcanzado, @firebase_id); SELECT SCOPE_IDENTITY() AS id;"
             );
 
         res.status(201).json({
@@ -65,6 +67,8 @@ export const createObjetivo = async (req, res) => {
             tipo_objetivo,
             nombre_objetivo,
             descripcion_objetivo,
+            valor_inicial,
+            valor_actual,
             valor_objetivo,
             fecha_limite,
             alcanzado,
@@ -79,7 +83,7 @@ export const createObjetivo = async (req, res) => {
 // Actualizar un objetivo
 export const updateObjetivo = async (req, res) => {
     const { id } = req.params;
-    const { tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_objetivo, fecha_limite, alcanzado, firebase_id } = req.body;
+    const { tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_inicial, valor_actual, valor_objetivo, fecha_limite, alcanzado, firebase_id } = req.body;
 
     try {
         const pool = await getConnection();
@@ -88,12 +92,14 @@ export const updateObjetivo = async (req, res) => {
             .input('tipo_objetivo', sql.VarChar, tipo_objetivo)
             .input('nombre_objetivo', sql.VarChar, nombre_objetivo)
             .input('descripcion_objetivo', sql.Text, descripcion_objetivo)
+            .input('valor_inicial', sql.Int, valor_inicial)
+            .input('valor_actual', sql.Int, valor_actual)
             .input('valor_objetivo', sql.Int, valor_objetivo)
             .input('fecha_limite', sql.Date, fecha_limite)
             .input('alcanzado', sql.VarChar, alcanzado)
             .input('firebase_id', sql.VarChar, firebase_id)
             .query(
-                "UPDATE OBJETIVO SET tipo_objetivo = @tipo_objetivo, nombre_objetivo = @nombre_objetivo, descripcion_objetivo = @descripcion_objetivo, valor_objetivo = @valor_objetivo, fecha_limite = @fecha_limite, alcanzado = @alcanzado, firebase_id = @firebase_id WHERE id_objetivo = @id_objetivo"
+                "UPDATE OBJETIVO SET tipo_objetivo = @tipo_objetivo, nombre_objetivo = @nombre_objetivo, descripcion_objetivo = @descripcion_objetivo, valor_inicial = @valor_inicial ,valor_actual = @valor_actual ,valor_objetivo = @valor_objetivo, fecha_limite = @fecha_limite, alcanzado = @alcanzado, firebase_id = @firebase_id WHERE id_objetivo = @id_objetivo"
             );
 
         if (result.rowsAffected[0] === 0) {
@@ -104,6 +110,8 @@ export const updateObjetivo = async (req, res) => {
             tipo_objetivo,
             nombre_objetivo,
             descripcion_objetivo,
+            valor_inicial,
+            valor_actual,
             valor_objetivo,
             fecha_limite,
             alcanzado,
