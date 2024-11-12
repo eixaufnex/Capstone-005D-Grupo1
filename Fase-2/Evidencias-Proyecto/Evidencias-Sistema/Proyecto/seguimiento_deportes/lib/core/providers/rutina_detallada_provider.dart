@@ -1,97 +1,133 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:seguimiento_deportes/core/models/rutina_detallada.dart';
 import 'package:seguimiento_deportes/core/constants.dart';
+import 'package:http/http.dart' as http;
 
 const urlapi = url;
 
 class RutinaDetalladaProvider with ChangeNotifier {
-  List<RutinaDetallada> rutinaDetallada = [];
+  List<RutinaDetallada> rutinasDetalladas = [];
 
-  // Obtener todas las rutinas detalladas
+  RutinaDetalladaProvider() {
+    getRutinasDetalladas();
+  }
+
   Future<void> getRutinasDetalladas() async {
-    final url = Uri.http(urlapi, 'rutina_detallada');
+    final url = Uri.http(urlapi, 'rutinas_detalladas_ejercicios');
     try {
       final resp = await http.get(url, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
       });
 
       if (resp.statusCode == 200) {
-        rutinaDetallada = rutinaDetalladaFromJson(resp.body);
-        notifyListeners(); // Notificar a los oyentes sobre el cambio en el estado
+        final List<dynamic> data = jsonDecode(resp.body);
+        rutinasDetalladas = data.map((json) => RutinaDetallada.fromJson(json)).toList();
+        print("Rutinas detalladas cargadas: ${rutinasDetalladas.length}");
+        notifyListeners();
       } else {
-        print('Error al obtener rutinas detalladas: ${resp.statusCode}');
+        print('Error al obtener rutinas detalladas con ejercicios: ${resp.statusCode}');
       }
     } catch (e) {
-      print('Error de conexión al obtener rutinas detalladas: $e');
+      print('Error de conexión al obtener rutinas detalladas con ejercicios: $e');
     }
   }
 
-  // Crear una nueva rutina detallada
-  Future<int?> postRutinaDetallada(RutinaDetallada rutina) async {
-    final url = Uri.http(urlapi, 'rutina_detallada');
+  Future<void> saveMultipleRutinasDetalladas(List<RutinaDetallada> rutinas) async {
+    for (RutinaDetallada rutina in rutinas) {
+      await postRutinaDetallada(rutina);
+    }
+    await getRutinasDetalladas();  // Actualizar la lista después del guardado
+  }
+
+  Future<RutinaDetallada?> getRutinaDetalladaById(int id) async {
+    final url = Uri.http(urlapi, 'rutinas_detalladas/$id');
+    try {
+      final resp = await http.get(url, headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
+
+      if (resp.statusCode == 200) {
+        return RutinaDetallada.fromJson(jsonDecode(resp.body));
+      } else {
+        print('Error al obtener la rutina detallada: ${resp.statusCode}');
+      }
+    } catch (e) {
+      print('Error de conexión al obtener la rutina detallada: $e');
+    }
+    return null;
+  }
+
+  Future<bool> postRutinaDetallada(RutinaDetallada rutinaDetallada) async {
+    final url = Uri.http(urlapi, 'rutinas_detalladas');
     try {
       final resp = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: jsonEncode(rutina.toJson()),
+        body: jsonEncode(rutinaDetallada.toJson()),
       );
 
       if (resp.statusCode == 201) {
-        final responseData = jsonDecode(resp.body);
-        await getRutinasDetalladas(); // Refresca la lista de rutinas
-        return responseData['id_rutina_detallada'];
+        print('Rutina detallada creada exitosamente');
+        await getRutinasDetalladas();  // Actualizar la lista
+        return true;
       } else {
-        print('Error al crear la rutina detallada: ${resp.statusCode}');
-        return null;
+        print('Error al crear la rutina detallada: ${jsonDecode(resp.body)['message'] ?? resp.body}');
       }
     } catch (e) {
-      print('Error de conexión al crear rutina detallada: $e');
-      return null;
+      print('Error de conexión al crear la rutina detallada: $e');
     }
+    return false;
   }
 
-  // Actualizar una rutina detallada
-  Future<void> updateRutinaDetallada(RutinaDetallada rutina) async {
-    final url = Uri.http(urlapi, 'rutina_detallada/${rutina.idRutinaDetallada}');
+  Future<bool> updateRutinaDetallada(int id, RutinaDetallada rutinaDetallada) async {
+    final url = Uri.http(urlapi, 'rutinas_detalladas/$id');
     try {
       final resp = await http.put(
         url,
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: jsonEncode(rutina.toJson()),
+        body: jsonEncode(rutinaDetallada.toJson()),
       );
 
       if (resp.statusCode == 200) {
-        await getRutinasDetalladas(); // Refresca la lista de rutinas
+        print('Rutina detallada actualizada exitosamente');
+        await getRutinasDetalladas();  // Actualizar la lista
+        return true;
       } else {
-        print('Error al actualizar la rutina detallada: ${resp.statusCode}');
+        print('Error al actualizar la rutina detallada: ${jsonDecode(resp.body)['message'] ?? resp.body}');
       }
     } catch (e) {
-      print('Error de conexión al actualizar rutina detallada: $e');
+      print('Error de conexión al actualizar la rutina detallada: $e');
     }
+    return false;
   }
 
-  // Eliminar una rutina detallada
-  Future<void> deleteRutinaDetallada(int id) async {
-    final url = Uri.http(urlapi, 'rutina_detallada/$id');
+  Future<bool> deleteRutinaDetallada(int id) async {
+    final url = Uri.http(urlapi, 'rutinas_detalladas/$id');
     try {
-      final resp = await http.delete(url);
+      final resp = await http.delete(url, headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
 
       if (resp.statusCode == 200) {
-        await getRutinasDetalladas(); // Refresca la lista de rutinas
+        print('Rutina detallada eliminada exitosamente');
+        await getRutinasDetalladas();  // Actualizar la lista
+        return true;
       } else {
         print('Error al eliminar la rutina detallada: ${resp.statusCode}');
       }
     } catch (e) {
-      print('Error de conexión al eliminar rutina detallada: $e');
+      print('Error de conexión al eliminar la rutina detallada: $e');
     }
+    return false;
   }
 }

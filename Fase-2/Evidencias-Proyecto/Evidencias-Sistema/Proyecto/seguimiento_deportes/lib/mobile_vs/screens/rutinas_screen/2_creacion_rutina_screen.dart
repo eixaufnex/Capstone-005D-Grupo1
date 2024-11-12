@@ -1,125 +1,257 @@
 import 'package:flutter/material.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/3_anadir_ejercicios_screen.dart';
+import 'package:seguimiento_deportes/core/services/rutina_ejercicio_service.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/3_seleccion_screen.dart';
 
-class CreacionRutinaScreen extends StatelessWidget {
+class CreacionRutinaScreen extends StatefulWidget {
   final int rutinaId;
+  final String nombreRutina;
+  final String tipoRutina;
 
-  const CreacionRutinaScreen({Key? key, required this.rutinaId}) : super(key: key);
+  const CreacionRutinaScreen({
+    Key? key,
+    required this.rutinaId,
+    required this.nombreRutina,
+    required this.tipoRutina,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    String? selectedExerciseType;
+  State<CreacionRutinaScreen> createState() => _CreacionRutinaScreenState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, 'rutinas');
-          },
-        ),
-        title: Text('Selecciona el tipo de ejercicio'),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                'Elige en base a tus objetivos',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  _buildExerciseOption('Fuerza', 'assets/pesas.jpeg', (type) {
-                    selectedExerciseType = type;
-                  }),
-                  _buildExerciseOption('Cardiovasculares', 'assets/cardiovascular.jpeg', (type) {
-                    selectedExerciseType = type;
-                  }),
-                  _buildExerciseOption('Flexibilidad', 'assets/flexibilidad.jpeg', (type) {
-                    selectedExerciseType = type;
-                  }),
-                  _buildExerciseOption('Deporte en equipo', 'assets/deporte.jpeg', (type) {
-                    selectedExerciseType = type;
-                  }),
-                  _buildExerciseOption('Elongacion', 'assets/elongacion.jpeg', (type) {
-                    selectedExerciseType = type;
-                  }),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  if (selectedExerciseType != null) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnadirEjerciciosScreen(
-                          rutinaId: rutinaId,
-                          exerciseType: selectedExerciseType!,
-                        ),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Seleccione un tipo de ejercicio')),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.grey[200],
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: Text(
-                  'Confirmar',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-          ],
+class _CreacionRutinaScreenState extends State<CreacionRutinaScreen> {
+  // Lista para almacenar los ejercicios seleccionados
+  List<Map<String, String>> ejercicios = [];
+
+  // Lista de íconos para alternar
+  final List<IconData> iconosAlternados = [
+    Icons.favorite,
+    Icons.star,
+    Icons.eco,
+  ];
+
+  // Índice para cambiar los íconos
+  int iconoIndex = 0;
+
+  // Navegar a la pantalla de selección de ejercicios
+  Future<void> _navigateAndAddExercises() async {
+    final selectedEjercicios = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SeleccionScreen(
+          rutinaId: widget.rutinaId,
+          tipoRutina: widget.tipoRutina,
+          ejerciciosSeleccionados: ejercicios, // Pasamos los ejercicios ya seleccionados
         ),
       ),
     );
+
+    // Añadir los ejercicios seleccionados si se retorna algo
+    if (selectedEjercicios != null) {
+      setState(() {
+        for (var ejercicio in selectedEjercicios) {
+          ejercicios.add({
+            'id': ejercicio['id'].toString(), // ID del ejercicio
+            'nombre': ejercicio['nombre'], // Nombre real del ejercicio
+          });
+        }
+      });
+    }
   }
 
-  Widget _buildExerciseOption(String title, String imagePath, Function(String) onTap) {
-    return GestureDetector(
-      onTap: () => onTap(title),
-      child: Column(
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
+  // Acción del botón de guardar con alerta de confirmación
+  void _confirmSaveRoutine() async {
+    // Mostrar alerta de confirmación
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('¿Estás seguro?'),
+          content: const Text('¿Deseas guardar esta rutina?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true), // Opción "Sí"
+              child: const Text('Sí'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false), // Opción "No"
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Si el usuario elige "Sí", guarda la rutina
+    if (shouldSave == true) {
+      _saveRoutine();
+    }
+  }
+
+  // Acción del botón de guardar
+  void _saveRoutine() async {
+    // Crear una cadena para almacenar la información de los ejercicios
+    String ejercicioInfo = ejercicios
+        .map((ejercicio) =>
+            'rutinaid = ${widget.rutinaId}, ejercicioid = ${ejercicio['id']}')
+        .join(' ; ');
+
+    // Mostrar en la consola el formato solicitado
+    print(ejercicioInfo);
+
+    // Llamar al servicio para guardar los ejercicios en la API
+    final success = await ApiService().saveEjerciciosToRutina(widget.rutinaId, ejercicios);
+
+    // Mostrar mensaje según si la operación fue exitosa o no
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Rutina guardada exitosamente')),
+      );
+      // Redirigir a la pantalla de rutinas automáticamente después de guardar
+      Navigator.pop(context);  // Regresa a la pantalla anterior (Rutinas)
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hubo un error al guardar la rutina')),
+      );
+    }
+  }
+
+  // Eliminar un ejercicio de la lista
+  void _removeExercise(int index) {
+    setState(() {
+      ejercicios.removeAt(index); // Eliminar el ejercicio en el índice dado
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          widget.tipoRutina,
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: false, // Deshabilita el botón de "Volver"
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            Center(
+              child: Text(
+                "¡Rellena tu rutina a tu manera!",
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
             ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            title,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              'ID de Rutina: ${widget.rutinaId}',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ejercicios.isEmpty
+                  ? Center(
+                      child: Text(
+                        "Tienes que agregar tus ejercicios",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[600]),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: ejercicios.length,
+                      itemBuilder: (context, index) {
+                        final ejercicio = ejercicios[index];
+                        final icono = iconosAlternados[iconoIndex % iconosAlternados.length];
+                        iconoIndex++; // Incrementar el índice para el próximo ícono
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF5ECE3),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                icono,
+                                size: 40,
+                                color: Colors.black,
+                              ),
+                            ),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${ejercicio['nombre']}', // Muestra el nombre
+                                  style: const TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  'Id: ${ejercicio['id']}', // Muestra el id
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                            trailing: IconButton(
+                              onPressed: () {
+                                // Eliminar el ejercicio cuando se presiona el ícono de basurero
+                                _removeExercise(index);
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: _confirmSaveRoutine,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: const Color(0xFFF5ECE3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  child: const Text('Guardar'),
+                ),
+                ElevatedButton(
+                  onPressed: _navigateAndAddExercises,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: const Color(0xFFF5ECE3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  child: const Text('Agrega un nuevo ejercicio'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

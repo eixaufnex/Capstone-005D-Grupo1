@@ -1,3 +1,6 @@
+//screen 1
+
+//rutinas_Screen
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/rutina_provider.dart';
@@ -7,9 +10,10 @@ import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.d
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/4_rutina_extend_screen.dart';
 
 class RutinaScreen extends StatefulWidget {
-  const RutinaScreen({super.key});
+  const RutinaScreen({Key? key}) : super(key: key);
 
   @override
   State<RutinaScreen> createState() => _RutinaScreenState();
@@ -21,7 +25,7 @@ class _RutinaScreenState extends State<RutinaScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<Rutina_provider>(context, listen: false).getRutinaXUsuario(
+    Provider.of<RutinaProvider>(context, listen: false).getRutinaXUsuario(
       FirebaseAuth.instance.currentUser!.uid,
     );
   }
@@ -32,37 +36,34 @@ class _RutinaScreenState extends State<RutinaScreen> {
     });
 
     // Manejo de la navegación
+    Widget? destination;
     switch (index) {
       case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        destination = HomeScreen();
         break;
       case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PublicacionesScreen()),
-        );
+        destination = PublicacionesScreen();
         break;
       case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => GraficosScreen()),
-        );
+        destination = GraficosScreen();
         break;
       case 4:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PerfilScreen()),
-        );
+        destination = PerfilScreen();
         break;
+    }
+
+    if (destination != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => destination!),
+      );
     }
   }
 
   void _showCreateRutinaDialog() {
     String nombreRutina = '';
     String selectedEmoji = '🏋️';
+    String selectedTipoRutina = 'Fuerza';
     List<String> emojis = [
       '🏋️',
       '🤸',
@@ -75,14 +76,22 @@ class _RutinaScreenState extends State<RutinaScreen> {
       '🏌️',
       '🤾'
     ];
+    List<String> tiposRutina = [
+      'Fuerza',
+      'Cardiovascular',
+      'Deporte en equipo',
+      'Elongación',
+      'Flexibilidad'
+    ];
 
-    final rutinaProvider = Provider.of<Rutina_provider>(context, listen: false);
+    final rutinaProvider = Provider.of<RutinaProvider>(context, listen: false);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Center(child: Text('Crea tu nueva rutina')),
           content: StatefulBuilder(
             builder: (context, setState) {
@@ -99,7 +108,8 @@ class _RutinaScreenState extends State<RutinaScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text('Elige tu Icono', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Elige tu Icono',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
@@ -112,9 +122,30 @@ class _RutinaScreenState extends State<RutinaScreen> {
                           });
                         },
                         child: CircleAvatar(
-                          backgroundColor: selectedEmoji == emoji ? Colors.grey[300] : Colors.transparent,
+                          backgroundColor: selectedEmoji == emoji
+                              ? Colors.grey[300]
+                              : Colors.transparent,
                           child: Text(emoji, style: TextStyle(fontSize: 24)),
                         ),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 20),
+                  Text('Tipo de Rutina',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  DropdownButton<String>(
+                    value: selectedTipoRutina,
+                    isExpanded: true,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedTipoRutina = newValue!;
+                      });
+                    },
+                    items: tiposRutina.map((tipo) {
+                      return DropdownMenuItem(
+                        value: tipo,
+                        child: Text(tipo),
                       );
                     }).toList(),
                   ),
@@ -124,26 +155,31 @@ class _RutinaScreenState extends State<RutinaScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancelar', style: TextStyle(color: Colors.red)),
-            ),
-            TextButton(
               onPressed: () async {
                 if (nombreRutina.isNotEmpty) {
                   int? rutinaId = await rutinaProvider.postRutina(
                     nombreRutina,
                     selectedEmoji,
                     FirebaseAuth.instance.currentUser!.uid,
+                    tipoRutina: selectedTipoRutina,
                   );
                   if (rutinaId != null) {
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(
+                    Navigator.of(context).pop(); // Cierra el diálogo
+
+                    // Navega a CreacionRutinaScreen pasando el rutinaId
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreacionRutinaScreen(rutinaId: rutinaId),
+                        builder: (context) => CreacionRutinaScreen(
+                          rutinaId: rutinaId,
+                          nombreRutina: nombreRutina,
+                          tipoRutina: selectedTipoRutina,
+                        ),
                       ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Rutina creada exitosamente')),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -163,20 +199,24 @@ class _RutinaScreenState extends State<RutinaScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Color> tileColors = [Colors.white, Colors.grey.shade200];
-    final rutinaProvider = Provider.of<Rutina_provider>(context);
+    final rutinaProvider = Provider.of<RutinaProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Center(
           child: Text(
             'Selecciona tu rutina',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 90),
-        child: rutinaProvider.rutina.isEmpty
+        padding:
+            const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 90),
+        child: rutinaProvider.rutinas.isEmpty
             ? Center(
                 child: Text(
                   "No tienes rutinas creadas",
@@ -184,9 +224,9 @@ class _RutinaScreenState extends State<RutinaScreen> {
                 ),
               )
             : ListView.builder(
-                itemCount: rutinaProvider.rutina.length,
+                itemCount: rutinaProvider.rutinas.length,
                 itemBuilder: (context, index) {
-                  final rutina = rutinaProvider.rutina[index];
+                  final rutina = rutinaProvider.rutinas[index];
                   return Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
@@ -201,18 +241,27 @@ class _RutinaScreenState extends State<RutinaScreen> {
                       ],
                     ),
                     child: ListTile(
-                      leading: Text(rutina.emoji, style: TextStyle(fontSize: 24)),
+                      leading:
+                          Text(rutina.emoji, style: TextStyle(fontSize: 24)),
                       title: Text(rutina.nombreRutina),
                       trailing: const Icon(Icons.arrow_forward_ios_outlined),
                       onTap: () {
-                        // Puedes agregar una acción aquí si necesitas redirigir a otra pantalla
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RutinaExtendScreen(
+                              rutinaId: rutina.idRutina,
+                              nombreRutina: rutina.nombreRutina,
+                              tipoRutina: rutina.tipoRutina ?? 'Null',
+                            ),
+                          ),
+                        );
                       },
                     ),
                   );
                 },
               ),
       ),
-      // Navbar
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

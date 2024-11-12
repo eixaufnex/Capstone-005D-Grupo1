@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/logros_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/objetivos_screen.dart';
@@ -41,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     User? user = _auth.currentUser;
     if (user != null) {
       String username =
-          await Provider.of<Usuario_provider>(context, listen: false)
+          await Provider.of<UsuarioProvider>(context, listen: false)
               .getUsername(user.uid);
       setState(() {
         usuario = username;
@@ -165,7 +166,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (context) => ObjetivosScreen()));
               },
             ),
-            SizedBox(height: 280),
+            ListTile(
+              leading: Icon(Icons.menu_book_rounded),
+              title: Text('Glosario'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => GlosarioScreen()));
+              },
+            ),
+            SizedBox(height: 260),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(

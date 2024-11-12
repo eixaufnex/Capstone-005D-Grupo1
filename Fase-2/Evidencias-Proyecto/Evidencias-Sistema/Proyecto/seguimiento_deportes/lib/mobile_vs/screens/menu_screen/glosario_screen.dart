@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:seguimiento_deportes/core/providers/logro_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/objetivos_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/logros_screen.dart';
 
-class LogrosScreen extends StatefulWidget {
-  const LogrosScreen({super.key});
+class GlosarioScreen extends StatefulWidget {
+  const GlosarioScreen({super.key});
 
   @override
-  State<LogrosScreen> createState() => _LogrosScreenState();
+  State<GlosarioScreen> createState() => _GlosarioScreenState();
 }
 
-class _LogrosScreenState extends State<LogrosScreen>
-    with SingleTickerProviderStateMixin {
+class _GlosarioScreenState extends State<GlosarioScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String usuario = "Cargando...";
-  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _fetchUsername();
-    _tabController = TabController(length: 2, vsync: this);
-    _fetchAchievements();
   }
 
   Future<void> _fetchUsername() async {
@@ -42,15 +37,6 @@ class _LogrosScreenState extends State<LogrosScreen>
     }
   }
 
-  Future<void> _fetchAchievements() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final logroProvider = Provider.of<LogroProvider>(context, listen: false);
-      await logroProvider.getLogrosGlobales();
-      await logroProvider.getLogrosObtenidos(user.uid); // Usando firebase_id
-    }
-  }
-
   Future<void> _signOut() async {
     await _auth.signOut();
     Navigator.pushReplacement(
@@ -59,41 +45,72 @@ class _LogrosScreenState extends State<LogrosScreen>
     );
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  final Map<String, String> _glosario = {
+    "abandonment": "The act of leaving or deserting something.",
+    "abate": "To reduce in degree or intensity.",
+    "abbreviate": "To make briefer in length or extent, to condense.",
+    "abdicate": "To formally give up a position or responsibility.",
+    "benevolent": "Characterized by or suggestive of doing good.",
+    "brevity": "Conciseness and exact use of words in writing or speech.",
+    "beleaguer": "To cause constant or repeated trouble for someone.",
+    "1": "To cause constant or repeated trouble for someone.",
+    "z": "To causesdfaasd constant or repeated trouble for someone.",
+    // Add more terms as needed
+  };
 
   @override
   Widget build(BuildContext context) {
+    // Group terms by their starting letter
+    final Map<String, List<MapEntry<String, String>>> groupedTerms = {};
+    for (var entry in _glosario.entries) {
+      final letter = entry.key[0].toUpperCase();
+      groupedTerms.putIfAbsent(letter, () => []).add(entry);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Logros',
+          'Glosario',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
         ),
         centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: 'Logros Globales'),
-            Tab(text: 'Logros Obtenidos'),
-          ],
-          indicatorColor: Colors.blue,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.grey,
-        ),
       ),
       drawer: _buildDrawer(),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildGlobalAchievementsList(),
-          _buildObtainedAchievementsList(),
-        ],
+      body: ListView(
+        padding: EdgeInsets.all(16.0),
+        children: groupedTerms.entries.map((group) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Display the letter header
+              Text(
+                group.key,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24.0,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              // Display the terms under each letter
+              ...group.value.map((entry) {
+                return ListTile(
+                  leading: Icon(Icons.collections_bookmark), // Change icon as desired
+                  title: Text(
+                    entry.key,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  subtitle: Text(entry.value),
+                );
+              }).toList(),
+              Divider(),
+            ],
+          );
+        }).toList(),
       ),
     );
   }
@@ -147,6 +164,14 @@ class _LogrosScreenState extends State<LogrosScreen>
             },
           ),
           ListTile(
+            leading: Icon(Icons.emoji_events),
+            title: Text('Logros'),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LogrosScreen()));
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.flag),
             title: Text('Objetivos'),
             onTap: () {
@@ -154,14 +179,6 @@ class _LogrosScreenState extends State<LogrosScreen>
                   MaterialPageRoute(builder: (context) => ObjetivosScreen()));
             },
           ),
-          ListTile(
-              leading: Icon(Icons.menu_book_rounded),
-              title: Text('Glosario'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GlosarioScreen()));
-              },
-            ),
           SizedBox(height: 260),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -178,60 +195,6 @@ class _LogrosScreenState extends State<LogrosScreen>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildGlobalAchievementsList() {
-    return Consumer<LogroProvider>(
-      builder: (context, logroProvider, child) {
-        final logrosGlobales = logroProvider.logrosGlobales;
-        return ListView.builder(
-          padding: EdgeInsets.all(16),
-          itemCount: logrosGlobales.length,
-          itemBuilder: (context, index) {
-            final logro = logrosGlobales[index];
-            return Card(
-              child: ListTile(
-                leading: Icon(Icons.emoji_events, size: 40, color: Colors.grey),
-                title: Text(logro.nombreLogro),
-                subtitle: Text(logro.descripcionLogro),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildObtainedAchievementsList() {
-    return Consumer<LogroProvider>(
-      builder: (context, logroProvider, child) {
-        final logrosObtenidos = logroProvider.logrosObtenidos
-            .where((logro) => logro.fechaObtencion != null)
-            .toList();
-
-        return ListView.builder(
-          padding: EdgeInsets.all(16),
-          itemCount: logrosObtenidos.length,
-          itemBuilder: (context, index) {
-            final logro = logrosObtenidos[index];
-            // Extrae solo la parte de la fecha en formato dd/MM/yyyy
-            final formattedDate =
-                "${logro.fechaObtencion!.day.toString().padLeft(2, '0')}/"
-                "${logro.fechaObtencion!.month.toString().padLeft(2, '0')}/"
-                "${logro.fechaObtencion!.year}";
-
-            return Card(
-              child: ListTile(
-                leading:
-                    Icon(Icons.emoji_events, size: 40, color: Colors.yellow),
-                title: Text(logro.nombreLogro),
-                subtitle: Text('Obtenido el $formattedDate'),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }

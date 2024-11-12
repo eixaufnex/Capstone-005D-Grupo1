@@ -106,3 +106,24 @@ export const deleteDetalle_ejercicio = async (req, res) => {
     }
     return res.json({ message: "Detalle de ejercicio eliminado"})
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

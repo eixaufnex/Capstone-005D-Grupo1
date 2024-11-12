@@ -7,10 +7,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 const urlapi = url;
 
-class Usuario_provider with ChangeNotifier {
+class UsuarioProvider with ChangeNotifier {
   List<Usuario> usuarios = [];
- 
-  Usuario_provider() {
+
+  UsuarioProvider() {
     getUsuarios();
   }
 
@@ -64,13 +64,14 @@ class Usuario_provider with ChangeNotifier {
   }
 
   // Método para crear un nuevo usuario
-  Future<bool> postUsuario(String email, String password, String username) async {
+  Future<bool> postUsuario(
+      String email, String password, String username) async {
     final url = Uri.http(urlapi, 'usuario');
 
     try {
       // Crear usuario en Firebase
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -101,11 +102,73 @@ class Usuario_provider with ChangeNotifier {
         return false;
       } else {
         final errorResponse = jsonDecode(resp.body);
-        print('Error al crear el usuario: ${errorResponse['message'] ?? errorResponse}');
+        print(
+            'Error al crear el usuario: ${errorResponse['message'] ?? errorResponse}');
         return false;
       }
     } catch (e) {
       print('Error de conexión al crear el usuario: $e');
+      return false;
+    }
+  }
+
+//función para guardar el firbase_id y el username de google.
+  Future<bool> guardarUsuario(String firebaseId, String username) async {
+    final url = Uri.http(urlapi, 'usuario');
+
+    try {
+      final resp = await http.post(
+        url,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": "true",
+          'Content-type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: jsonEncode({
+          'firebase_id': firebaseId,
+          'username': username,
+        }),
+      );
+
+      if (resp.statusCode == 201) {
+        print('Usuario guardado exitosamente');
+        return true;
+      } else if (resp.statusCode == 400) {
+        print('Error: El nombre de usuario ya está en uso');
+        return false;
+      } else {
+        final errorResponse = jsonDecode(resp.body);
+        print(
+            'Error al guardar el usuario: ${errorResponse['message'] ?? errorResponse}');
+        return false;
+      }
+    } catch (e) {
+      print('Error de conexión al guardar el usuario: $e');
+      return false;
+    }
+  }
+
+  Future<bool> checkIfUserExists(String firebaseId) async {
+    final url = Uri.http(urlapi, 'usuario/$firebaseId');
+    try {
+      final resp = await http.get(url, headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
+      });
+
+      if (resp.statusCode == 200) {
+        return true; // Usuario existe
+      } else if (resp.statusCode == 404) {
+        return false; // Usuario no existe
+      } else {
+        print('Error al verificar usuario: ${resp.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error de conexión al verificar usuario: $e');
       return false;
     }
   }

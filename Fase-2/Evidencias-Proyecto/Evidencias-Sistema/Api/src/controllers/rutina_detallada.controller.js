@@ -1,114 +1,167 @@
 import { getConnection } from "../database/connection.js";
 import sql from 'mssql';
 
-// Obtener todas las rutinas detalladas
-export const getRutinas_detalladas = async (req, res) => {
-    const pool = await getConnection();
-    const result = await pool.request().query('SELECT * FROM RUTINA_DETALLADA;');
-    res.json(result.recordset);
+// Obtener todas las rutinas detalladas con sus ejercicios
+export const getRutinasDetalladasConEjercicios = async (req, res) => {
+    try {
+        const pool = await getConnection();
+        const result = await pool.request().query(`
+            SELECT 
+                rd.id_rutina_detallada,
+                rd.id_rutina,
+                rd.id_lista_ejercicio,
+                rd.series,
+                rd.repeticiones,
+                rd.peso,
+                rd.rpe,
+                rd.tiempo_ejercicio,
+                rd.fecha_rutina,
+                rd.dias_rutina,
+                rd.comentarios
+            FROM 
+                RUTINA_DETALLADA rd
+            JOIN 
+                RUTINA_EJERCICIO re ON rd.id_rutina = re.id_rutina AND rd.id_lista_ejercicio = re.id_lista_ejercicio;
+        `);
+
+        console.log("Datos de rutinas detalladas con ejercicios:", result.recordset);
+        res.json(result.recordset);
+    } catch (error) {
+        console.error('Error al obtener rutinas detalladas con ejercicios:', error);
+        res.status(500).json({ message: 'Error al obtener rutinas detalladas con ejercicios.' });
+    }
 };
 
 // Obtener una rutina detallada por id
 export const getRutina_detallada = async (req, res) => {
-    console.log(req.params.id);
-    const pool = await getConnection();
-    const result = await pool.request()
-        .input('id_rutina_detallada', sql.Int, req.params.id)
-        .query('SELECT * FROM RUTINA_DETALLADA WHERE id_rutina_detallada = @id_rutina_detallada');
+    const id = req.params.id;
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('id_rutina_detallada', sql.Int, id)
+            .query(`
+                SELECT * 
+                FROM RUTINA_DETALLADA 
+                WHERE id_rutina_detallada = @id_rutina_detallada
+            `);
 
-    if (result.rowsAffected[0] === 0) {
-        return res.status(404).json({ message: "Rutina detallada no encontrada" });
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ message: "Rutina detallada no encontrada." });
+        }
+        res.json(result.recordset[0]);
+    } catch (error) {
+        console.error('Error al obtener la rutina detallada:', error);
+        res.status(500).json({ message: 'Error al obtener la rutina detallada.' });
     }
-    return res.json(result.recordset[0]);
 };
 
 // Crear una rutina detallada
 export const createRutina_detallada = async (req, res) => {
-    console.log(req.body);
-    const pool = await getConnection();
+    const { series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, dias_rutina, comentarios, id_rutina, id_lista_ejercicio } = req.body;
 
     try {
-        // Verificar si la rutina detallada ya existe
-        const existingRutina_detallada = await pool
-            .request()
-            .input('id_rutina_detallada', sql.Int, req.body.id_rutina_detallada)
-            .query("SELECT COUNT(*) AS count FROM RUTINA_DETALLADA WHERE id_rutina_detallada = @id_rutina_detallada");
-
-        if (existingRutina_detallada.recordset[0].count > 0) {
-            return res.status(400).json({ message: 'La rutina detallada ya está en uso' });
-        }
-
-        // Si no existe, proceder a crear la nueva rutina detallada 
-        const result = await pool
-            .request()
-            .input('series', sql.Int, req.body.series)
-            .input('repeticiones', sql.Int, req.body.repeticiones)
-            .input('peso', sql.Float, req.body.peso)
-            .input('descanso', sql.Int, req.body.descanso)
-            .input('fecha_rutina', sql.Date, req.body.fecha_rutina)
-            .input('id_rutina', sql.Int, req.body.id_rutina)
-            .input('id_lista_ejercicio', sql.Int, req.body.id_lista_ejercicio)
-            .query("INSERT INTO RUTINA_DETALLADA (series, repeticiones, peso, descanso, fecha_rutina, id_rutina, id_lista_ejercicio) VALUES (@series, @repeticiones, @peso, @descanso, @fecha_rutina, @id_rutina, @id_lista_ejercicio); SELECT SCOPE_IDENTITY() AS id;");
-
-        console.log(result);
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('series', sql.Int, series)
+            .input('repeticiones', sql.Int, repeticiones)
+            .input('peso', sql.Float, peso)
+            .input('rpe', sql.Int, rpe)
+            .input('tiempo_ejercicio', sql.Int, tiempo_ejercicio)
+            .input('fecha_rutina', sql.Date, fecha_rutina)
+            .input('dias_rutina', sql.VarChar, dias_rutina)
+            .input('comentarios', sql.Text, comentarios)
+            .input('id_rutina', sql.Int, id_rutina)
+            .input('id_lista_ejercicio', sql.Int, id_lista_ejercicio)
+            .query(`
+                INSERT INTO RUTINA_DETALLADA 
+                (series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, dias_rutina, comentarios, id_rutina, id_lista_ejercicio) 
+                VALUES (@series, @repeticiones, @peso, @rpe, @tiempo_ejercicio, @fecha_rutina, @dias_rutina, @comentarios, @id_rutina, @id_lista_ejercicio);
+                SELECT SCOPE_IDENTITY() AS id_rutina_detallada;
+            `);
 
         res.status(201).json({
-            id_rutina_detallada: result.recordset[0].id,
-            series: req.body.series,
-            repeticiones: req.body.repeticiones,
-            peso: req.body.peso,
-            descanso: req.body.descanso,
-            fecha_rutina: req.body.fecha_rutina,
-            id_rutina: req.body.id_rutina, 
-            id_lista_ejercicio: req.body.id_lista_ejercicio
+            id_rutina_detallada: result.recordset[0].id_rutina_detallada,
+            series,
+            repeticiones,
+            peso,
+            rpe,
+            tiempo_ejercicio,
+            fecha_rutina,
+            dias_rutina,
+            comentarios,
+            id_rutina,
+            id_lista_ejercicio
         });
     } catch (error) {
-        console.error('Error al crear la Rutina detallada', error);
-        res.status(500).json({ message: 'Error al crear la Rutina detallada' });
+        console.error('Error al crear la rutina detallada:', error);
+        res.status(500).json({ message: 'Error al crear la rutina detallada.' });
     }
 };
 
-// Actualizar una rutina detallada 
+// Actualizar una rutina detallada
 export const updateRutina_detallada = async (req, res) => {
     const id = req.params.id;
-    const pool = await getConnection();
-    const result = await pool.request()
-        .input('id_rutina_detallada', sql.Int, id)
-        .input('series', sql.Int, req.body.series)
-        .input('repeticiones', sql.Int, req.body.repeticiones)
-        .input('peso', sql.Float, req.body.peso)
-        .input('descanso', sql.Int, req.body.descanso)
-        .input('fecha_rutina', sql.Date, req.body.fecha_rutina)
-        .input('id_rutina', sql.Int, req.body.id_rutina) // Cambiado de id_usuario a id_rutina
-        .input('id_lista_ejercicio', sql.Int, req.body.id_lista_ejercicio)
-        .query("UPDATE RUTINA_DETALLADA SET series = @series, repeticiones = @repeticiones, peso = @peso, descanso = @descanso, fecha_rutina = @fecha_rutina, id_rutina = @id_rutina, id_lista_ejercicio = @id_lista_ejercicio WHERE id_rutina_detallada = @id_rutina_detallada");
+    const { series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, dias_rutina, comentarios, id_rutina, id_lista_ejercicio } = req.body;
 
-    console.log(result);
-    if (result.rowsAffected[0] === 0) {
-        return res.status(404).json({ message: "Rutina detallada no encontrada" });
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('id_rutina_detallada', sql.Int, id)
+            .input('series', sql.Int, series)
+            .input('repeticiones', sql.Int, repeticiones)
+            .input('peso', sql.Float, peso)
+            .input('rpe', sql.Int, rpe)
+            .input('tiempo_ejercicio', sql.Int, tiempo_ejercicio)
+            .input('fecha_rutina', sql.Date, fecha_rutina)
+            .input('dias_rutina', sql.VarChar, dias_rutina)
+            .input('comentarios', sql.Text, comentarios)
+            .input('id_rutina', sql.Int, id_rutina)
+            .input('id_lista_ejercicio', sql.Int, id_lista_ejercicio)
+            .query(`
+                UPDATE RUTINA_DETALLADA 
+                SET series = @series, repeticiones = @repeticiones, peso = @peso, rpe = @rpe, tiempo_ejercicio = @tiempo_ejercicio, 
+                    fecha_rutina = @fecha_rutina, dias_rutina = @dias_rutina, comentarios = @comentarios, id_rutina = @id_rutina, id_lista_ejercicio = @id_lista_ejercicio
+                WHERE id_rutina_detallada = @id_rutina_detallada
+            `);
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ message: "Rutina detallada no encontrada." });
+        }
+        res.json({
+            id_rutina_detallada: id,
+            series,
+            repeticiones,
+            peso,
+            rpe,
+            tiempo_ejercicio,
+            fecha_rutina,
+            dias_rutina,
+            comentarios,
+            id_rutina,
+            id_lista_ejercicio
+        });
+    } catch (error) {
+        console.error('Error al actualizar la rutina detallada:', error);
+        res.status(500).json({ message: 'Error al actualizar la rutina detallada.' });
     }
-    res.json({
-        id_rutina_detallada: req.params.id,
-        series: req.body.series,
-        repeticiones: req.body.repeticiones,
-        peso: req.body.peso,
-        descanso: req.body.descanso,
-        fecha_rutina: req.body.fecha_rutina,
-        id_rutina: req.body.id_rutina, // Cambiado aquí también
-        id_lista_ejercicio: req.body.id_lista_ejercicio
-    });
 };
 
 // Eliminar una rutina detallada
 export const deleteRutina_detallada = async (req, res) => {
-    const pool = await getConnection();
-    const result = await pool.request()
-        .input('id_rutina_detallada', sql.Int, req.params.id)
-        .query("DELETE FROM RUTINA_DETALLADA WHERE id_rutina_detallada = @id_rutina_detallada");
-    
-    console.log(result);
-    if (result.rowsAffected[0] === 0) {
-        return res.status(404).json({ message: "Rutina detallada no encontrada" });
+    const id = req.params.id;
+
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('id_rutina_detallada', sql.Int, id)
+            .query("DELETE FROM RUTINA_DETALLADA WHERE id_rutina_detallada = @id_rutina_detallada");
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ message: "Rutina detallada no encontrada." });
+        }
+        res.json({ message: "Rutina detallada eliminada exitosamente." });
+    } catch (error) {
+        console.error('Error al eliminar la rutina detallada:', error);
+        res.status(500).json({ message: 'Error al eliminar la rutina detallada.' });
     }
-    return res.json({ message: "Rutina detallada eliminada" });
 };

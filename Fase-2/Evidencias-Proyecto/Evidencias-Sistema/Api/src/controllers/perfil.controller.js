@@ -33,7 +33,7 @@ export const getPerfil = async (req, res) => {
 
 // Crear un perfil
 export const createPerfil = async (req, res) => {
-    const { nombre, apellido, tipo_nivel, foto_perfil, biografia, firebase_id } = req.body;
+    const { nombre, apellido, edad, peso, estatura, genero, tipo_nivel, foto_perfil, biografia, firebase_id } = req.body;
 
     try {
         const pool = await getConnection();
@@ -49,18 +49,28 @@ export const createPerfil = async (req, res) => {
 
         // Crear el nuevo perfil
         const result = await pool.request()
+            .input('firebase_id', sql.VarChar, firebase_id)
             .input('nombre', sql.VarChar, nombre)
             .input('apellido', sql.VarChar, apellido)
+            .input('edad', sql.Int, edad)
+            .input('peso', sql.Decimal(5, 2), peso)
+            .input('estatura', sql.Decimal(5, 2), estatura)
+            .input('genero', sql.VarChar, genero)
             .input('tipo_nivel', sql.VarChar, tipo_nivel)
-            .input('foto_perfil', sql.VarBinary, foto_perfil) // Usa VarBinary para imagenes
+            .input('foto_perfil', sql.Image, foto_perfil)
             .input('biografia', sql.Text, biografia)
-            .input('firebase_id', sql.VarChar, firebase_id)
-            .query("INSERT INTO PERFIL (nombre, apellido, tipo_nivel, foto_perfil, biografia, firebase_id) VALUES (@nombre, @apellido, @tipo_nivel, @foto_perfil, @biografia, @firebase_id); SELECT SCOPE_IDENTITY() AS id;");
+            .query(`INSERT INTO PERFIL (firebase_id, nombre, apellido, edad, peso, estatura, genero, tipo_nivel, foto_perfil, biografia) 
+                    VALUES (@firebase_id, @nombre, @apellido, @edad, @peso, @estatura, @genero, @tipo_nivel, @foto_perfil, @biografia);
+                    SELECT SCOPE_IDENTITY() AS id;`);
 
         res.status(201).json({
             id_perfil: result.recordset[0].id,
             nombre,
             apellido,
+            edad,
+            peso,
+            estatura,
+            genero,
             tipo_nivel,
             foto_perfil,
             biografia,
@@ -75,19 +85,34 @@ export const createPerfil = async (req, res) => {
 // Actualizar un perfil
 export const updatePerfil = async (req, res) => {
     const { id } = req.params;
-    const { nombre, apellido, tipo_nivel, foto_perfil, biografia, firebase_id } = req.body;
+    const { nombre, apellido, edad, peso, estatura, genero, tipo_nivel, foto_perfil, biografia, firebase_id } = req.body;
 
     try {
         const pool = await getConnection();
         const result = await pool.request()
             .input('id_perfil', sql.Int, id)
+            .input('firebase_id', sql.VarChar, firebase_id)
             .input('nombre', sql.VarChar, nombre)
             .input('apellido', sql.VarChar, apellido)
+            .input('edad', sql.Int, edad)
+            .input('peso', sql.Decimal(5, 2), peso)
+            .input('estatura', sql.Decimal(5, 2), estatura)
+            .input('genero', sql.VarChar, genero)
             .input('tipo_nivel', sql.VarChar, tipo_nivel)
-            .input('foto_perfil', sql.VarBinary, foto_perfil) // Usa VarBinary para imagenes
+            .input('foto_perfil', sql.Image, foto_perfil)
             .input('biografia', sql.Text, biografia)
-            .input('firebase_id', sql.VarChar, firebase_id)
-            .query("UPDATE PERFIL SET nombre = @nombre, apellido = @apellido, tipo_nivel = @tipo_nivel, foto_perfil = @foto_perfil, biografia = @biografia, firebase_id = @firebase_id WHERE id_perfil = @id_perfil");
+            .query(`UPDATE PERFIL SET 
+                    nombre = @nombre, 
+                    apellido = @apellido, 
+                    edad = @edad, 
+                    peso = @peso, 
+                    estatura = @estatura, 
+                    genero = @genero, 
+                    tipo_nivel = @tipo_nivel, 
+                    foto_perfil = @foto_perfil, 
+                    biografia = @biografia, 
+                    firebase_id = @firebase_id 
+                    WHERE id_perfil = @id_perfil`);
 
         if (result.rowsAffected[0] === 0) {
             return res.status(404).json({ message: "Perfil no encontrado" });
@@ -96,6 +121,10 @@ export const updatePerfil = async (req, res) => {
             id_perfil: id,
             nombre,
             apellido,
+            edad,
+            peso,
+            estatura,
+            genero,
             tipo_nivel,
             foto_perfil,
             biografia,

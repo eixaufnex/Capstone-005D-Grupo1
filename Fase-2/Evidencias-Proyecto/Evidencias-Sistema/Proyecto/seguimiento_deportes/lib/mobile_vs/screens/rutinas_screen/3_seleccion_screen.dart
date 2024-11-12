@@ -1,30 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/ejercicio_provider.dart';
+import 'package:seguimiento_deportes/core/models/ejercicio.dart';
 
 class SeleccionScreen extends StatefulWidget {
   final int rutinaId;
-  final String exerciseType;
+  final String tipoRutina;
+  final List<Map<String, String>> ejerciciosSeleccionados; // Recibimos los ejercicios seleccionados
 
-  const SeleccionScreen({Key? key, required this.rutinaId, required this.exerciseType})
-      : super(key: key);
+  const SeleccionScreen({
+    Key? key,
+    required this.rutinaId,
+    required this.tipoRutina,
+    required this.ejerciciosSeleccionados, // Recibimos desde el constructor
+  }) : super(key: key);
 
   @override
   _SeleccionScreenState createState() => _SeleccionScreenState();
 }
 
 class _SeleccionScreenState extends State<SeleccionScreen> {
-  final Map<int, bool> selectedExercises = {}; // Map para almacenar el estado de selección
+  final Map<int, bool> selectedExercises = {}; // Mapa para controlar las selecciones
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => Ejercicio_Provider(),
-      child: Consumer<Ejercicio_Provider>(
+      create: (_) => EjercicioProvider(), // Inicia el proveedor
+      child: Consumer<EjercicioProvider>( // Aquí es donde se consume el proveedor
         builder: (context, ejercicioProvider, _) {
-          final principianteExercises = ejercicioProvider.getExercisesByDifficulty('Principiante');
-          final intermedioExercises = ejercicioProvider.getExercisesByDifficulty('Intermedio');
-          final avanzadoExercises = ejercicioProvider.getExercisesByDifficulty('Avanzado');
+          // Filtramos los ejercicios según el tipo de rutina
+          final tipoRutina = widget.tipoRutina;
+
+          // Filtramos los ejercicios según el tipo (Fuerza o Cardiovascular)
+          final filteredExercises = ejercicioProvider.getExercisesByType(tipoRutina);
+
+          // Filtramos los ejercicios que ya están seleccionados
+          final principianteExercises = filteredExercises
+              .where((ejercicio) =>
+                  ejercicio.dificultadEjercicio == 'Principiante' &&
+                  !widget.ejerciciosSeleccionados
+                      .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
+              .toList();
+
+          final intermedioExercises = filteredExercises
+              .where((ejercicio) =>
+                  ejercicio.dificultadEjercicio == 'Intermedio' &&
+                  !widget.ejerciciosSeleccionados
+                      .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
+              .toList();
+
+          final avanzadoExercises = filteredExercises
+              .where((ejercicio) =>
+                  ejercicio.dificultadEjercicio == 'Avanzado' &&
+                  !widget.ejerciciosSeleccionados
+                      .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
+              .toList();
 
           return Scaffold(
             appBar: AppBar(
@@ -53,7 +83,7 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
                   const SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
-                      onPressed: _confirmSelection,
+                      onPressed: () => _confirmSelection(filteredExercises), // Pasa filteredExercises aquí
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.black,
                         backgroundColor: const Color(0xFFF5ECE3),
@@ -73,7 +103,8 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
     );
   }
 
-  Widget _buildDifficultySection(String title, List ejercicios) {
+  // Construye las secciones de ejercicios por dificultad
+  Widget _buildDifficultySection(String title, List<Ejercicio> ejercicios) {
     if (ejercicios.isEmpty) return const SizedBox(); // No mostrar si la lista está vacía
 
     return Column(
@@ -87,7 +118,7 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
         ...ejercicios.map((ejercicio) => _buildExerciseItem(
           id: ejercicio.idListaEjercicio,
           emoji: ejercicio.emojiEjercicio ?? '🏋️',
-          name: ejercicio.nombreEjercicio,
+          name_ejercicio: ejercicio.nombreEjercicio,
           muscleGroup: ejercicio.grupoMuscular,
         )),
         const SizedBox(height: 16),
@@ -95,10 +126,11 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
     );
   }
 
+  // Construye el item de cada ejercicio
   Widget _buildExerciseItem({
     required int id,
     required String emoji,
-    required String name,
+    required String name_ejercicio,
     required String muscleGroup,
   }) {
     return Padding(
@@ -127,7 +159,7 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    name_ejercicio,
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
@@ -138,28 +170,35 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
               ),
             ],
           ),
-          IconButton(
-            onPressed: () {
+          Checkbox(
+            value: selectedExercises[id] ?? false,
+            onChanged: (bool? value) {
               setState(() {
-                selectedExercises[id] = !(selectedExercises[id] ?? false);
+                selectedExercises[id] = value!; // Marca los ejercicios seleccionados
               });
             },
-            icon: Icon(
-              selectedExercises[id] == true ? Icons.check : Icons.add,
-              color: selectedExercises[id] == true ? Colors.green : Colors.black,
-            ),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _confirmSelection() async {
-    final selectedIds = selectedExercises.entries
+  // Método para confirmar la selección de ejercicios
+  Future<void> _confirmSelection(List<Ejercicio> filteredExercises) async {
+    final selectedExercisesData = selectedExercises.entries
         .where((entry) => entry.value)
-        .map((entry) => entry.key)
-        .toList();
+        .map((entry) {
+          // Busca el ejercicio correspondiente al id
+          final ejercicio = filteredExercises.firstWhere(
+            (ejercicio) => ejercicio.idListaEjercicio == entry.key,
+          );
+          return {
+            'id': ejercicio.idListaEjercicio,
+            'nombre': ejercicio.nombreEjercicio,
+          };
+        }).toList();
 
-    Navigator.pop(context, selectedIds); // Retorna los IDs seleccionados
+    // Devuelve la lista de ejercicios seleccionados con id y nombre
+    Navigator.pop(context, selectedExercisesData); // Devuelve la lista de ejercicios seleccionados
   }
 }

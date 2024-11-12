@@ -4,13 +4,15 @@ import gr_muscularRoutes from './routes/gr_muscular.routes.js' //---------------
 import list_ejercicioRoutes from './routes/list_ejercicio.routes.js' //----------lista ejercicio
 import detalle_ejercicioRoutes from './routes/detalle_ejercicio.routes.js' //----detalle ejercicio
 import rutina_detalladaRoutes from './routes/rutina_detallada.routes.js' //------rutina detallada
-import progresoRoutes from './routes/progreso.routes.js' //----------------------progreso
 import rutinaRoutes from './routes/rutina.routes.js' //--------------------------rutina
 import perfilRoutes from './routes/perfil.routes.js' //--------------------------perifl
 import feedbackRoutes from './routes/feedback.routes.js' //----------------------feedback
 import logroRoutes from './routes/logro.routes.js' //----------------------------logro
 import objetivoRoutes from './routes/objetivo.routes.js' //----------------------objetivo
 import notificacionRoutes from './routes/notificacion.routes.js' //--------------notificacion
+import rutina_ejercicioRoutes from './routes/rutina_ejercicio.routes.js' //------rutina-ejercicio
+import publicacionRoutes from './routes/publicacion.routes.js' //----------------publicacion
+
 
 const app = express();
 app.use(express.json());
@@ -25,8 +27,9 @@ app.use(notificacionRoutes); //----------notificacion
 app.use(list_ejercicioRoutes); //--------lista ejercicio
 app.use(detalle_ejercicioRoutes); //-----detalle ejercicio
 app.use(rutina_detalladaRoutes); //------rutina detallada
-app.use(progresoRoutes); //--------------progreso
 app.use(rutinaRoutes); //----------------rutina
+app.use(rutina_ejercicioRoutes); //------rutina-ejercicio
+app.use(publicacionRoutes); //-----------publicaciones
 
 
 export default app

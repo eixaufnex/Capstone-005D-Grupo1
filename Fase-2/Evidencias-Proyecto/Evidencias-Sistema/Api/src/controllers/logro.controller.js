@@ -1,124 +1,138 @@
 import { getConnection } from "../database/connection.js";
 import sql from 'mssql';
 
-// Obtener todos los logros
-export const getLogros = async (req, res) => {
+// Obtener todos los logros globales
+export const getLogrosGlobales = async (req, res) => {
     try {
         const pool = await getConnection();
-        const result = await pool.request().query('SELECT * FROM LOGRO;');
+        const result = await pool.request().query('SELECT * FROM LOGRO_GLOBAL;');
         res.json(result.recordset);
     } catch (error) {
-        console.error('Error al obtener logros:', error);
-        res.status(500).json({ message: 'Error al obtener logros' });
+        console.error('Error al obtener logros globales:', error);
+        res.status(500).json({ message: 'Error al obtener logros globales' });
     }
 };
 
-// Obtener un logro por id
-export const getLogro = async (req, res) => {
+// Obtener logros obtenidos por usuario
+export const getLogrosObtenidosPorUsuario = async (req, res) => {
+    const { firebase_id } = req.params;
+
     try {
         const pool = await getConnection();
         const result = await pool.request()
-            .input('id_logro', sql.Int, req.params.id)
-            .query('SELECT * FROM LOGRO WHERE id_logro = @id_logro');
+            .input('firebase_id', sql.VarChar, firebase_id)
+            .query(`
+                SELECT LG.id_logro_global, LG.nombre_logro, LG.descripcion_logro, LO.fecha_obtencion
+                FROM LOGRO_GLOBAL LG
+                LEFT JOIN LOGRO_OBTENIDO LO ON LG.id_logro_global = LO.id_logro_global AND LO.firebase_id = @firebase_id
+                ORDER BY LG.id_logro_global;
+            `);
 
-        if (result.rowsAffected[0] === 0) {
-            return res.status(404).json({ message: "Logro no encontrado" });
-        }
-        return res.json(result.recordset[0]);
+        res.json(result.recordset);
     } catch (error) {
-        console.error('Error al obtener logro:', error);
-        res.status(500).json({ message: 'Error al obtener logro' });
+        console.error('Error al obtener logros obtenidos por usuario:', error);
+        res.status(500).json({ message: 'Error al obtener logros obtenidos' });
     }
 };
 
-// Crear un logro
-export const createLogro = async (req, res) => {
-    const { nombre_logro, descripcion_logro, fecha_obtencion, firebase_id } = req.body;
+// Crear un logro global
+export const createLogroGlobal = async (req, res) => {
+    const { nombre_logro, descripcion_logro } = req.body;
 
     try {
         const pool = await getConnection();
-
-        // Verificar si el logro ya existe
-        const existingLogro = await pool.request()
-            .input('nombre_logro', sql.VarChar, nombre_logro)
-            .query("SELECT COUNT(*) AS count FROM LOGRO WHERE nombre_logro = @nombre_logro");
-
-        if (existingLogro.recordset[0].count > 0) {
-            return res.status(400).json({ message: 'El logro ya está en uso' });
-        }
-
-        // Crear el nuevo logro
         const result = await pool.request()
             .input('nombre_logro', sql.VarChar, nombre_logro)
             .input('descripcion_logro', sql.Text, descripcion_logro)
-            .input('fecha_obtencion', sql.Date, fecha_obtencion)
-            .input('firebase_id', sql.VarChar, firebase_id)
-            .query(
-                "INSERT INTO LOGRO (nombre_logro, descripcion_logro, fecha_obtencion, firebase_id) VALUES (@nombre_logro, @descripcion_logro, @fecha_obtencion, @firebase_id); SELECT SCOPE_IDENTITY() AS id;"
-            );
+            .query(`
+                INSERT INTO LOGRO_GLOBAL (nombre_logro, descripcion_logro)
+                VALUES (@nombre_logro, @descripcion_logro);
+                SELECT SCOPE_IDENTITY() AS id;
+            `);
 
         res.status(201).json({
-            id_logro: result.recordset[0].id,
+            id_logro_global: result.recordset[0].id,
             nombre_logro,
-            descripcion_logro,
-            fecha_obtencion,
-            firebase_id
+            descripcion_logro
         });
     } catch (error) {
-        console.error('Error al crear el logro:', error);
-        res.status(500).json({ message: 'Error al crear el logro' });
+        console.error('Error al crear logro global:', error);
+        res.status(500).json({ message: 'Error al crear logro global' });
     }
 };
 
-// Actualizar un logro
-export const updateLogro = async (req, res) => {
-    const { id } = req.params;
-    const { nombre_logro, descripcion_logro, fecha_obtencion, firebase_id } = req.body;
+// Marcar un logro como obtenido por un usuario
+export const obtenerLogro = async (req, res) => {
+    const { firebase_id, id_logro_global } = req.body;
+    const fecha_obtencion = new Date();  // Usamos la fecha actual
 
     try {
         const pool = await getConnection();
         const result = await pool.request()
-            .input('id_logro', sql.Int, id)
+            .input('firebase_id', sql.VarChar, firebase_id)
+            .input('id_logro_global', sql.Int, id_logro_global)
+            .input('fecha_obtencion', sql.Date, fecha_obtencion)
+            .query(`
+                INSERT INTO LOGRO_OBTENIDO (firebase_id, id_logro_global, fecha_obtencion)
+                VALUES (@firebase_id, @id_logro_global, @fecha_obtencion);
+            `);
+
+        res.status(201).json({
+            message: 'Logro obtenido registrado',
+            firebase_id,
+            id_logro_global,
+            fecha_obtencion
+        });
+    } catch (error) {
+        console.error('Error al registrar logro obtenido:', error);
+        res.status(500).json({ message: 'Error al registrar logro obtenido' });
+    }
+};
+
+
+// Editar un logro global
+export const updateLogroGlobal = async (req, res) => {
+    const { id } = req.params;
+    const { nombre_logro, descripcion_logro } = req.body;
+
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('id_logro_global', sql.Int, id)
             .input('nombre_logro', sql.VarChar, nombre_logro)
             .input('descripcion_logro', sql.Text, descripcion_logro)
-            .input('fecha_obtencion', sql.Date, fecha_obtencion)
-            .input('firebase_id', sql.VarChar, firebase_id)
-            .query(
-                "UPDATE LOGRO SET nombre_logro = @nombre_logro, descripcion_logro = @descripcion_logro, fecha_obtencion = @fecha_obtencion, firebase_id = @firebase_id WHERE id_logro = @id_logro"
-            );
+            .query(`
+                UPDATE LOGRO_GLOBAL 
+                SET nombre_logro = @nombre_logro, descripcion_logro = @descripcion_logro 
+                WHERE id_logro_global = @id_logro_global
+            `);
 
         if (result.rowsAffected[0] === 0) {
-            return res.status(404).json({ message: "Logro no encontrado" });
+            return res.status(404).json({ message: "Logro global no encontrado" });
         }
-        res.json({
-            id_logro: id,
-            nombre_logro,
-            descripcion_logro,
-            fecha_obtencion,
-            firebase_id
-        });
+        res.json({ message: 'Logro global actualizado', id_logro_global: id });
     } catch (error) {
-        console.error('Error al actualizar el logro:', error);
-        res.status(500).json({ message: 'Error al actualizar el logro' });
+        console.error('Error al actualizar logro global:', error);
+        res.status(500).json({ message: 'Error al actualizar logro global' });
     }
 };
 
-// Eliminar un logro
-export const deleteLogro = async (req, res) => {
+// Eliminar un logro global
+export const deleteLogroGlobal = async (req, res) => {
     const { id } = req.params;
 
     try {
         const pool = await getConnection();
         const result = await pool.request()
-            .input('id_logro', sql.Int, id)
-            .query("DELETE FROM LOGRO WHERE id_logro = @id_logro");
+            .input('id_logro_global', sql.Int, id)
+            .query("DELETE FROM LOGRO_GLOBAL WHERE id_logro_global = @id_logro_global");
 
         if (result.rowsAffected[0] === 0) {
-            return res.status(404).json({ message: "Logro no encontrado" });
+            return res.status(404).json({ message: "Logro global no encontrado" });
         }
-        res.json({ message: "Logro eliminado" });
+        res.json({ message: "Logro global eliminado" });
     } catch (error) {
-        console.error('Error al eliminar el logro:', error);
-        res.status(500).json({ message: 'Error al eliminar el logro' });
+        console.error('Error al eliminar logro global:', error);
+        res.status(500).json({ message: 'Error al eliminar logro global' });
     }
 };

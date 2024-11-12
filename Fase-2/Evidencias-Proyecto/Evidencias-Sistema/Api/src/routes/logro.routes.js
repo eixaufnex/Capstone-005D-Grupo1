@@ -1,28 +1,31 @@
-import {Router} from 'express';
-import {getLogros, 
-        getLogro, 
-        createLogro, 
-        updateLogro, 
-        deleteLogro} from '../controllers/logro.controller.js';
+import { Router } from 'express';
+import {
+    getLogrosGlobales,
+    getLogrosObtenidosPorUsuario,
+    createLogroGlobal,
+    obtenerLogro,
+    updateLogroGlobal,
+    deleteLogroGlobal
+} from '../controllers/logro.controller.js';
 
+const router = Router();
 
+// Obtener todos los logros globales
+router.get("/logros-globales", getLogrosGlobales);
 
-const router = Router()
+// Obtener logros obtenidos por un usuario específico
+router.get("/logros-obtenidos/:firebase_id", getLogrosObtenidosPorUsuario);
 
-//Obtener todos los logros
-router.get("/logro", getLogros);
+// Crear un nuevo logro global
+router.post("/logros-globales", createLogroGlobal);
 
-//Obtener logro por id
-router.get("/logro/:id", getLogro);
+// Marcar un logro como obtenido por un usuario
+router.post("/logros-obtenidos", obtenerLogro);
 
-//Creando logro
-router.post("/logro", createLogro);
+// Actualizar un logro global
+router.put("/logros-globales/:id", updateLogroGlobal);
 
-//Actualizando logro
-router.put("/logro/:id", updateLogro);
-
-//Eliminando logro
-router.delete("/logro/:id", deleteLogro);
-
+// Eliminar un logro global
+router.delete("/logros-globales/:id", deleteLogroGlobal);
 
 export default router;

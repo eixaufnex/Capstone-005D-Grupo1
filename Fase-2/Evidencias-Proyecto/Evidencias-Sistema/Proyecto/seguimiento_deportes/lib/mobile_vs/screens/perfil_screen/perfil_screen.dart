@@ -101,7 +101,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     backgroundColor: Color(0xFFF5ECE3),
                     side: BorderSide(
                       color: Colors.black12,
-                      width: 1.5, 
+                      width: 1.5,
                     ),
                     shape: StadiumBorder(),
                   ),
@@ -112,8 +112,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
               const SizedBox(height: 5),
               const Divider(),
               const SizedBox(height: 5),
-
-              //menu perfil
+              //veremos
+              perfil_widget(
+                title: "Idioma",
+                icon: Icons.language,
+                onPress: () {
+                  Navigator.pushReplacementNamed(context, 'idioma');
+                },
+              ),  
               perfil_widget(
                 title: "Notificaciones",
                 icon: Icons.notifications,
@@ -121,11 +127,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   Navigator.pushReplacementNamed(context, 'notificaciones');
                 },
               ),
+              //veremos
               perfil_widget(
-                title: "Idioma",
-                icon: Icons.language,
+                title: "Tema    (Próximamente...)",
+                icon: Icons.dark_mode,
                 onPress: () {
-                  Navigator.pushReplacementNamed(context, 'idioma');
+                  Navigator.pushReplacementNamed(context, 'tema');
                 },
               ),
               perfil_widget(
@@ -133,13 +140,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 icon: Icons.build_rounded,
                 onPress: () {
                   Navigator.pushReplacementNamed(context, 'unidades');
-                },
-              ),
-              perfil_widget(
-                title: "Tema    (Próximamente...)",
-                icon: Icons.dark_mode,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'tema');
                 },
               ),
               perfil_widget(
@@ -217,7 +217,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               BottomNavigationBarItem(
                 icon: Transform.translate(
                   offset:
-                      Offset(0, 10), // Ajusta el valor según lo que necesites
+                      Offset(0, 10), // Ajusta el valor segÃºn lo que necesites
                   child: Icon(Icons.add_circle, size: 45),
                 ),
                 label: '',

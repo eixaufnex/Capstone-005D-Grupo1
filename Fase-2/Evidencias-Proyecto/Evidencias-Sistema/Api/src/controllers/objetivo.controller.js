@@ -38,13 +38,14 @@ export const createObjetivo = async (req, res) => {
     try {
         const pool = await getConnection();
 
-        // Verificar si el objetivo ya existe
+        // Verificar si el objetivo ya existe (nombre y firebase_id)
         const existingObjetivo = await pool.request()
             .input('nombre_objetivo', sql.VarChar, nombre_objetivo)
-            .query("SELECT COUNT(*) AS count FROM OBJETIVO WHERE nombre_objetivo = @nombre_objetivo");
+            .input('firebase_id', sql.VarChar, firebase_id)
+            .query("SELECT COUNT(*) AS count FROM OBJETIVO WHERE nombre_objetivo = @nombre_objetivo AND firebase_id = @firebase_id");
 
         if (existingObjetivo.recordset[0].count > 0) {
-            return res.status(400).json({ message: 'El objetivo ya está en uso' });
+            return res.status(400).json({ error: 'El objetivo ya está en uso' });
         }
 
         // Crear el nuevo objetivo
@@ -59,11 +60,11 @@ export const createObjetivo = async (req, res) => {
             .input('alcanzado', sql.VarChar, alcanzado)
             .input('firebase_id', sql.VarChar, firebase_id)
             .query(
-                "INSERT INTO OBJETIVO (tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_inicial, valor_actual, valor_objetivo, fecha_limite, alcanzado, firebase_id) VALUES (@tipo_objetivo, @nombre_objetivo, @descripcion_objetivo, @valor_inicial, @valor_actual, @valor_objetivo, @fecha_limite, @alcanzado, @firebase_id); SELECT SCOPE_IDENTITY() AS id;"
+                "INSERT INTO OBJETIVO (tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_inicial, valor_actual, valor_objetivo, fecha_limite, alcanzado, firebase_id) VALUES (@tipo_objetivo, @nombre_objetivo, @descripcion_objetivo, @valor_inicial, @valor_actual, @valor_objetivo, @fecha_limite, @alcanzado, @firebase_id); SELECT SCOPE_IDENTITY() AS id_objetivo;"
             );
 
         res.status(201).json({
-            id_objetivo: result.recordset[0].id,
+            id_objetivo: result.recordset[0].id_objetivo,
             tipo_objetivo,
             nombre_objetivo,
             descripcion_objetivo,
@@ -76,14 +77,30 @@ export const createObjetivo = async (req, res) => {
         });
     } catch (error) {
         console.error('Error al crear el objetivo:', error);
-        res.status(500).json({ message: 'Error al crear el objetivo' });
+        res.status(500).json({ error: 'Error al crear el objetivo', details: error.message });
     }
 };
+
 
 // Actualizar un objetivo
 export const updateObjetivo = async (req, res) => {
     const { id } = req.params;
-    const { tipo_objetivo, nombre_objetivo, descripcion_objetivo, valor_inicial, valor_actual, valor_objetivo, fecha_limite, alcanzado, firebase_id } = req.body;
+    const {
+        tipo_objetivo,
+        nombre_objetivo,
+        descripcion_objetivo,
+        valor_inicial,
+        valor_actual,
+        valor_objetivo,
+        fecha_limite,
+        alcanzado,
+        firebase_id
+    } = req.body;
+
+    // Validación de datos de entrada
+    if (!tipo_objetivo || !nombre_objetivo || !firebase_id || valor_inicial == null || valor_objetivo == null) {
+        return res.status(400).json({ message: "Datos incompletos" });
+    }
 
     try {
         const pool = await getConnection();
@@ -98,30 +115,32 @@ export const updateObjetivo = async (req, res) => {
             .input('fecha_limite', sql.Date, fecha_limite)
             .input('alcanzado', sql.VarChar, alcanzado)
             .input('firebase_id', sql.VarChar, firebase_id)
-            .query(
-                "UPDATE OBJETIVO SET tipo_objetivo = @tipo_objetivo, nombre_objetivo = @nombre_objetivo, descripcion_objetivo = @descripcion_objetivo, valor_inicial = @valor_inicial ,valor_actual = @valor_actual ,valor_objetivo = @valor_objetivo, fecha_limite = @fecha_limite, alcanzado = @alcanzado, firebase_id = @firebase_id WHERE id_objetivo = @id_objetivo"
-            );
+            .query(`
+                UPDATE OBJETIVO 
+                SET tipo_objetivo = @tipo_objetivo, 
+                    nombre_objetivo = @nombre_objetivo, 
+                    descripcion_objetivo = @descripcion_objetivo, 
+                    valor_inicial = @valor_inicial,
+                    valor_actual = @valor_actual,
+                    valor_objetivo = @valor_objetivo, 
+                    fecha_limite = @fecha_limite, 
+                    alcanzado = @alcanzado, 
+                    firebase_id = @firebase_id 
+                WHERE id_objetivo = @id_objetivo
+            `);
 
+        // Verificar si se encontró el objetivo
         if (result.rowsAffected[0] === 0) {
             return res.status(404).json({ message: "Objetivo no encontrado" });
         }
-        res.json({
-            id_objetivo: id,
-            tipo_objetivo,
-            nombre_objetivo,
-            descripcion_objetivo,
-            valor_inicial,
-            valor_actual,
-            valor_objetivo,
-            fecha_limite,
-            alcanzado,
-            firebase_id
-        });
+
+        res.json({ message: "Objetivo actualizado correctamente" });
     } catch (error) {
         console.error('Error al actualizar el objetivo:', error);
         res.status(500).json({ message: 'Error al actualizar el objetivo' });
     }
 };
+
 
 // Eliminar un objetivo
 export const deleteObjetivo = async (req, res) => {

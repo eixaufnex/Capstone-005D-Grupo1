@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final usuarioProvider = Provider.of<Usuario_provider>(context);
+    final usuarioProvider = Provider.of<UsuarioProvider>(context);
 
     return Scaffold(
       body: SizedBox(

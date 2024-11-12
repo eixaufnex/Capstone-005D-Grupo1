@@ -34,11 +34,11 @@ class Objetivo {
 
   // Método para crear un Objetivo a partir de un JSON
   factory Objetivo.fromJson(Map<String, dynamic> json) => Objetivo(
-        idObjetivo: json["id_objetivo"],
+        idObjetivo: json["id_objetivo"], // Usar el nombre exacto del campo
         tipoObjetivo: json["tipo_objetivo"],
         nombreObjetivo: json["nombre_objetivo"],
         descripcionObjetivo: json["descripcion_objetivo"],
-        valorInicial: json["valor_inicial"] ?? 0, // Se asigna 0 solo si el valor en JSON es null
+        valorInicial: json["valor_inicial"] ?? 0,
         valorActual: json["valor_actual"] ?? 0,
         valorObjetivo: json["valor_objetivo"] ?? 0,
         fechaLimite: DateTime.parse(json["fecha_limite"]),
@@ -48,7 +48,7 @@ class Objetivo {
 
   // Método para convertir un Objetivo a JSON
   Map<String, dynamic> toJson() => {
-        "id_objetivo": idObjetivo,
+        "id_objetivo": idObjetivo, // Asegurar que el JSON utilice el nombre correcto
         "tipo_objetivo": tipoObjetivo,
         "nombre_objetivo": nombreObjetivo,
         "descripcion_objetivo": descripcionObjetivo,
