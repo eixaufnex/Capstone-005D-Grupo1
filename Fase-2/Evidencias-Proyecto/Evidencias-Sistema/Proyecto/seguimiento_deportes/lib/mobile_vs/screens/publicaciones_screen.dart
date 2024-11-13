@@ -114,7 +114,29 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
                           if (publicacion.firebaseId == currentUserId)
                             IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _confirmDelete(publicacion.idPublicacion),
+                              onPressed: () async {
+                                final confirmDelete = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text("Eliminar Publicación"),
+                                    content: const Text("¿Estás seguro de que deseas eliminar esta publicación?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(false),
+                                        child: const Text("Cancelar"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(true),
+                                        child: const Text("Eliminar"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirmDelete == true) {
+                                  Provider.of<PublicacionesProvider>(context, listen: false)
+                                      .deletePublicacion(publicacion.idPublicacion);
+                                }
+                              },
                             ),
                         ],
                       ),
@@ -169,27 +191,6 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
       ),
     );
   }
-
-  void _confirmDelete(int idPublicacion) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Eliminar Publicación"),
-          content: Text("¿Estás seguro de que deseas eliminar esta publicación?"),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Cancelar")),
-            TextButton(
-              onPressed: () async {
-                await Provider.of<PublicacionesProvider>(context, listen: false)
-                    .deletePublicacion(idPublicacion, currentUserId);
-                Navigator.of(context).pop();
-              },
-              child: Text("Eliminar"),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
+
+

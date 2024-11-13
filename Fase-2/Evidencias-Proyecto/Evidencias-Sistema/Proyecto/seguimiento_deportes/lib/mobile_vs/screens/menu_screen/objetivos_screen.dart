@@ -253,6 +253,9 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                             _showEditModal(context, objetivo);
                                           },
                                         ),
+
+
+
                                         IconButton(
                                           icon: const Icon(Icons.delete,
                                               color: Colors.red),
@@ -289,6 +292,9 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                             }
                                           },
                                         ),
+
+
+                                        
                                       ],
                                     ),
                                   ],

@@ -118,38 +118,21 @@ class PublicacionesProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deletePublicacion(int idPublicacion, String firebaseId) async {
-    final url = Uri.http(urlapi, '/publicacion/$idPublicacion');
-    final body = jsonEncode({"firebase_id": firebaseId});
 
-    // Diagnóstico: imprime los valores de la URL y el cuerpo de la solicitud
-    print("Eliminando publicación con id: $idPublicacion y firebase_id: $firebaseId");
-    print("URL de eliminación: $url");
-    print("Cuerpo de la solicitud: $body");
-
+  Future<void> deletePublicacion(int idPublicacion) async {
+    final urlDelete = Uri.http(urlapi, '/publicacion/$idPublicacion');
     try {
-      final resp = await http.delete(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: body,
-      );
-
-      // Diagnóstico: imprime la respuesta del servidor
-      print('Respuesta de eliminación: ${resp.statusCode} - ${resp.body}');
-
+      final resp = await http.delete(urlDelete);
       if (resp.statusCode == 200) {
-        publicaciones.removeWhere((pub) => pub.idPublicacion == idPublicacion);
-        await getPublicaciones(firebaseId);  // Recarga la lista de publicaciones
+        publicaciones.removeWhere((obj) => obj.idPublicacion == idPublicacion);
         notifyListeners();
       } else {
-        print('Error al eliminar la publicación: ${resp.statusCode}');
-        print('Respuesta del servidor: ${resp.body}');
+        print('Error al eliminar objetivo en el servidor: ${resp.statusCode}');
       }
     } catch (e) {
-      print('Error de conexión al eliminar publicación: $e');
+      print('Error de conexión al eliminar el objetivo: $e');
     }
   }
+
+
 }

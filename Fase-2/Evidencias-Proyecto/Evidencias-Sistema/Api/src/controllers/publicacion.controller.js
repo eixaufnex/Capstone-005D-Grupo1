@@ -111,19 +111,19 @@ export const unlikePublicacion = async (req, res) => {
 // Cambia el endpoint a '/publicacion/:id_publicacion/delete' en tu router y usa POST en lugar de DELETE
 export const deletePublicacion = async (req, res) => {
     const { id_publicacion } = req.params;
-    const { firebase_id } = req.body;
+    // const { firebase_id } = req.body;
 
     try {
         const pool = await getConnection();
         
-        const checkResult = await pool.request()
-            .input('id_publicacion', sql.Int, id_publicacion)
-            .input('firebase_id', sql.VarChar, firebase_id)
-            .query('SELECT 1 FROM PUBLICACIONES WHERE id_publicacion = @id_publicacion AND firebase_id = @firebase_id');
+        // const checkResult = await pool.request()
+        //     .input('id_publicacion', sql.Int, id_publicacion)
+        //     .input('firebase_id', sql.VarChar, firebase_id)
+        //     .query('SELECT 1 FROM PUBLICACIONES WHERE id_publicacion = @id_publicacion AND firebase_id = @firebase_id');
 
-        if (checkResult.recordset.length === 0) {
-            return res.status(403).json({ message: "No tienes permiso para eliminar esta publicación." });
-        }
+        // if (checkResult.recordset.length === 0) {
+        //     return res.status(403).json({ message: "No tienes permiso para eliminar esta publicación." });
+        // }
 
         const result = await pool.request()
             .input('id_publicacion', sql.Int, id_publicacion)
