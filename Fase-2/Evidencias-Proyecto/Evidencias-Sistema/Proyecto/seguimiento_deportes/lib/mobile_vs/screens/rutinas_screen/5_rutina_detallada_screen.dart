@@ -39,14 +39,16 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
   void initState() {
     super.initState();
     seriesList = List.generate(sets, (index) => Series());
-    startTime = DateTime.now().millisecondsSinceEpoch; // Registrar tiempo de inicio
+    startTime =
+        DateTime.now().millisecondsSinceEpoch; // Registrar tiempo de inicio
   }
 
   void _updateSets(int value) {
     setState(() {
       sets = value;
       if (seriesList.length < sets) {
-        seriesList.addAll(List.generate(sets - seriesList.length, (_) => Series()));
+        seriesList
+            .addAll(List.generate(sets - seriesList.length, (_) => Series()));
       } else if (seriesList.length > sets) {
         seriesList = seriesList.sublist(0, sets);
       }
@@ -71,11 +73,13 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
   }
 
   Future<void> _saveSeriesData() async {
-    final provider = Provider.of<RutinaDetalladaProvider>(context, listen: false);
+    final provider =
+        Provider.of<RutinaDetalladaProvider>(context, listen: false);
 
     // Calcular el tiempo en segundos desde que se ingresó a la pantalla
     int endTime = DateTime.now().millisecondsSinceEpoch;
-    int tiempoPermanencia = ((endTime - startTime) / 1000).round(); // Tiempo en segundos
+    int tiempoPermanencia =
+        ((endTime - startTime) / 1000).round(); // Tiempo en segundos
 
     for (int i = 0; i < seriesList.length; i++) {
       final series = seriesList[i];
@@ -85,9 +89,11 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
         repeticiones: series.reps,
         peso: series.weight.toDouble(),
         rpe: series.rpe,
-        tiempoEjercicio: tiempoPermanencia, // Guardar el tiempo de permanencia en descanso
-        fechaRutina: DateTime.now(),
-        diasRutina: "Día",
+        tiempoEjercicio: i == 0
+            ? tiempoPermanencia
+            : null, // Solo guarda el tiempo en la primera serie
+        fechaRutina: DateTime.now()
+            .toLocal(), // Asegurarse de usar la zona horaria local
         comentarios: _commentsController.text,
         idRutina: widget.rutinaId,
         idListaEjercicio: widget.idListaEjercicio,
@@ -97,7 +103,9 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Datos guardados exitosamente para el ejercicio específico')),
+      SnackBar(
+          content: Text(
+              'Datos guardados exitosamente para el ejercicio específico')),
     );
   }
 
@@ -194,8 +202,10 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildCalculationCard(Icons.show_chart, 'E1RM', e1rm.toStringAsFixed(1)),
-        _buildCalculationCard(Icons.fitness_center, 'Tonelaje', tonelaje.toString()),
+        _buildCalculationCard(
+            Icons.show_chart, 'E1RM', e1rm.toStringAsFixed(1)),
+        _buildCalculationCard(
+            Icons.fitness_center, 'Tonelaje', tonelaje.toString()),
       ],
     );
   }
@@ -263,7 +273,8 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
               children: routinesOnDate.map((rutina) {
                 return ListTile(
                   title: Text("Serie ${rutina.series}"),
-                  subtitle: Text("Reps: ${rutina.repeticiones}, Peso: ${rutina.peso} kg, RPE: ${rutina.rpe}"),
+                  subtitle: Text(
+                      "Reps: ${rutina.repeticiones}, Peso: ${rutina.peso} kg, RPE: ${rutina.rpe}"),
                 );
               }).toList(),
             );
@@ -286,7 +297,8 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
             children: [
               Text(
                 'Serie ${index + 1}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 8),
               Row(
@@ -321,7 +333,8 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
                     child: _buildCompactCounter(
                       label: 'RPE',
                       value: seriesList[index].rpe,
-                      onChanged: (newValue) => setState(() => seriesList[index].rpe = newValue),
+                      onChanged: (newValue) =>
+                          setState(() => seriesList[index].rpe = newValue),
                       min: 1,
                       max: 10,
                     ),
@@ -346,7 +359,8 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
       ),
       onChanged: onChanged,
     );
@@ -374,7 +388,9 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
               constraints: const BoxConstraints.tightFor(width: 24, height: 24),
               padding: EdgeInsets.zero,
             ),
-            Text('$value', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text('$value',
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             IconButton(
               onPressed: () {
                 if (value < max) onChanged(value + 1);
@@ -389,7 +405,8 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
     );
   }
 
-  Widget _buildCounterRow(String label, int value, ValueChanged<int> onChanged, {int min = 1}) {
+  Widget _buildCounterRow(String label, int value, ValueChanged<int> onChanged,
+      {int min = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -402,9 +419,12 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
                 onPressed: () {
                   if (value > min) onChanged(value - 1);
                 },
-                icon: const Icon(Icons.remove_circle_outline, color: Colors.grey),
+                icon:
+                    const Icon(Icons.remove_circle_outline, color: Colors.grey),
               ),
-              Text('$value', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('$value',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
               IconButton(
                 onPressed: () {
                   onChanged(value + 1);

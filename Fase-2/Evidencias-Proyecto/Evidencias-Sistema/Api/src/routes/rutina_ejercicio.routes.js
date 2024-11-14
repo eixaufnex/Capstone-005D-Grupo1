@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { addEjerciciosToRutina, 
     getEjerciciosByRutina, 
-    deleteEjercicioFromRutina} from '../controllers/rutina_ejercicio.controller.js';
+    deleteEjercicioFromRutina, 
+    getRutinasAndEjerciciosByUser} from '../controllers/rutina_ejercicio.controller.js';
 
 const router = Router();
 
@@ -12,6 +13,8 @@ router.post('/rutina_ejercicio/agregar', addEjerciciosToRutina);
 router.get('/rutina/:id/ejercicios', getEjerciciosByRutina);
 
 router.delete('/rutina/:id_rutina/ejercicio/:id_lista_ejercicio', deleteEjercicioFromRutina);
+
+router.get('/usuario/:firebase_id/rutinas', getRutinasAndEjerciciosByUser);
 
 
 export default router;

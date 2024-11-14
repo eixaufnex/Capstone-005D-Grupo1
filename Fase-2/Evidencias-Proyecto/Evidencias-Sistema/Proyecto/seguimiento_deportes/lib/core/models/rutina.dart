@@ -14,6 +14,7 @@ class Rutina {
   final String emoji;
   final String firebaseId;
   final String? tipoRutina; // Tipo opcional, puede ser null
+  final String? diasRutina;
 
   Rutina({
     required this.idRutina,
@@ -21,6 +22,7 @@ class Rutina {
     required this.emoji,
     required this.firebaseId,
     this.tipoRutina,
+    this.diasRutina,
   });
 
   // Crear un objeto Rutina a partir de un Map
@@ -29,7 +31,8 @@ class Rutina {
         nombreRutina: json["nombre_rutina"],
         emoji: json["emoji"],
         firebaseId: json["firebase_id"],
-        tipoRutina: json["tipo_rutina"] ?? null, // Maneja null de manera explícita
+        tipoRutina: json["tipo_rutina"], // Maneja null de manera explícita
+        diasRutina: json["dias_rutina"] 
       );
 
   // Convertir el objeto Rutina a un Map
@@ -38,6 +41,7 @@ class Rutina {
         "nombre_rutina": nombreRutina,
         "emoji": emoji,
         "firebase_id": firebaseId,
-        "tipo_rutina": tipoRutina ?? null, // Si es null, se manejará correctamente
+        "tipo_rutina": tipoRutina, // Si es null, se manejará correctamente
+        "dias_rutina": diasRutina
       };
 }

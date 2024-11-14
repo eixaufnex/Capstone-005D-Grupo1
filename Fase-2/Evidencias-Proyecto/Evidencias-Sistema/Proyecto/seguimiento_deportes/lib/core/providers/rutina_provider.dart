@@ -13,6 +13,7 @@ class RutinaProvider with ChangeNotifier {
   List<Rutina> rutinas = [];
   List<Ejercicio> ejerciciosDeRutina =
       []; // Lista de ejercicios de la rutina seleccionada
+  List<String> diasSeleccionados = []; // Lista para los días seleccionados
   final ApiService apiService = ApiService();
 
   RutinaProvider() {
@@ -112,4 +113,16 @@ class RutinaProvider with ChangeNotifier {
       print("Error al obtener ejercicios de la rutina: $e");
     }
   }
+
+  // Método para alternar la selección de un día en la lista
+  void toggleDia(String dia) {
+    if (diasSeleccionados.contains(dia)) {
+      diasSeleccionados.remove(dia);
+    } else {
+      diasSeleccionados.add(dia);
+    }
+    notifyListeners();
+  }
+
+
 }

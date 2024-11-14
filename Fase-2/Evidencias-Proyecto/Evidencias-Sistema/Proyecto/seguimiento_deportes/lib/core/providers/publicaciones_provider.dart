@@ -87,12 +87,11 @@ class PublicacionesProvider with ChangeNotifier {
     }
   }
 
-  Future<void> createPublicacion(String firebaseId, {String? descripcion, int? idRutina}) async {
+  Future<void> createPublicacion(String firebaseId, {String? descripcion}) async {
     final url = Uri.http(urlapi, '/publicacion');
     final body = {
       "firebase_id": firebaseId,
       "descripcion": descripcion ?? "",
-      "id_rutina": idRutina
     };
 
     try {
@@ -118,7 +117,6 @@ class PublicacionesProvider with ChangeNotifier {
     }
   }
 
-
   Future<void> deletePublicacion(int idPublicacion) async {
     final urlDelete = Uri.http(urlapi, '/publicacion/$idPublicacion');
     try {
@@ -133,6 +131,4 @@ class PublicacionesProvider with ChangeNotifier {
       print('Error de conexión al eliminar el objetivo: $e');
     }
   }
-
-
 }

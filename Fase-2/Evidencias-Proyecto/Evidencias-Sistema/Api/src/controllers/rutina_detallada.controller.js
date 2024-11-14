@@ -16,7 +16,6 @@ export const getRutinasDetalladasConEjercicios = async (req, res) => {
                 rd.rpe,
                 rd.tiempo_ejercicio,
                 rd.fecha_rutina,
-                rd.dias_rutina,
                 rd.comentarios
             FROM 
                 RUTINA_DETALLADA rd
@@ -57,7 +56,7 @@ export const getRutina_detallada = async (req, res) => {
 
 // Crear una rutina detallada
 export const createRutina_detallada = async (req, res) => {
-    const { series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, dias_rutina, comentarios, id_rutina, id_lista_ejercicio } = req.body;
+    const { series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, comentarios, id_rutina, id_lista_ejercicio } = req.body;
 
     try {
         const pool = await getConnection();
@@ -68,14 +67,13 @@ export const createRutina_detallada = async (req, res) => {
             .input('rpe', sql.Int, rpe)
             .input('tiempo_ejercicio', sql.Int, tiempo_ejercicio)
             .input('fecha_rutina', sql.Date, fecha_rutina)
-            .input('dias_rutina', sql.VarChar, dias_rutina)
             .input('comentarios', sql.Text, comentarios)
             .input('id_rutina', sql.Int, id_rutina)
             .input('id_lista_ejercicio', sql.Int, id_lista_ejercicio)
             .query(`
                 INSERT INTO RUTINA_DETALLADA 
-                (series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, dias_rutina, comentarios, id_rutina, id_lista_ejercicio) 
-                VALUES (@series, @repeticiones, @peso, @rpe, @tiempo_ejercicio, @fecha_rutina, @dias_rutina, @comentarios, @id_rutina, @id_lista_ejercicio);
+                (series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, comentarios, id_rutina, id_lista_ejercicio) 
+                VALUES (@series, @repeticiones, @peso, @rpe, @tiempo_ejercicio, @fecha_rutina, @comentarios, @id_rutina, @id_lista_ejercicio);
                 SELECT SCOPE_IDENTITY() AS id_rutina_detallada;
             `);
 
@@ -87,7 +85,6 @@ export const createRutina_detallada = async (req, res) => {
             rpe,
             tiempo_ejercicio,
             fecha_rutina,
-            dias_rutina,
             comentarios,
             id_rutina,
             id_lista_ejercicio
@@ -101,7 +98,7 @@ export const createRutina_detallada = async (req, res) => {
 // Actualizar una rutina detallada
 export const updateRutina_detallada = async (req, res) => {
     const id = req.params.id;
-    const { series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, dias_rutina, comentarios, id_rutina, id_lista_ejercicio } = req.body;
+    const { series, repeticiones, peso, rpe, tiempo_ejercicio, fecha_rutina, comentarios, id_rutina, id_lista_ejercicio } = req.body;
 
     try {
         const pool = await getConnection();
@@ -113,14 +110,13 @@ export const updateRutina_detallada = async (req, res) => {
             .input('rpe', sql.Int, rpe)
             .input('tiempo_ejercicio', sql.Int, tiempo_ejercicio)
             .input('fecha_rutina', sql.Date, fecha_rutina)
-            .input('dias_rutina', sql.VarChar, dias_rutina)
             .input('comentarios', sql.Text, comentarios)
             .input('id_rutina', sql.Int, id_rutina)
             .input('id_lista_ejercicio', sql.Int, id_lista_ejercicio)
             .query(`
                 UPDATE RUTINA_DETALLADA 
                 SET series = @series, repeticiones = @repeticiones, peso = @peso, rpe = @rpe, tiempo_ejercicio = @tiempo_ejercicio, 
-                    fecha_rutina = @fecha_rutina, dias_rutina = @dias_rutina, comentarios = @comentarios, id_rutina = @id_rutina, id_lista_ejercicio = @id_lista_ejercicio
+                    fecha_rutina = @fecha_rutina, comentarios = @comentarios, id_rutina = @id_rutina, id_lista_ejercicio = @id_lista_ejercicio
                 WHERE id_rutina_detallada = @id_rutina_detallada
             `);
 
@@ -135,7 +131,6 @@ export const updateRutina_detallada = async (req, res) => {
             rpe,
             tiempo_ejercicio,
             fecha_rutina,
-            dias_rutina,
             comentarios,
             id_rutina,
             id_lista_ejercicio

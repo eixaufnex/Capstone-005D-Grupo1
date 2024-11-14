@@ -14,26 +14,6 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
     {'name': 'Chileno', 'flag': '🇨🇱'},
     {'name': 'Español', 'flag': '🇪🇸'},
     {'name': 'Inglés', 'flag': '🇺🇸'},
-    {'name': 'Francés', 'flag': '🇫🇷'},
-    {'name': 'Italiano', 'flag': '🇮🇹'},
-    {'name': 'Portugués', 'flag': '🇵🇹'},
-    {'name': 'Chino', 'flag': '🇨🇳'},
-    {'name': 'Ruso', 'flag': '🇷🇺'},
-    {'name': 'Japonés', 'flag': '🇯🇵'},
-    {'name': 'Alemán', 'flag': '🇩🇪'},
-    {'name': 'Coreano', 'flag': '🇰🇷'},
-    {'name': 'Árabe', 'flag': '🇸🇦'},
-    {'name': 'Hindi', 'flag': '🇮🇳'},
-    {'name': 'Griego', 'flag': '🇬🇷'},
-    {'name': 'Holandés', 'flag': '🇳🇱'},
-    {'name': 'Sueco', 'flag': '🇸🇪'},
-    {'name': 'Danés', 'flag': '🇩🇰'},
-    {'name': 'Finés', 'flag': '🇫🇮'},
-    {'name': 'Turco', 'flag': '🇹🇷'},
-    {'name': 'Noruego', 'flag': '🇳🇴'},
-    {'name': 'Polaco', 'flag': '🇵🇱'},
-    {'name': 'Tailandés', 'flag': '🇹🇭'},
-    {'name': 'Vietnamita', 'flag': '🇻🇳'}
   ];
 
   @override

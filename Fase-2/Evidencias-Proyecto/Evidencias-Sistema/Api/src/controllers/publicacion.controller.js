@@ -31,7 +31,7 @@ export const getPublicacionesByUser = async (req, res) => {
 
 // Crear una nueva publicación con validación de firebase_id en USUARIO
 export const createPublicacion = async (req, res) => {
-    const { firebase_id, descripcion, id_rutina } = req.body;
+    const { firebase_id, descripcion } = req.body;
     try {
         const pool = await getConnection();
 
@@ -49,10 +49,9 @@ export const createPublicacion = async (req, res) => {
         const result = await pool.request()
             .input('firebase_id', sql.VarChar, firebase_id)
             .input('descripcion', sql.Text, descripcion || null)
-            .input('id_rutina', sql.Int, id_rutina || null)
             .query(
-                `INSERT INTO PUBLICACIONES (firebase_id, descripcion, id_rutina, likes, fecha_creacion) 
-                 VALUES (@firebase_id, @descripcion, @id_rutina, 0, GETDATE()); 
+                `INSERT INTO PUBLICACIONES (firebase_id, descripcion, likes, fecha_creacion) 
+                 VALUES (@firebase_id, @descripcion, 0, GETDATE()); 
                  SELECT SCOPE_IDENTITY() AS id_publicacion;`
             );
 
@@ -61,7 +60,6 @@ export const createPublicacion = async (req, res) => {
             id_publicacion: result.recordset[0].id_publicacion,
             firebase_id,
             descripcion,
-            id_rutina,
             likes: 0,
             fecha_creacion: new Date()
         });
@@ -70,6 +68,30 @@ export const createPublicacion = async (req, res) => {
         res.status(500).json({ message: 'Error al crear la publicación' });
     }
 };
+
+// Verificar si un usuario ha dado "like" a una publicación
+export const hasUserLiked = async (req, res) => {
+    const { id_publicacion, firebase_id } = req.params;
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('id_publicacion', sql.Int, id_publicacion)
+            .input('firebase_id', sql.VarChar, firebase_id)
+            .query('SELECT 1 FROM PUBLICACIONES WHERE id_publicacion = @id_publicacion AND firebase_id = @firebase_id');
+
+        if (result.recordset.length > 0) {
+            // El usuario ha dado "like" a esta publicación
+            res.json({ liked: true });
+        } else {
+            // El usuario no ha dado "like" a esta publicación
+            res.json({ liked: false });
+        }
+    } catch (error) {
+        console.error('Error al verificar estado de like:', error);
+        res.status(500).json({ message: 'Error al verificar estado de like' });
+    }
+};
+
 
 // Dar like a una publicación
 export const likePublicacion = async (req, res) => {
@@ -111,20 +133,8 @@ export const unlikePublicacion = async (req, res) => {
 // Cambia el endpoint a '/publicacion/:id_publicacion/delete' en tu router y usa POST en lugar de DELETE
 export const deletePublicacion = async (req, res) => {
     const { id_publicacion } = req.params;
-    // const { firebase_id } = req.body;
-
     try {
-        const pool = await getConnection();
-        
-        // const checkResult = await pool.request()
-        //     .input('id_publicacion', sql.Int, id_publicacion)
-        //     .input('firebase_id', sql.VarChar, firebase_id)
-        //     .query('SELECT 1 FROM PUBLICACIONES WHERE id_publicacion = @id_publicacion AND firebase_id = @firebase_id');
-
-        // if (checkResult.recordset.length === 0) {
-        //     return res.status(403).json({ message: "No tienes permiso para eliminar esta publicación." });
-        // }
-
+        const pool = await getConnection();        
         const result = await pool.request()
             .input('id_publicacion', sql.Int, id_publicacion)
             .query('DELETE FROM PUBLICACIONES WHERE id_publicacion = @id_publicacion');

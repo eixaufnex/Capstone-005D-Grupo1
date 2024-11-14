@@ -1,6 +1,57 @@
 import { getConnection } from "../database/connection.js";
 import sql from 'mssql';
 
+
+
+// Obtener las rutinas y ejercicios de un usuario por su firebase_id
+export const getRutinasAndEjerciciosByUser = async (req, res) => {
+    const firebaseId = req.params.firebase_id;
+
+    if (!firebaseId) {
+        return res.status(400).json({ message: 'El firebase_id es obligatorio' });
+    }
+
+    try {
+        const pool = await getConnection();
+
+        const result = await pool.request()
+            .input('firebase_id', sql.VarChar, firebaseId)
+            .query(`
+                SELECT 
+                    r.id_rutina,
+                    r.nombre_rutina,
+                    le.id_lista_ejercicio,
+                    le.nombre_ejercicio,
+                    rd.series,
+                    rd.repeticiones,
+                    rd.peso,
+                    rd.rpe,
+                    rd.tiempo_ejercicio,
+                    rd.fecha_rutina,
+                FROM 
+                    USUARIO u
+                JOIN 
+                    RUTINA r ON u.firebase_id = r.firebase_id
+                JOIN 
+                    RUTINA_EJERCICIO re ON r.id_rutina = re.id_rutina
+                JOIN 
+                    LISTA_EJERCICIO le ON re.id_lista_ejercicio = le.id_lista_ejercicio
+                JOIN 
+                    RUTINA_DETALLADA rd ON re.id_rutina = rd.id_rutina AND re.id_lista_ejercicio = rd.id_lista_ejercicio
+                WHERE 
+                    u.firebase_id = @firebase_id
+            `);
+
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error('Error al obtener las rutinas y ejercicios del usuario:', error);
+        res.status(500).json({ message: 'Error al obtener las rutinas y ejercicios del usuario', error: error.message });
+    }
+};
+
+
+
+
 // Agregar ejercicios a una rutina
 export const addEjerciciosToRutina = async (req, res) => {
     const { id_rutina, ejercicios_id } = req.body;

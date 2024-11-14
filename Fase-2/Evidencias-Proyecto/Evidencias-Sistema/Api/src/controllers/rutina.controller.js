@@ -51,9 +51,10 @@ export const getRutina = async (req, res) => {
     }
 };
 
+
 // Crear una rutina
 export const createRutina = async (req, res) => {
-    const { nombre_rutina, emoji, firebase_id, tipo_rutina, ejercicios } = req.body;
+    const { nombre_rutina, emoji, firebase_id, tipo_rutina, ejercicios, dias_rutina } = req.body;
 
     try {
         const pool = await getConnection();
@@ -64,7 +65,8 @@ export const createRutina = async (req, res) => {
             .input('emoji', sql.NVarChar, emoji)
             .input('firebase_id', sql.VarChar, firebase_id)
             .input('tipo_rutina', sql.VarChar, tipo_rutina)
-            .query("INSERT INTO RUTINA (nombre_rutina, emoji, firebase_id, tipo_rutina) VALUES (@nombre_rutina, @emoji, @firebase_id, @tipo_rutina); SELECT SCOPE_IDENTITY() AS id;");
+            .input('dias_rutina', sql.Text, dias_rutina)
+            .query("INSERT INTO RUTINA (nombre_rutina, emoji, firebase_id, tipo_rutina, dias_rutina) VALUES (@nombre_rutina, @emoji, @firebase_id, @tipo_rutina, @dias_rutina); SELECT SCOPE_IDENTITY() AS id;");
 
         const id_rutina = result.recordset[0].id;
 
@@ -83,7 +85,8 @@ export const createRutina = async (req, res) => {
             nombre_rutina,
             emoji,
             firebase_id,
-            tipo_rutina
+            tipo_rutina,
+            dias_rutina
         });
     } catch (error) {
         console.error('Error al crear la rutina:', error);
@@ -94,7 +97,7 @@ export const createRutina = async (req, res) => {
 // Actualizar una rutina
 export const updateRutina = async (req, res) => {
     const { id } = req.params;
-    const { nombre_rutina, emoji, firebase_id, tipo_rutina } = req.body;
+    const { nombre_rutina, emoji, firebase_id, tipo_rutina, dias_rutina } = req.body;
 
     try {
         const pool = await getConnection();
@@ -104,7 +107,8 @@ export const updateRutina = async (req, res) => {
             .input('emoji', sql.NVarChar, emoji)
             .input('firebase_id', sql.VarChar, firebase_id)
             .input('tipo_rutina', sql.VarChar, tipo_rutina)
-            .query("UPDATE RUTINA SET nombre_rutina = @nombre_rutina, emoji = @emoji, firebase_id = @firebase_id, tipo_rutina = @tipo_rutina WHERE id_rutina = @id_rutina");
+            .input('dias_rutina', sql.Text, dias_rutina)
+            .query("UPDATE RUTINA SET nombre_rutina = @nombre_rutina, emoji = @emoji, firebase_id = @firebase_id, tipo_rutina = @tipo_rutina, dias_rutina = @dias_rutina WHERE id_rutina = @id_rutina");
 
         if (result.rowsAffected[0] === 0) {
             return res.status(404).json({ message: "Rutina no encontrada" });
@@ -114,7 +118,8 @@ export const updateRutina = async (req, res) => {
             nombre_rutina,
             emoji,
             firebase_id,
-            tipo_rutina
+            tipo_rutina,
+            dias_rutina
         });
     } catch (error) {
         console.error('Error al actualizar la rutina:', error);

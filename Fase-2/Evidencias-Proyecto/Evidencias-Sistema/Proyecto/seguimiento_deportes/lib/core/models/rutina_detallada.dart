@@ -12,9 +12,8 @@ class RutinaDetallada {
   int repeticiones;
   double peso;
   int rpe;
-  int tiempoEjercicio; // Cambio de descanso a tiempoEjercicio
+  int? tiempoEjercicio;
   DateTime fechaRutina;
-  String diasRutina;
   String? comentarios; // Campo opcional para comentarios
   int idRutina;
   int? idListaEjercicio; // Campo opcional para idListaEjercicio
@@ -27,7 +26,6 @@ class RutinaDetallada {
     required this.rpe,
     required this.tiempoEjercicio,
     required this.fechaRutina,
-    required this.diasRutina,
     this.comentarios,
     required this.idRutina,
     this.idListaEjercicio,
@@ -42,7 +40,6 @@ class RutinaDetallada {
         rpe: json["rpe"],
         tiempoEjercicio: json["tiempo_ejercicio"], // Cambio aquí
         fechaRutina: DateTime.parse(json["fecha_rutina"]),
-        diasRutina: json["dias_rutina"],
         comentarios: json["comentarios"], // Asignación directa, ya que es opcional
         idRutina: json["id_rutina"],
         idListaEjercicio: json["id_lista_ejercicio"], // Asignación directa, ya que es opcional
@@ -57,7 +54,6 @@ class RutinaDetallada {
         "rpe": rpe,
         "tiempo_ejercicio": tiempoEjercicio, // Cambio aquí
         "fecha_rutina": fechaRutina.toIso8601String(),
-        "dias_rutina": diasRutina,
         "comentarios": comentarios, // Incluir el campo de comentarios
         "id_rutina": idRutina,
         if (idListaEjercicio != null) "id_lista_ejercicio": idListaEjercicio, // Solo incluir si no es nulo

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 // Funciones para manejar la conversión de JSON a Perfil y viceversa
 List<Perfil> perfilFromJson(String str) =>

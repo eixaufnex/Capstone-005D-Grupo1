@@ -1,13 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:provider/provider.dart';
-import 'package:seguimiento_deportes/core/models/ejercicio.dart';
-import 'package:seguimiento_deportes/core/models/rutina.dart';
-import 'package:seguimiento_deportes/core/providers/rutina_provider.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/perfil_screen.dart';
+import 'package:seguimiento_deportes/core/services/rutina_ejercicio_service.dart';
 
 class GraficosScreen extends StatefulWidget {
   const GraficosScreen({super.key});
@@ -17,16 +15,393 @@ class GraficosScreen extends StatefulWidget {
 }
 
 class _GraficosScreenState extends State<GraficosScreen> {
+  final ApiService apiService = ApiService();
+  List<Map<String, dynamic>> rutinas = [];
+  String? firebaseId;
+  String? selectedRutina;
+  String? selectedEjercicio;
+
   int _selectedIndex = 3;
-  String _selectedTab = 'Yearly';
-  int? _selectedRoutineId;
-  int? _selectedExerciseId;
+  String _selectedTab = 'Diario';
 
   @override
   void initState() {
     super.initState();
-    final rutinaProvider = Provider.of<RutinaProvider>(context, listen: false);
-    rutinaProvider.initializeUserRutinas();
+    _getFirebaseIdAndFetchData();
+  }
+
+  Future<void> _getFirebaseIdAndFetchData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      setState(() {
+        firebaseId = user.uid;
+      });
+      await _fetchRutinasAndEjercicios();
+    } else {
+      print("Usuario no autenticado");
+    }
+  }
+
+  Future<void> _fetchRutinasAndEjercicios() async {
+    if (firebaseId == null) return;
+
+    final data = await apiService.getRutinasAndEjerciciosByUser(firebaseId!);
+
+    if (data != null) {
+      Map<int, Map<String, dynamic>> rutinasMap = {};
+
+      for (var item in data) {
+        int idRutina = item['id_rutina'];
+        if (!rutinasMap.containsKey(idRutina)) {
+          rutinasMap[idRutina] = {
+            'id_rutina': idRutina,
+            'nombre_rutina': item['nombre_rutina'],
+            'ejercicios': []
+          };
+        }
+
+        rutinasMap[idRutina]?['ejercicios'].add({
+          'id_lista_ejercicio': item['id_lista_ejercicio'],
+          'nombre_ejercicio': item['nombre_ejercicio'],
+          'series': item['series'],
+          'repeticiones': item['repeticiones'],
+          'peso': item['peso'],
+          'rpe': item['rpe'],
+          'tiempo_ejercicio': item['tiempo_ejercicio'],
+          'fecha_rutina': item['fecha_rutina'],
+        });
+      }
+
+      setState(() {
+        rutinas = rutinasMap.values.toList();
+      });
+    } else {
+      print("Error al obtener las rutinas y ejercicios");
+    }
+  }
+
+  List<BarChartGroupData> _getBarChartGroups() {
+    if (_selectedTab == 'Diario') {
+      Map<int, List<double>> tiempoPorDia = {
+        0: [],
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: []
+      };
+
+      for (var rutina in rutinas) {
+        if (rutina['id_rutina'] == int.tryParse(selectedRutina ?? '')) {
+          var ejercicios = rutina['ejercicios'] as List<dynamic>;
+
+          for (var ejercicio in ejercicios) {
+            if (selectedEjercicio == null ||
+                ejercicio['nombre_ejercicio'] == selectedEjercicio) {
+              DateTime fecha = DateTime.parse(ejercicio['fecha_rutina']);
+              double tiempo = ejercicio['tiempo_ejercicio']?.toDouble() ?? 0;
+              int diaSemana = fecha.weekday - 1;
+              tiempoPorDia[diaSemana]?.add(tiempo);
+            }
+          }
+        }
+      }
+
+      return tiempoPorDia.entries.map((entry) {
+        double promedio = entry.value.isNotEmpty
+            ? double.parse(
+                (entry.value.reduce((a, b) => a + b) / entry.value.length)
+                    .toStringAsFixed(2))
+            : 0.0;
+        return BarChartGroupData(
+          x: entry.key,
+          barRods: [BarChartRodData(toY: promedio)],
+        );
+      }).toList();
+    } else if (_selectedTab == 'Mensual') {
+      Map<int, List<double>> tiempoPorMes = {
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: [],
+        7: [],
+        8: [],
+        9: [],
+        10: [],
+        11: [],
+        12: []
+      };
+
+      for (var rutina in rutinas) {
+        if (rutina['id_rutina'] == int.tryParse(selectedRutina ?? '')) {
+          var ejercicios = rutina['ejercicios'] as List<dynamic>;
+
+          for (var ejercicio in ejercicios) {
+            if (selectedEjercicio == null ||
+                ejercicio['nombre_ejercicio'] == selectedEjercicio) {
+              DateTime fecha = DateTime.parse(ejercicio['fecha_rutina']);
+              double tiempo = ejercicio['tiempo_ejercicio']?.toDouble() ?? 0;
+              int mes = fecha.month;
+              tiempoPorMes[mes]?.add(tiempo);
+            }
+          }
+        }
+      }
+
+      return tiempoPorMes.entries.map((entry) {
+        double promedio = entry.value.isNotEmpty
+            ? double.parse(
+                (entry.value.reduce((a, b) => a + b) / entry.value.length)
+                    .toStringAsFixed(2))
+            : 0.0;
+        return BarChartGroupData(
+          x: entry.key,
+          barRods: [BarChartRodData(toY: promedio)],
+        );
+      }).toList();
+    } else {
+      return [];
+    }
+  }
+
+  List<FlSpot> _getLineChartSpots() {
+    Map<int, List<double>> pesoPorDiaOMes = (_selectedTab == 'Diario')
+        ? {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+        : {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: [],
+            10: [],
+            11: [],
+            12: []
+          };
+
+    for (var rutina in rutinas) {
+      if (rutina['id_rutina'] == int.tryParse(selectedRutina ?? '')) {
+        var ejercicios = rutina['ejercicios'] as List<dynamic>;
+
+        for (var ejercicio in ejercicios) {
+          if (selectedEjercicio == null ||
+              ejercicio['nombre_ejercicio'] == selectedEjercicio) {
+            DateTime fecha = DateTime.parse(ejercicio['fecha_rutina']);
+            double peso = ejercicio['peso']?.toDouble() ?? 0;
+            int index =
+                (_selectedTab == 'Diario') ? fecha.weekday - 1 : fecha.month;
+            pesoPorDiaOMes[index]?.add(peso);
+          }
+        }
+      }
+    }
+
+    return pesoPorDiaOMes.entries.map((entry) {
+      double promedio = entry.value.isNotEmpty
+          ? double.parse(
+              (entry.value.reduce((a, b) => a + b) / entry.value.length)
+                  .toStringAsFixed(2))
+          : 0.0;
+      return FlSpot(entry.key.toDouble(), promedio);
+    }).toList();
+  }
+
+  Widget _buildBarChartSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Rendimiento Físico',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.all(4.0),
+          child: SizedBox(
+            height: 190,
+            child: BarChart(
+              BarChartData(
+                gridData: FlGridData(show: false),
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 25,
+                      getTitlesWidget: (double value, TitleMeta meta) {
+                        if (_selectedTab == 'Diario') {
+                          const days = [
+                            'Lun',
+                            'Mar',
+                            'Mié',
+                            'Jue',
+                            'Vie',
+                            'Sáb',
+                            'Dom'
+                          ];
+                          return SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Text(days[value.toInt() % 7]),
+                          );
+                        } else if (_selectedTab == 'Mensual') {
+                          return SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Text((value.toInt() + 1).toString()),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                ),
+                barGroups: _getBarChartGroups(),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          'Progreso de Entrenamiento',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.all(4.0),
+          child: SizedBox(
+            height: 198,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(show: false),
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 25,
+                      getTitlesWidget: (double value, TitleMeta meta) {
+                        if (_selectedTab == 'Diario') {
+                          const days = [
+                            'Lun',
+                            'Mar',
+                            'Mié',
+                            'Jue',
+                            'Vie',
+                            'Sáb',
+                            'Dom'
+                          ];
+                          return SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Text(days[value.toInt() % 7]),
+                          );
+                        } else if (_selectedTab == 'Mensual') {
+                          return SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Text((value.toInt() + 1).toString()),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                ),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: _getLineChartSpots(),
+                    isCurved: true,
+                    dotData: FlDotData(show: false),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Filtrar"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                value: selectedRutina,
+                hint: const Text("Seleccionar Rutina"),
+                onChanged: (value) {
+                  setState(() {
+                    selectedRutina = value;
+                    selectedEjercicio = null;
+                  });
+                },
+                items: rutinas.map((rutina) {
+                  return DropdownMenuItem<String>(
+                    value: rutina['id_rutina'].toString(),
+                    child: Text(rutina['nombre_rutina']),
+                  );
+                }).toList(),
+              ),
+              DropdownButtonFormField<String>(
+                value: selectedEjercicio,
+                hint: const Text("Seleccionar Ejercicio"),
+                onChanged: (value) {
+                  setState(() {
+                    selectedEjercicio = value;
+                  });
+                },
+                items: (rutinas.firstWhere(
+                        (rutina) =>
+                            rutina['id_rutina'].toString() == selectedRutina,
+                        orElse: () => {'ejercicios': []})['ejercicios'] as List)
+                    .map((ejercicio) => ejercicio['nombre_ejercicio'])
+                    .toSet()
+                    .map((nombreEjercicio) => DropdownMenuItem<String>(
+                          value: nombreEjercicio,
+                          child: Text(nombreEjercicio),
+                        ))
+                    .toList(),
+              )
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Aplicar"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _onItemTapped(int index) {
@@ -53,107 +428,6 @@ class _GraficosScreenState extends State<GraficosScreen> {
         context,
         MaterialPageRoute(builder: (context) => PerfilScreen()),
       );
-    }
-  }
-
-  void _showFilterDialog() {
-    final rutinaProvider = Provider.of<RutinaProvider>(context, listen: false);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Filtrar"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Dropdown para seleccionar la rutina
-              DropdownButtonFormField<int>(
-                decoration: const InputDecoration(labelText: "Seleccionar Rutina"),
-                value: _selectedRoutineId,
-                items: rutinaProvider.rutinas.map((Rutina rutina) {
-                  return DropdownMenuItem<int>(
-                    value: rutina.idRutina,
-                    child: Text(rutina.nombreRutina),
-                  );
-                }).toList(),
-                onChanged: (value) async {
-                  setState(() {
-                    _selectedRoutineId = value;
-                    _selectedExerciseId = null; // Resetea el ejercicio seleccionado
-                  });
-                  if (value != null) {
-                    await rutinaProvider.getEjerciciosDeRutina(value); // Carga los ejercicios de la rutina seleccionada
-                  }
-                },
-              ),
-              // Dropdown para seleccionar el ejercicio si se ha seleccionado una rutina
-              if (_selectedRoutineId != null)
-                DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(labelText: "Seleccionar Ejercicio"),
-                  value: _selectedExerciseId,
-                  items: rutinaProvider.ejerciciosDeRutina.map((Ejercicio ejercicio) {
-                    return DropdownMenuItem<int>(
-                      value: ejercicio.idListaEjercicio,
-                      child: Text(ejercicio.nombreEjercicio),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedExerciseId = value;
-                    });
-                  },
-                ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Cancelar"),
-            ),
-            TextButton(
-              onPressed: () {
-                // Aplica el filtro usando _selectedRoutineId y _selectedExerciseId
-                if (_selectedRoutineId != null) {
-                  rutinaProvider.getEjerciciosDeRutina(_selectedRoutineId!);
-                }
-                Navigator.of(context).pop();
-              },
-              child: const Text("Aplicar"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildFilteredExercisesList() {
-    final rutinaProvider = Provider.of<RutinaProvider>(context);
-    if (_selectedRoutineId != null && rutinaProvider.ejerciciosDeRutina.isNotEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Ejercicios Filtrados:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          ...rutinaProvider.ejerciciosDeRutina.map((ejercicio) {
-            return ListTile(
-              title: Text(ejercicio.nombreEjercicio),
-              onTap: () {
-                setState(() {
-                  _selectedExerciseId = ejercicio.idListaEjercicio;
-                });
-              },
-            );
-          }).toList(),
-        ],
-      );
-    } else {
-      return const SizedBox.shrink(); // Retorna un espacio vacío si no hay rutina seleccionada o ejercicios cargados
     }
   }
 
@@ -186,19 +460,54 @@ class _GraficosScreenState extends State<GraficosScreen> {
               children: [
                 _buildTabButton('Diario'),
                 _buildTabButton('Mensual'),
-                _buildTabButton('Anual'),
               ],
             ),
             const SizedBox(height: 20),
-            _buildFilteredExercisesList(), // Muestra la lista de ejercicios filtrados
-            const SizedBox(height: 20),
-            _buildLineChartSection(),
-            const SizedBox(height: 20),
             _buildBarChartSection(),
+            const SizedBox(height: 20),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 5,
+              ),
+            ],
+          ),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            selectedItemColor: Colors.red,
+            unselectedItemColor: Colors.black,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            items: const [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home_filled), label: 'Home'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.view_list_rounded), label: 'Rutinas'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.add_circle, size: 45), label: ''),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.stacked_line_chart_rounded),
+                  label: 'Progreso'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.account_circle), label: 'Perfil'),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -221,136 +530,6 @@ class _GraficosScreenState extends State<GraficosScreen> {
             fontWeight: FontWeight.bold,
             color: _selectedTab == title ? Colors.blue : Colors.black,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLineChartSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Revenue',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 200,
-          child: LineChart(
-            LineChartData(
-              gridData: FlGridData(show: false),
-              titlesData: FlTitlesData(show: true),
-              borderData: FlBorderData(show: false),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: [
-                    FlSpot(0, 1),
-                    FlSpot(1, 3),
-                    FlSpot(2, 2),
-                    FlSpot(3, 5),
-                    FlSpot(4, 3.1),
-                  ],
-                  isCurved: true,
-                  color: Colors.blue,
-                  barWidth: 4,
-                  dotData: FlDotData(show: false),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBarChartSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Dias',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 200,
-          child: BarChart(
-            BarChartData(
-              gridData: FlGridData(show: false),
-              titlesData: FlTitlesData(show: true),
-              borderData: FlBorderData(show: false),
-              barGroups: [
-                BarChartGroupData(
-                    x: 0,
-                    barRods: [BarChartRodData(toY: 5, color: Colors.blue)]),
-                BarChartGroupData(
-                    x: 1,
-                    barRods: [BarChartRodData(toY: 1, color: Colors.blue)]),
-                BarChartGroupData(
-                    x: 2,
-                    barRods: [BarChartRodData(toY: 1.5, color: Colors.blue)]),
-                BarChartGroupData(
-                    x: 3,
-                    barRods: [BarChartRodData(toY: 1, color: Colors.blue)]),
-                BarChartGroupData(
-                    x: 4,
-                    barRods: [BarChartRodData(toY: 4, color: Colors.blue)]),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(50),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 5,
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedItemColor: Colors.red,
-          unselectedItemColor: Colors.black,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.view_list_rounded),
-              label: 'Rutinas',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle, size: 45),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.stacked_line_chart_rounded),
-              label: 'Progreso',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Perfil',
-            ),
-          ],
         ),
       ),
     );

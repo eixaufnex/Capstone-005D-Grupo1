@@ -16,15 +16,22 @@ class PublicacionesScreen extends StatefulWidget {
 
 class _PublicacionesScreenState extends State<PublicacionesScreen> {
   late String currentUserId;
-  int _selectedIndex = 2; // Posición de la pantalla de publicaciones en el navbar
+  int _selectedIndex = 2;
+  bool _isLoaded = false;
 
   @override
   void initState() {
     super.initState();
     currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isLoaded) {
       Provider.of<PublicacionesProvider>(context, listen: false).getPublicaciones(currentUserId);
-    });
+      _isLoaded = true;
+    }
   }
 
   void _onItemTapped(int index) {
@@ -192,5 +199,3 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
     );
   }
 }
-
-

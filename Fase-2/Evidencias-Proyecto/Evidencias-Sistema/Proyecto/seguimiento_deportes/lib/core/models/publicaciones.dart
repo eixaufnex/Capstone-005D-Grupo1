@@ -11,7 +11,6 @@ class Publicacion {
   int idPublicacion;
   String firebaseId;
   String? descripcion;
-  int? idRutina;
   int likes;
   DateTime fechaCreacion;
   String usuario;
@@ -21,7 +20,6 @@ class Publicacion {
     required this.idPublicacion,
     required this.firebaseId,
     this.descripcion,
-    this.idRutina,
     required this.likes,
     required this.fechaCreacion,
     required this.usuario,
@@ -33,7 +31,6 @@ class Publicacion {
         idPublicacion: json["id_publicacion"],
         firebaseId: json["firebase_id"],
         descripcion: json["descripcion"],
-        idRutina: json["id_rutina"],
         likes: json["likes"],
         fechaCreacion: DateTime.parse(json["fecha_creacion"]),
         usuario: json["usuario"] ?? "Usuario desconocido",
@@ -45,7 +42,6 @@ class Publicacion {
         "id_publicacion": idPublicacion,
         "firebase_id": firebaseId,
         "descripcion": descripcion,
-        "id_rutina": idRutina,
         "likes": likes,
         "fecha_creacion": fechaCreacion.toIso8601String(),
         "usuario": usuario,
