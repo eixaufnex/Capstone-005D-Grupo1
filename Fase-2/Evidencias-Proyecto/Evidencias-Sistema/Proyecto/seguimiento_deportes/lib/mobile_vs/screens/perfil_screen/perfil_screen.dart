@@ -119,7 +119,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 onPress: () {
                   Navigator.pushReplacementNamed(context, 'idioma');
                 },
-              ),  
+              ),
               perfil_widget(
                 title: "Notificaciones",
                 icon: Icons.notifications,
@@ -216,13 +216,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
               //Publicaciones
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                  offset:
-                      Offset(0, 10), // Ajusta el valor segÃºn lo que necesites
-                  child: Icon(Icons.add_circle, size: 45),
+                  offset: Offset(0, 10),
+                  child: Image.asset(
+                    'assets/logoicon.png',
+                    width: 45,
+                    height: 45,
+                  ),
                 ),
                 label: '',
-                backgroundColor: Colors.transparent,
-              ), //Rendimiento
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.stacked_line_chart_rounded),
                 label: 'Progreso',

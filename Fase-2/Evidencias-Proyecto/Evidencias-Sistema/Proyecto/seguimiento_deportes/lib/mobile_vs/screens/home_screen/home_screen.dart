@@ -228,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                 Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
@@ -367,8 +367,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                    offset: Offset(0, 10),
-                    child: Icon(Icons.add_circle, size: 45)),
+                  offset: Offset(0, 10),
+                  child: Image.asset(
+                    'assets/logoicon.png',
+                    width: 45,
+                    height: 45,
+                  ),
+                ),
                 label: '',
               ),
               BottomNavigationBarItem(

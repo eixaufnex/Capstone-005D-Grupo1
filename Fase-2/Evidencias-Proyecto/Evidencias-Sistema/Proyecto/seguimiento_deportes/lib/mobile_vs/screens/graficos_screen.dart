@@ -69,7 +69,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
           'peso': item['peso'],
           'rpe': item['rpe'],
           'tiempo_ejercicio': item['tiempo_ejercicio'],
-          'fecha_rutina': item['fecha_rutina'],
+          'fecha_rutina': item['fecha_rutina']
         });
       }
 
@@ -492,17 +492,26 @@ class _GraficosScreenState extends State<GraficosScreen> {
             unselectedItemColor: Colors.black,
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            items: const [
-              BottomNavigationBarItem(
+            items: [
+              const BottomNavigationBarItem(
                   icon: Icon(Icons.home_filled), label: 'Home'),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                   icon: Icon(Icons.view_list_rounded), label: 'Rutinas'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.add_circle, size: 45), label: ''),
-              BottomNavigationBarItem(
+                icon: Transform.translate(
+                  offset: Offset(0, 10),
+                  child: Image.asset(
+                    'assets/logoicon.png',
+                    width: 45,
+                    height: 45,
+                  ),
+                ),
+                label: '',
+              ),
+              const BottomNavigationBarItem(
                   icon: Icon(Icons.stacked_line_chart_rounded),
                   label: 'Progreso'),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                   icon: Icon(Icons.account_circle), label: 'Perfil'),
             ],
           ),

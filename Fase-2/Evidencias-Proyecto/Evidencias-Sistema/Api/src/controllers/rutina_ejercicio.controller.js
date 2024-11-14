@@ -27,7 +27,7 @@ export const getRutinasAndEjerciciosByUser = async (req, res) => {
                     rd.peso,
                     rd.rpe,
                     rd.tiempo_ejercicio,
-                    rd.fecha_rutina,
+                    rd.fecha_rutina
                 FROM 
                     USUARIO u
                 JOIN 
