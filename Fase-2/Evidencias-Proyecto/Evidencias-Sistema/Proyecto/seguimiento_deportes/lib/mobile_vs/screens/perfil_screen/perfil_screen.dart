@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/informacion_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
+
+// Notificador para actualizar el avatar en otras pantallas
+final ValueNotifier<String> avatarNotifier = ValueNotifier<String>('assets/av9.png');
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -20,11 +24,15 @@ class _PerfilScreenState extends State<PerfilScreen>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
+  String selectedAvatar = 'assets/av9.png'; // Avatar por defecto
+  String? userId; // Almacena el UID del usuario actual
+
   @override
   void initState() {
     super.initState();
-    User? user = FirebaseAuth.instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
     userEmail = user?.email;
+    userId = user?.uid; // Obtener UID del usuario actual
 
     _animationController = AnimationController(
       vsync: this,
@@ -34,6 +42,29 @@ class _PerfilScreenState extends State<PerfilScreen>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+
+    _loadAvatarSelection(); // Cargar el avatar guardado del usuario actual desde Firebase
+  }
+
+  // Función para cargar el avatar del usuario actual desde Firebase
+  Future<void> _loadAvatarSelection() async {
+    if (userId == null) return;
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if (userDoc.exists) {
+      setState(() {
+        selectedAvatar = userDoc['avatarUrl'] ?? 'assets/av9.png';
+      });
+      avatarNotifier.value = selectedAvatar; // Notificar el avatar inicial
+    }
+  }
+
+  // Función para guardar la selección de avatar en Firebase
+  Future<void> _saveAvatarSelection(String avatarPath) async {
+    if (userId == null) return;
+    await FirebaseFirestore.instance.collection('users').doc(userId).set({
+      'avatarUrl': avatarPath,
+    }, SetOptions(merge: true));
+    avatarNotifier.value = avatarPath; // Notificar cambios de avatar
   }
 
   @override
@@ -69,6 +100,41 @@ class _PerfilScreenState extends State<PerfilScreen>
     }
   }
 
+  // Mostrar opciones de avatar en un ModalBottomSheet
+  void _showAvatarOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: Image.asset('assets/av9.png', width: 40, height: 40),
+              title: Text('Avatar 1'),
+              onTap: () {
+                setState(() {
+                  selectedAvatar = 'assets/av9.png';
+                });
+                _saveAvatarSelection('assets/av9.png'); // Guardar y notificar selección
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Image.asset('assets/av10.webp', width: 40, height: 40),
+              title: Text('Avatar 2'),
+              onTap: () {
+                setState(() {
+                  selectedAvatar = 'assets/av10.webp';
+                });
+                _saveAvatarSelection('assets/av10.webp'); // Guardar y notificar selección
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,28 +155,30 @@ class _PerfilScreenState extends State<PerfilScreen>
             Stack(
               alignment: Alignment.center,
               children: [
-                // Imagen de perfil y animación sin cuadro de fondo
                 Column(
                   children: [
                     ScaleTransition(
                       scale: _scaleAnimation,
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(width: 2, color: Colors.grey.shade700),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 10,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Image.asset('assets/av9.png'),
+                      child: GestureDetector(
+                        onTap: () => _showAvatarOptions(),
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(width: 2, color: Colors.grey.shade700),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Image.asset(selectedAvatar),
+                          ),
                         ),
                       ),
                     ),
@@ -260,6 +328,7 @@ class _PerfilScreenState extends State<PerfilScreen>
   }
 }
 
+// Clase perfil_widget para los elementos de perfil en el ListView
 class perfil_widget extends StatelessWidget {
   const perfil_widget({
     super.key,

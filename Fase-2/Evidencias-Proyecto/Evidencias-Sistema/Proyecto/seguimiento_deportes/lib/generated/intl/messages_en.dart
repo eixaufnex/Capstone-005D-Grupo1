@@ -31,6 +31,24 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Or log in with Google"),
         "Password": MessageLookupByLibrary.simpleMessage("Password"),
         "Sing_Up": MessageLookupByLibrary.simpleMessage(" Sing Up"),
-        "emailsample": MessageLookupByLibrary.simpleMessage("Email@gmail.com")
+        "datos_google": MessageLookupByLibrary.simpleMessage(
+            "Complete the fields for a better user experience"),
+        "emailsample": MessageLookupByLibrary.simpleMessage("Email@gmail.com"),
+        "label_age": MessageLookupByLibrary.simpleMessage("Age"),
+        "label_gender":
+            MessageLookupByLibrary.simpleMessage("Select your gender"),
+        "label_height": MessageLookupByLibrary.simpleMessage("Height (cm)"),
+        "label_intensity":
+            MessageLookupByLibrary.simpleMessage("Intensity level"),
+        "label_intensity1": MessageLookupByLibrary.simpleMessage("Beginner"),
+        "label_intensity2": MessageLookupByLibrary.simpleMessage("Medium"),
+        "label_intensity3": MessageLookupByLibrary.simpleMessage("Advanced"),
+        "label_lastname": MessageLookupByLibrary.simpleMessage("Last name"),
+        "label_man": MessageLookupByLibrary.simpleMessage("Man"),
+        "label_name": MessageLookupByLibrary.simpleMessage("Name"),
+        "label_username": MessageLookupByLibrary.simpleMessage("username"),
+        "label_weight": MessageLookupByLibrary.simpleMessage("Weight (kg)"),
+        "label_woman": MessageLookupByLibrary.simpleMessage("Woman"),
+        "save": MessageLookupByLibrary.simpleMessage("Save and continue")
       };
 }

@@ -8,6 +8,7 @@ import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/list_ejercicios_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/objetivos_screen.dart';
+import 'package:seguimiento_deportes/core/services/logro_service.dart';
 
 class LogrosScreen extends StatefulWidget {
   const LogrosScreen({super.key});
@@ -21,13 +22,67 @@ class _LogrosScreenState extends State<LogrosScreen>
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String usuario = "Cargando...";
   late TabController _tabController;
+  bool logroVerificado = false; // Estado para evitar múltiples verificaciones
 
   @override
   void initState() {
     super.initState();
     _fetchUsername();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabChange);
     _fetchAchievements();
+
+    // Verificar logro si aún no se ha verificado
+    if (!logroVerificado) {
+      _verificarLogro();
+    }
+  }
+
+  void _handleTabChange() {
+    if (_tabController.index == 1) {
+      _fetchAchievements(); // Actualiza los logros obtenidos
+    }
+  }
+
+  Future<void> _verificarLogro() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      try {
+        // Verificar y asignar logro para rutinas
+        bool logroRutinaExiste =
+            await existeLogro(user.uid, 1); // ID del logro "crear rutina"
+        if (!logroRutinaExiste) {
+          await verificarLogroCrearRutina(user.uid);
+        } else {
+          print('El logro "crear rutina" ya ha sido registrado previamente.');
+        }
+
+        // Verificar y asignar logro para objetivos
+        bool logroObjetivoExiste =
+            await existeLogro(user.uid, 2); // ID del logro "crear objetivo"
+        if (!logroObjetivoExiste) {
+          await verificarLogroCrearObjetivo(user.uid);
+        } else {
+          print('El logro "crear objetivo" ya ha sido registrado previamente.');
+        }
+
+        // Verificar y asignar logro para publicaciones
+        bool logroPublicacionExiste =
+            await existeLogro(user.uid, 3); // ID del logro "crear publicación"
+        if (!logroPublicacionExiste) {
+          await verificarLogroCrearPublicacion(user.uid);
+        } else {
+          print(
+              'El logro "crear publicación" ya ha sido registrado previamente.');
+        }
+
+        setState(() {
+          logroVerificado = true; // Indicar que ya se verificaron los logros
+        });
+      } catch (e) {
+        print('Error al verificar o registrar los logros: $e');
+      }
+    }
   }
 
   Future<void> _fetchUsername() async {
@@ -47,7 +102,7 @@ class _LogrosScreenState extends State<LogrosScreen>
     if (user != null) {
       final logroProvider = Provider.of<LogroProvider>(context, listen: false);
       await logroProvider.getLogrosGlobales();
-      await logroProvider.getLogrosObtenidos(user.uid); // Usando firebase_id
+      await logroProvider.getLogrosObtenidos(user.uid);
     }
   }
 
@@ -61,6 +116,7 @@ class _LogrosScreenState extends State<LogrosScreen>
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
   }
@@ -155,13 +211,13 @@ class _LogrosScreenState extends State<LogrosScreen>
             },
           ),
           ListTile(
-              leading: Icon(Icons.menu_book_rounded),
-              title: Text('Glosario'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GlosarioScreen()));
-              },
-            ),
+            leading: Icon(Icons.menu_book_rounded),
+            title: Text('Glosario'),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => GlosarioScreen()));
+            },
+          ),
           SizedBox(height: 260),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -215,7 +271,6 @@ class _LogrosScreenState extends State<LogrosScreen>
           itemCount: logrosObtenidos.length,
           itemBuilder: (context, index) {
             final logro = logrosObtenidos[index];
-            // Extrae solo la parte de la fecha en formato dd/MM/yyyy
             final formattedDate =
                 "${logro.fechaObtencion!.day.toString().padLeft(2, '0')}/"
                 "${logro.fechaObtencion!.month.toString().padLeft(2, '0')}/"

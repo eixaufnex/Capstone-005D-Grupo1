@@ -47,7 +47,7 @@ export const createDetalle_ejercicio = async (req, res) => {
         const result = await pool
             .request()
             .input('descripcion_ejercicio', sql.Text, req.body.descripcion_ejercicio)
-            .input('instrucciones_ejercicio', sql.VarChar, req.body.instrucciones_ejercicio)
+            .input('instrucciones_ejercicio', sql.Text, req.body.instrucciones_ejercicio)
             .input('id_lista_ejercicio', sql.Int, req.body.id_lista_ejercicio)
             .query("INSERT INTO DETALLE_EJERCICIO (descripcion_ejercicio, instrucciones_ejercicio, id_lista_ejercicio) VALUES (@descripcion_ejercicio, @instrucciones_ejercicio, @id_lista_ejercicio); SELECT SCOPE_IDENTITY() AS id;"
             );
@@ -75,7 +75,7 @@ export const updateDetalle_ejercicio = async (req, res) => {
     const result = await pool.request()
         .input('id_detalle_ejercicio', sql.Int, id)
         .input('descripcion_ejercicio', sql.Text, req.body.descripcion_ejercicio)
-        .input('instrucciones_ejercicio', sql.VarChar, req.body.instrucciones_ejercicio)
+        .input('instrucciones_ejercicio', sql.Text, req.body.instrucciones_ejercicio)
         .input('id_lista_ejercicio', sql.Int, req.body.id_lista_ejercicio)
         .query(
             "UPDATE DETALLE_EJERCICIO SET descripcion_ejercicio = @descripcion_ejercicio, instrucciones_ejercicio = @instrucciones_ejercicio, id_lista_ejercicio = @id_lista_ejercicio WHERE id_detalle_ejercicio = @id_detalle_ejercicio"

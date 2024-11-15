@@ -129,6 +129,156 @@ class S {
       args: [],
     );
   }
+
+  /// `Complete the fields for a better user experience`
+  String get datos_google {
+    return Intl.message(
+      'Complete the fields for a better user experience',
+      name: 'datos_google',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `username`
+  String get label_username {
+    return Intl.message(
+      'username',
+      name: 'label_username',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get label_name {
+    return Intl.message(
+      'Name',
+      name: 'label_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last name`
+  String get label_lastname {
+    return Intl.message(
+      'Last name',
+      name: 'label_lastname',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Age`
+  String get label_age {
+    return Intl.message(
+      'Age',
+      name: 'label_age',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight (kg)`
+  String get label_weight {
+    return Intl.message(
+      'Weight (kg)',
+      name: 'label_weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Height (cm)`
+  String get label_height {
+    return Intl.message(
+      'Height (cm)',
+      name: 'label_height',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select your gender`
+  String get label_gender {
+    return Intl.message(
+      'Select your gender',
+      name: 'label_gender',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Man`
+  String get label_man {
+    return Intl.message(
+      'Man',
+      name: 'label_man',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Woman`
+  String get label_woman {
+    return Intl.message(
+      'Woman',
+      name: 'label_woman',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Intensity level`
+  String get label_intensity {
+    return Intl.message(
+      'Intensity level',
+      name: 'label_intensity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Beginner`
+  String get label_intensity1 {
+    return Intl.message(
+      'Beginner',
+      name: 'label_intensity1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Medium`
+  String get label_intensity2 {
+    return Intl.message(
+      'Medium',
+      name: 'label_intensity2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Advanced`
+  String get label_intensity3 {
+    return Intl.message(
+      'Advanced',
+      name: 'label_intensity3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save and continue`
+  String get save {
+    return Intl.message(
+      'Save and continue',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

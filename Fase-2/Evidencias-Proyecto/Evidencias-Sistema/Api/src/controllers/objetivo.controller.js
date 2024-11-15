@@ -1,6 +1,28 @@
 import { getConnection } from "../database/connection.js";
 import sql from 'mssql';
 
+// Obtener todos los objetivo de un usuario específico por firebase_id
+export const getObjetivoXUsuario = async (req, res) => {
+    const { firebase_id } = req.params;
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('firebase_id', sql.VarChar, firebase_id)
+            .query('SELECT * FROM OBJETIVO WHERE firebase_id = @firebase_id');
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ message: "No se encontraron objetivos para este usuario" });
+        }
+
+        res.json(result.recordset);
+    } catch (error) {
+        console.error('Error al obtener los objetivos del usuario:', error);
+        res.status(500).json({ message: "Error al obtener los objetivos del usuario" });
+    }
+};
+
+
+
 // Obtener todos los objetivos
 export const getObjetivos = async (req, res) => {
     try {

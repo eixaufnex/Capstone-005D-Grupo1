@@ -1,5 +1,5 @@
 {
-
+    "@@locale": "es",
     "Log_In" : "Iniciar sesión",
     "Email" : "Correo electrónico",
     "Password" : "Contraseña",
@@ -7,7 +7,23 @@
     "Dont_have_an_account" : "¿No tienes cuenta? ",
     "Sing_Up": " Regístrate",
     "Or_log_in_with_Google" : "O iniciar sesión con Google",
-    "emailsample" : "Correo@gmail.com"
+    "emailsample" : "Correo@gmail.com",
+    "datos_google": "Completa los campos para una mejor experiencia de usuario",
+    "label_username" : "username",
+    "label_name" : "Nombre",
+    "label_lastname" : "Apellido",
+    "label_age" : "Edad",
+    "label_weight" : "Peso (kg)",
+    "label_height" : "Estatura (cm)",
+    "label_gender" : "Selecciona tu género",
+    "label_man" : "Hombre",
+    "label_woman" : "Mujer",
+    "label_intensity": "Nivel de intensidad",
+    "label_intensity1": "Principiante",
+    "label_intensity2": "Medio",
+    "label_intensity3": "Avanzado",
+    "save": "Guardar y continuar"
+
 
 
 }

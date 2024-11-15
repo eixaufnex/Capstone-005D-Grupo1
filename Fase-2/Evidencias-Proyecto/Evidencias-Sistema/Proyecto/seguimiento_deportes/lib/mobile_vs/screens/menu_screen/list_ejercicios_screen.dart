@@ -96,59 +96,61 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
             onPressed: deselectEjercicio,
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.network(
-                ejercicio.imagenEjercicio ??
-                    'https://media.istockphoto.com/id/1128826884/es/vector/ning%C3%BAn-s%C3%ADmbolo-de-vector-de-imagen-falta-icono-disponible-no-hay-galer%C3%ADa-para-este-momento.jpg?s=612x612&w=0&k=20&c=9vnjI4XI3XQC0VHfuDePO7vNJE7WDM8uzQmZJ1SnQgk=',
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              SizedBox(height: 16),
-              Text(
-                ejercicio.nombreEjercicio,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Dificultad: ${ejercicio.dificultadEjercicio}',
-                style: TextStyle(fontSize: 16, color: Colors.blueAccent),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Grupo Muscular: ${ejercicio.grupoMuscular}',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              SizedBox(height: 16),
-              if (ejercicio.detalle != null) ...[
-                Text(
-                  'Descripción:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  ejercicio.detalle!.descripcion,
-                  style: TextStyle(fontSize: 16),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.network(
+                  ejercicio.imagenEjercicio ??
+                      'https://media.istockphoto.com/id/1128826884/es/vector/ning%C3%BAn-s%C3%ADmbolo-de-vector-de-imagen-falta-icono-disponible-no-hay-galer%C3%ADa-para-este-momento.jpg?s=612x612&w=0&k=20&c=9vnjI4XI3XQC0VHfuDePO7vNJE7WDM8uzQmZJ1SnQgk=',
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.contain, // Ajuste para que se vea toda la imagen
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Instrucciones:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ejercicio.nombreEjercicio,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
+                SizedBox(height: 8),
                 Text(
-                  ejercicio.detalle!.instrucciones,
-                  style: TextStyle(fontSize: 16),
+                  'Dificultad: ${ejercicio.dificultadEjercicio}',
+                  style: TextStyle(fontSize: 16, color: Colors.blueAccent),
                 ),
-              ] else ...[
+                SizedBox(height: 8),
                 Text(
-                  'No hay detalles disponibles para este ejercicio.',
-                  style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                  'Grupo Muscular: ${ejercicio.grupoMuscular}',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
+                SizedBox(height: 16),
+                if (ejercicio.detalle != null) ...[
+                  Text(
+                    'Descripción:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    ejercicio.detalle!.descripcion,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Instrucciones:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    ejercicio.detalle!.instrucciones,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ] else ...[
+                  Text(
+                    'No hay detalles disponibles para este ejercicio.',
+                    style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       );
@@ -215,13 +217,15 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
                 },
               ),
               ListTile(
-              leading: Icon(Icons.menu_book_rounded),
-              title: Text('Glosario'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GlosarioScreen()));
-              },
-            ),
+                leading: Icon(Icons.menu_book_rounded),
+                title: Text('Glosario'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GlosarioScreen()));
+                },
+              ),
               SizedBox(height: 260),
               Padding(
                 padding: const EdgeInsets.all(16.0),

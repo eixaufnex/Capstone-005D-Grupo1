@@ -14,6 +14,36 @@ class ObjetivoProvider with ChangeNotifier {
     getObjetivos();
   }
 
+  Future<void> getObjetivosPorUsuario(String firebaseId) async {
+    isLoading = true;
+    notifyListeners();
+
+    final urlUsuario = Uri.http(urlapi, 'objetivo/usuario/$firebaseId');
+    try {
+      final resp = await http.get(urlUsuario, headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
+
+      if (resp.statusCode == 200) {
+        objetivos = objetivoFromJson(resp.body);
+        notifyListeners();
+      } else if (resp.statusCode == 404) {
+        print(
+            'No se encontraron objetivos para el usuario con ID: $firebaseId');
+        objetivos = [];
+      } else {
+        print(
+            'Error al obtener objetivos: Código de estado ${resp.statusCode}');
+      }
+    } catch (e) {
+      print('Error de conexión al obtener objetivos por usuario: $e');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> getObjetivos() async {
     isLoading = true;
     notifyListeners();
@@ -28,7 +58,8 @@ class ObjetivoProvider with ChangeNotifier {
       if (resp.statusCode == 200) {
         objetivos = objetivoFromJson(resp.body);
       } else {
-        print('Error al obtener objetivos: Código de estado ${resp.statusCode}');
+        print(
+            'Error al obtener objetivos: Código de estado ${resp.statusCode}');
       }
     } catch (e) {
       print('Error de conexión al obtener objetivos: $e');
@@ -41,7 +72,8 @@ class ObjetivoProvider with ChangeNotifier {
   List<Objetivo> get objetivosEnProgreso {
     return objetivos.where((objetivo) {
       final progreso = (objetivo.valorActual - objetivo.valorInicial) /
-          (objetivo.valorObjetivo - objetivo.valorInicial) * 100;
+          (objetivo.valorObjetivo - objetivo.valorInicial) *
+          100;
       return progreso > 1 && progreso < 99;
     }).toList();
   }
@@ -49,7 +81,8 @@ class ObjetivoProvider with ChangeNotifier {
   List<Objetivo> get objetivosCompletados {
     return objetivos.where((objetivo) {
       final progreso = (objetivo.valorActual - objetivo.valorInicial) /
-          (objetivo.valorObjetivo - objetivo.valorInicial) * 100;
+          (objetivo.valorObjetivo - objetivo.valorInicial) *
+          100;
       return progreso >= 99;
     }).toList();
   }
@@ -57,7 +90,8 @@ class ObjetivoProvider with ChangeNotifier {
   List<Objetivo> get objetivosSinComenzar {
     return objetivos.where((objetivo) {
       final progreso = (objetivo.valorActual - objetivo.valorInicial) /
-          (objetivo.valorObjetivo - objetivo.valorInicial) * 100;
+          (objetivo.valorObjetivo - objetivo.valorInicial) *
+          100;
       return progreso <= 1;
     }).toList();
   }
@@ -79,7 +113,8 @@ class ObjetivoProvider with ChangeNotifier {
         objetivos.add(createdObjetivo);
         notifyListeners();
       } else {
-        print('Error al crear objetivo en el servidor: Código de estado ${resp.statusCode}');
+        print(
+            'Error al crear objetivo en el servidor: Código de estado ${resp.statusCode}');
       }
     } catch (e) {
       print('Error de conexión al crear el objetivo: $e');
@@ -102,7 +137,8 @@ class ObjetivoProvider with ChangeNotifier {
   }
 
   Future<void> updateValorActual(int idObjetivo, int nuevoValor) async {
-    final objetivo = objetivos.firstWhere((obj) => obj.idObjetivo == idObjetivo);
+    final objetivo =
+        objetivos.firstWhere((obj) => obj.idObjetivo == idObjetivo);
     objetivo.valorActual = nuevoValor;
     notifyListeners();
 
@@ -129,7 +165,8 @@ class ObjetivoProvider with ChangeNotifier {
       );
 
       if (resp.statusCode != 200) {
-        print('Error al actualizar el objetivo en el servidor: ${resp.statusCode}');
+        print(
+            'Error al actualizar el objetivo en el servidor: ${resp.statusCode}');
       }
     } catch (e) {
       print('Error de conexión al actualizar el objetivo: $e');

@@ -64,11 +64,27 @@ export const createLogroGlobal = async (req, res) => {
 // Marcar un logro como obtenido por un usuario
 export const obtenerLogro = async (req, res) => {
     const { firebase_id, id_logro_global } = req.body;
-    const fecha_obtencion = new Date();  // Usamos la fecha actual
+    const fecha_obtencion = new Date();
 
     try {
         const pool = await getConnection();
-        const result = await pool.request()
+
+        // Verificar si el logro ya existe
+        const checkResult = await pool.request()
+            .input('firebase_id', sql.VarChar, firebase_id)
+            .input('id_logro_global', sql.Int, id_logro_global)
+            .query(`
+                SELECT 1 
+                FROM LOGRO_OBTENIDO 
+                WHERE firebase_id = @firebase_id AND id_logro_global = @id_logro_global;
+            `);
+
+        if (checkResult.recordset.length > 0) {
+            return res.status(409).json({ message: 'El logro ya ha sido registrado para este usuario.' });
+        }
+
+        // Registrar el logro si no existe
+        await pool.request()
             .input('firebase_id', sql.VarChar, firebase_id)
             .input('id_logro_global', sql.Int, id_logro_global)
             .input('fecha_obtencion', sql.Date, fecha_obtencion)
@@ -89,7 +105,6 @@ export const obtenerLogro = async (req, res) => {
     }
 };
 
-
 // Editar un logro global
 export const updateLogroGlobal = async (req, res) => {
     const { id } = req.params;
@@ -104,7 +119,7 @@ export const updateLogroGlobal = async (req, res) => {
             .query(`
                 UPDATE LOGRO_GLOBAL 
                 SET nombre_logro = @nombre_logro, descripcion_logro = @descripcion_logro 
-                WHERE id_logro_global = @id_logro_global
+                WHERE id_logro_global = @id_logro_global;
             `);
 
         if (result.rowsAffected[0] === 0) {
@@ -125,7 +140,10 @@ export const deleteLogroGlobal = async (req, res) => {
         const pool = await getConnection();
         const result = await pool.request()
             .input('id_logro_global', sql.Int, id)
-            .query("DELETE FROM LOGRO_GLOBAL WHERE id_logro_global = @id_logro_global");
+            .query(`
+                DELETE FROM LOGRO_GLOBAL 
+                WHERE id_logro_global = @id_logro_global;
+            `);
 
         if (result.rowsAffected[0] === 0) {
             return res.status(404).json({ message: "Logro global no encontrado" });

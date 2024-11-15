@@ -1,5 +1,6 @@
 import {Router} from 'express';
-import {getObjetivos, 
+import {getObjetivoXUsuario,
+        getObjetivos, 
         getObjetivo, 
         createObjetivo, 
         updateObjetivo, 
@@ -8,6 +9,10 @@ import {getObjetivos,
 
 
 const router = Router()
+
+//objetivo x usuario
+router.get('/objetivo/usuario/:firebase_id', getObjetivoXUsuario);
+
 
 //Obtener todos los objetivos
 router.get("/objetivo", getObjetivos);
