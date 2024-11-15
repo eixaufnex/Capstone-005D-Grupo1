@@ -16,23 +16,15 @@ class PublicacionesScreen extends StatefulWidget {
 
 class _PublicacionesScreenState extends State<PublicacionesScreen> {
   late String currentUserId;
-  int _selectedIndex = 2;
-  bool _isLoaded = false;
+  int _selectedIndex = 2; // Posición de la pantalla de publicaciones en el navbar
 
   @override
   void initState() {
     super.initState();
     currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isLoaded) {
-      Provider.of<PublicacionesProvider>(context, listen: false)
-          .getPublicaciones(currentUserId);
-      _isLoaded = true;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PublicacionesProvider>(context, listen: false).getPublicaciones(currentUserId);
+    });
   }
 
   void _onItemTapped(int index) {
@@ -41,17 +33,13 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
     });
 
     if (index == 0) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
     } else if (index == 1) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => RutinaScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RutinaScreen()));
     } else if (index == 3) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => GraficosScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GraficosScreen()));
     } else if (index == 4) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => PerfilScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PerfilScreen()));
     }
   }
 
@@ -70,14 +58,11 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
             decoration: InputDecoration(hintText: "Escribe tu consejo aquí..."),
           ),
           actions: <Widget>[
-            TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("Cancelar")),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text("Cancelar")),
             TextButton(
               onPressed: () async {
                 if (contenidoController.text.isNotEmpty) {
-                  await provider.createPublicacion(currentUserId,
-                      descripcion: contenidoController.text);
+                  await provider.createPublicacion(currentUserId, descripcion: contenidoController.text);
                   Navigator.pop(context);
                 }
               },
@@ -92,7 +77,15 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Publicaciones")),
+      appBar: AppBar(
+        title: Text(
+          'Publicaciones',
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,),
       body: Consumer<PublicacionesProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
@@ -105,9 +98,7 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
             itemCount: provider.publicaciones.length,
             itemBuilder: (context, index) {
               final publicacion = provider.publicaciones[index];
-              final isLiked =
-                  provider.likedPublications[publicacion.idPublicacion] ??
-                      false;
+              final isLiked = provider.likedPublications[publicacion.idPublicacion] ?? false;
 
               return Card(
                 margin: EdgeInsets.all(10),
@@ -120,14 +111,10 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
                       Row(
                         children: [
                           IconButton(
-                            icon: Icon(
-                                isLiked
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
+                            icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
                                 color: isLiked ? Colors.red : Colors.grey),
                             onPressed: () {
-                              provider.toggleLike(
-                                  publicacion.idPublicacion, currentUserId);
+                              provider.toggleLike(publicacion.idPublicacion, currentUserId);
                             },
                           ),
                           Text('${publicacion.likes} Likes'),
@@ -140,27 +127,22 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
                                   context: context,
                                   builder: (context) => AlertDialog(
                                     title: const Text("Eliminar Publicación"),
-                                    content: const Text(
-                                        "¿Estás seguro de que deseas eliminar esta publicación?"),
+                                    content: const Text("¿Estás seguro de que deseas eliminar esta publicación?"),
                                     actions: [
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(false),
+                                        onPressed: () => Navigator.of(context).pop(false),
                                         child: const Text("Cancelar"),
                                       ),
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(true),
+                                        onPressed: () => Navigator.of(context).pop(true),
                                         child: const Text("Eliminar"),
                                       ),
                                     ],
                                   ),
                                 );
                                 if (confirmDelete == true) {
-                                  Provider.of<PublicacionesProvider>(context,
-                                          listen: false)
-                                      .deletePublicacion(
-                                          publicacion.idPublicacion);
+                                  Provider.of<PublicacionesProvider>(context, listen: false)
+                                      .deletePublicacion(publicacion.idPublicacion);
                                 }
                               },
                             ),
@@ -203,10 +185,9 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
             showSelectedLabels: true,
             showUnselectedLabels: true,
             items: [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.home_filled), label: 'Home'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.view_list_rounded), label: 'Rutinas'),
+              BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.view_list_rounded), label: 'Rutinas'),
+              //Publicaciones
               BottomNavigationBarItem(
                 icon: Transform.translate(
                   offset: Offset(0, 10),
@@ -218,11 +199,8 @@ class _PublicacionesScreenState extends State<PublicacionesScreen> {
                 ),
                 label: '',
               ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.stacked_line_chart_rounded),
-                  label: 'Progreso'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle), label: 'Perfil'),
+              BottomNavigationBarItem(icon: Icon(Icons.stacked_line_chart_rounded), label: 'Progreso'),
+              BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Perfil'),
             ],
           ),
         ),

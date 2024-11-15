@@ -97,7 +97,7 @@ class RutinasRecomendadas extends StatelessWidget {
               !isRecommendedAddedList[0])
             Listarecomendaciones(
               nombre: 'Rutina de Fuerza',
-              ejercicios: '12 Ejercicios',
+              ejercicios: '7 Ejercicios',
               emoji: '💪',
               nivel: 'Intermedio',
               onAdd: () => addRecommendedRoutine(
@@ -111,8 +111,8 @@ class RutinasRecomendadas extends StatelessWidget {
                   {'id': '3'},
                   {'id': '4'},
                   {'id': '5'},
-                  {'id': '16'},
-                  {'id': '17'},
+                  {'id': '6'},
+                  {'id': '7'},
                 ],
               ),
             ),

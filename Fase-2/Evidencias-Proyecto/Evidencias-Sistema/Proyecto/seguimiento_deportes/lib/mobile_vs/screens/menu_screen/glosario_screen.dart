@@ -128,7 +128,7 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/miguelito.jpeg'),
+                    backgroundImage: AssetImage('assets/av9.png'),
                   ),
                   SizedBox(height: 10),
                   Text(

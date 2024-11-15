@@ -74,7 +74,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                   children: [
                     CircleAvatar(
                       radius: 40, // Tamaño de la imagen
-                      backgroundImage: AssetImage('assets/miguelito.jpeg'),
+                      backgroundImage: AssetImage('assets/av9.png'),
                     ),
                     SizedBox(height: 10),
                     Text(

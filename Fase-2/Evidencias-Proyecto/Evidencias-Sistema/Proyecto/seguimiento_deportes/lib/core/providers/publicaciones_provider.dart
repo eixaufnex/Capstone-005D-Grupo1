@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'package:seguimiento_deportes/core/models/publicaciones.dart';
@@ -27,9 +28,7 @@ class PublicacionesProvider with ChangeNotifier {
         publicaciones = publicacionFromJson(resp.body);
 
         // Verifica si el usuario ha dado like y actualiza el estado
-        for (var publicacion in publicaciones) {
-          likedPublications[publicacion.idPublicacion] = await hasUserLiked(userId, publicacion.idPublicacion);
-        }
+        await loadLikesFromPreferences(userId);
 
         notifyListeners();
       } else {
@@ -43,18 +42,14 @@ class PublicacionesProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> hasUserLiked(String userId, int idPublicacion) async {
-    final url = Uri.http(urlapi, '/publicacion/$idPublicacion/has_liked/$userId');
-    final resp = await http.get(url, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    });
+  Future<void> loadLikesFromPreferences(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
 
-    if (resp.statusCode == 200) {
-      return jsonDecode(resp.body)['liked'];
-    } else {
-      print('Error al verificar estado de like: ${resp.statusCode}');
-      return false;
+    // Cargar estado de "me gusta" de cada publicación para el usuario actual
+    likedPublications = {};
+    for (var publicacion in publicaciones) {
+      final key = 'like_${userId}_${publicacion.idPublicacion}';
+      likedPublications[publicacion.idPublicacion] = prefs.getBool(key) ?? false;
     }
   }
 
@@ -72,6 +67,9 @@ class PublicacionesProvider with ChangeNotifier {
         // Cambiar el estado de "like" en el mapa
         likedPublications[idPublicacion] = !alreadyLiked;
 
+        // Guardar el estado de "me gusta" en SharedPreferences
+        await saveLikeToPreferences(idPublicacion, userId, likedPublications[idPublicacion]!);
+
         // Actualiza el contador de likes directamente en el objeto de la lista
         final publicacionIndex = publicaciones.indexWhere((pub) => pub.idPublicacion == idPublicacion);
         if (publicacionIndex != -1) {
@@ -85,6 +83,19 @@ class PublicacionesProvider with ChangeNotifier {
     } catch (e) {
       print('Error de conexión al cambiar estado de like: $e');
     }
+  }
+
+  Future<void> saveLikeToPreferences(int idPublicacion, String userId, bool liked) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'like_${userId}_$idPublicacion';
+    prefs.setBool(key, liked);
+  }
+
+  Future<bool> hasUserLiked(String userId, int idPublicacion) async {
+    // Obtén el estado de "me gusta" desde SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'like_${userId}_$idPublicacion';
+    return prefs.getBool(key) ?? false;
   }
 
   Future<void> createPublicacion(String firebaseId, {String? descripcion}) async {

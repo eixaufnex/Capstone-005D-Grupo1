@@ -78,7 +78,7 @@ export const createPerfil = async (req, res) => {
             .input('estatura', sql.Decimal(5, 2), estatura)
             .input('genero', sql.VarChar, genero)
             .input('tipo_nivel', sql.VarChar, tipo_nivel)
-            .input('foto_perfil', sql.Image, foto_perfil)
+            .input('foto_perfil', sql.Text, foto_perfil)
             .input('biografia', sql.Text, biografia)
             .query(`INSERT INTO PERFIL (firebase_id, nombre, apellido, edad, peso, estatura, genero, tipo_nivel, foto_perfil, biografia) 
                     VALUES (@firebase_id, @nombre, @apellido, @edad, @peso, @estatura, @genero, @tipo_nivel, @foto_perfil, @biografia);
@@ -120,7 +120,7 @@ export const updatePerfil = async (req, res) => {
             .input('estatura', sql.Decimal(5, 2), estatura)
             .input('genero', sql.VarChar, genero)
             .input('tipo_nivel', sql.VarChar, tipo_nivel)
-            .input('foto_perfil', sql.Image, foto_perfil)
+            .input('foto_perfil', sql.Text, foto_perfil)
             .input('biografia', sql.Text, biografia)
             .query(`UPDATE PERFIL SET 
                     nombre = @nombre, 

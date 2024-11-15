@@ -184,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage: AssetImage('assets/miguelito.jpeg'),
+                      backgroundImage: AssetImage('assets/av9.png'),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -355,31 +355,28 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ClipRRect(
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),
-                  child: Container(
-                    color: Colors.grey[100],
-                    child: Center(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Recomendado',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              Icon(Icons.more_horiz),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                          RutinasRecomendadas(
-                            tipoNivel: tipoNivel,
-                            isRecommendedAddedList: isRecommendedAddedList,
-                            addRecommendedRoutine: _addRecommendedRoutine,
-                            isRoutineExists: isRoutineExists,
-                          ),
-                        ],
-                      ),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Recomendado',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                            Icon(Icons.more_horiz),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        RutinasRecomendadas(
+                          tipoNivel: tipoNivel,
+                          isRecommendedAddedList: isRecommendedAddedList,
+                          addRecommendedRoutine: _addRecommendedRoutine,
+                          isRoutineExists: isRoutineExists,
+                        ),
+                      ],
                     ),
                   ),
                 ),

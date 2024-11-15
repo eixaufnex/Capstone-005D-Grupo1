@@ -26,7 +26,6 @@ import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/idioma_scre
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/unidades_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/tema_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/privacidad_datos_screen.dart';
-import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/sugerencias_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/acerca_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/2_creacion_rutina_screen.dart';
@@ -123,7 +122,6 @@ class MobileMain extends StatelessWidget {
           'unidades': (_) => UnidadesScreen(),
           'tema': (_) => TemaScreen(),
           'privacidad': (_) => PrivacidadDatosScreen(),
-          'sugerencias': (_) => SugerenciasScreen(),
           'about': (_) => AcercaScreen(),
           'objetivos': (_) => ObjetivosScreen(),
           'logros': (_) => LogrosScreen(),

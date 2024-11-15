@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Auth
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/informacion_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 
@@ -12,45 +13,55 @@ class PerfilScreen extends StatefulWidget {
   State<PerfilScreen> createState() => _PerfilScreenState();
 }
 
-class _PerfilScreenState extends State<PerfilScreen> {
+class _PerfilScreenState extends State<PerfilScreen>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 4;
   String? userEmail;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    // Obtener el correo del usuario actual
     User? user = FirebaseAuth.instance.currentUser;
-    setState(() {
-      userEmail = user?.email; // Almacena el correo en la variable
-    });
+    userEmail = user?.email;
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-
-    //Direccionar a Home
     if (index == 0) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
-    } //Direccionar a Rutinas
-    else if (index == 1) {
+    } else if (index == 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => RutinaScreen()),
       );
-    } //Direccionar a Publicaciones
-    else if (index == 2) {
+    } else if (index == 2) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => PublicacionesScreen()),
       );
-    } //Direccionar a graficos
-    else if (index == 3) {
+    } else if (index == 3) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => GraficosScreen()),
@@ -61,132 +72,149 @@ class _PerfilScreenState extends State<PerfilScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Perfil',
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium
-              ?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
       body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              SizedBox(
-                width: 120,
-                height: 120,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image.asset('assets/miguelito.jpeg'),
-                ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 40, bottom: 10),
+              alignment: Alignment.center,
+              child: Text(
+                'Perfil',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87),
               ),
-              const SizedBox(height: 10),
-              Text('Nombre', style: Theme.of(context).textTheme.headlineSmall),
-              Text(userEmail ?? 'correo@gmail.com',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall), // Muestra el correo del usuario
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 130,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.pushReplacementNamed(context, 'editar_perfil');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFF5ECE3),
-                    side: BorderSide(
-                      color: Colors.black12,
-                      width: 1.5,
+            ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                // Imagen de perfil y animación sin cuadro de fondo
+                Column(
+                  children: [
+                    ScaleTransition(
+                      scale: _scaleAnimation,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(width: 2, color: Colors.grey.shade700),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image.asset('assets/av9.png'),
+                        ),
+                      ),
                     ),
-                    shape: StadiumBorder(),
-                  ),
-                  child: const Text('Editar perfil',
-                      style: TextStyle(color: Colors.black)),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Correo',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(color: Colors.black87),
+                    ),
+                    Text(
+                      userEmail ?? 'correo@gmail.com',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: 180,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => InformacionScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          side: BorderSide(
+                            color: Colors.grey.shade400,
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text(
+                          'Ver Información',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 5),
-              const Divider(),
-              const SizedBox(height: 5),
-              //veremos
-              perfil_widget(
-                title: "Idioma",
-                icon: Icons.language,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'idioma');
-                },
-              ),
-              perfil_widget(
-                title: "Notificaciones",
-                icon: Icons.notifications,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'notificaciones');
-                },
-              ),
-              //veremos
-              perfil_widget(
-                title: "Tema    (Próximamente...)",
-                icon: Icons.dark_mode,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'tema');
-                },
-              ),
-              perfil_widget(
-                title: "Unidades",
-                icon: Icons.build_rounded,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'unidades');
-                },
-              ),
-              perfil_widget(
-                title: "Preguntas frecuentes",
-                icon: Icons.flag,
-                onPress: () {
-                  // Navigator.pushReplacementNamed(context, 'preguntas_frecuentes');
-                },
-              ),
-              perfil_widget(
-                title: "Privacidad de datos",
-                icon: Icons.security,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'privacidad');
-                },
-              ),
-              perfil_widget(
-                title: "Sugerencias",
-                icon: Icons.sentiment_satisfied_alt_rounded,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'sugerencias');
-                },
-              ),
-              perfil_widget(
-                title: "Acerca de...",
-                icon: Icons.info,
-                onPress: () {
-                  Navigator.pushReplacementNamed(context, 'about');
-                },
-              ),
-            ],
-          ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            const Divider(),
+            const SizedBox(height: 10),
+            perfil_widget(
+              title: "Idioma",
+              icon: Icons.language,
+              onPress: () {
+                Navigator.pushReplacementNamed(context, 'idioma');
+              },
+            ),
+            perfil_widget(
+              title: "Notificaciones",
+              icon: Icons.notifications,
+              onPress: () {
+                Navigator.pushReplacementNamed(context, 'notificaciones');
+              },
+            ),
+            perfil_widget(
+              title: "Tema    (Próximamente...)",
+              icon: Icons.dark_mode,
+              onPress: () {
+                Navigator.pushReplacementNamed(context, 'tema');
+              },
+            ),
+            perfil_widget(
+              title: "Unidades",
+              icon: Icons.build_rounded,
+              onPress: () {
+                Navigator.pushReplacementNamed(context, 'unidades');
+              },
+            ),
+            perfil_widget(
+              title: "Privacidad de datos",
+              icon: Icons.security,
+              onPress: () {
+                Navigator.pushReplacementNamed(context, 'privacidad');
+              },
+            ),
+            perfil_widget(
+              title: "Acerca de...",
+              icon: Icons.info,
+              onPress: () {
+                Navigator.pushReplacementNamed(context, 'about');
+              },
+            ),
+          ],
         ),
       ),
-
-      // navbar
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.black.withOpacity(0.1),
                 spreadRadius: 2,
-                blurRadius: 5,
+                blurRadius: 8,
               ),
             ],
           ),
@@ -196,44 +224,33 @@ class _PerfilScreenState extends State<PerfilScreen> {
             elevation: 0,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
-            selectedItemColor: Colors.red,
-            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.black87,
+            unselectedItemColor: Colors.grey.shade600,
             showSelectedLabels: true,
             showUnselectedLabels: true,
             items: [
-              //Home
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_filled),
                 label: 'Home',
-                backgroundColor: Colors.transparent,
               ),
-              //Rutinas
               BottomNavigationBarItem(
                 icon: Icon(Icons.view_list_rounded),
                 label: 'Rutinas',
-                backgroundColor: Colors.transparent,
               ),
-              //Publicaciones
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                  offset: Offset(0, 10),
-                  child: Image.asset(
-                    'assets/logoicon.png',
-                    width: 45,
-                    height: 45,
-                  ),
+                  offset: Offset(0, 8),
+                  child: Icon(Icons.add_circle, size: 45, color: Colors.black87),
                 ),
                 label: '',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.stacked_line_chart_rounded),
                 label: 'Progreso',
-                backgroundColor: Colors.transparent,
-              ), //Perfil
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
                 label: 'Perfil',
-                backgroundColor: Colors.transparent,
               ),
             ],
           ),
@@ -264,17 +281,21 @@ class perfil_widget extends StatelessWidget {
     return ListTile(
       onTap: onPress,
       leading: Container(
-        width: 40,
-        height: 40,
+        width: 45,
+        height: 45,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-          color: Colors.green.withOpacity(0.1),
+          color: Colors.grey.shade300,
         ),
-        child: Icon(icon, color: Colors.black),
+        child: Icon(icon, color: Colors.black87),
       ),
-      title: Text(title,
-          style:
-              Theme.of(context).textTheme.bodySmall?.apply(color: textColor)),
+      title: Text(
+        title,
+        style: Theme.of(context)
+            .textTheme
+            .bodyLarge
+            ?.apply(color: textColor ?? Colors.black87, fontWeightDelta: 2),
+      ),
       trailing: endIcon
           ? Container(
               width: 30,
