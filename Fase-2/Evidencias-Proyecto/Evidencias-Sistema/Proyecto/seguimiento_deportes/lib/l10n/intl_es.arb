@@ -1,0 +1,14 @@
+{
+
+    "Log_In" : "Iniciar sesión",
+    "Email" : "Correo electrónico",
+    "Password" : "Contraseña",
+    "Enter" : "Confirmar",
+    "Dont_have_an_account" : "¿No tienes cuenta? ",
+    "Sing_Up": " Regístrate",
+    "Or_log_in_with_Google" : "O iniciar sesión con Google",
+    "emailsample" : "Correo@gmail.com"
+
+
+}
+

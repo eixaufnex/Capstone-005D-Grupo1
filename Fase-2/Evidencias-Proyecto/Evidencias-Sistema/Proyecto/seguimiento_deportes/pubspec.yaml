@@ -1,9 +1,8 @@
 name: seguimiento_deportes
 
-
 description: Proyecto de seguimiento de deportes para gente principiante y experta.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' # Elimina esta línea si deseas publicar en pub.dev
 
 version: 0.0.1+1
 
@@ -17,17 +16,18 @@ dependencies:
   firebase_core: ^3.6.0       
   firebase_auth: ^5.3.1       
   cloud_firestore: ^5.4.3 
-  intl: ^0.18.0 
+  intl: ^0.19.0 
   fl_chart: ^0.69.0
   google_sign_in: ^6.2.1
-
   english_words: ^4.0.0
   provider: ^6.0.0
+  shared_preferences: ^2.0.15
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^2.0.0
 
 flutter:
@@ -36,6 +36,5 @@ flutter:
   assets:
     - assets/
 
-
-
-  
+flutter_intl:
+  enabled: true

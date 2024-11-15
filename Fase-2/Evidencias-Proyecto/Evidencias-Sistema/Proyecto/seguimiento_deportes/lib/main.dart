@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/main_mobile.dart';
 import 'package:seguimiento_deportes/web_vs/main_web.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,6 +33,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'VitalityConnect',
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -39,5 +47,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

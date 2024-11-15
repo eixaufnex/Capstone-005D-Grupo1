@@ -14,6 +14,29 @@ class PerfilProvider with ChangeNotifier {
     getPerfiles();
   }
 
+  Future<Perfil?> getPerfil(String firebaseId) async {
+     final urlGetPerfil = Uri.http(urlapi, 'perfil/usuario/$firebaseId');
+    try {
+      final resp = await http.get(urlGetPerfil, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+
+      if (resp.statusCode == 200) {
+        return Perfil.fromJson(json.decode(resp.body));
+      } else if (resp.statusCode == 404) {
+        print('Perfil no encontrado: Código de estado ${resp.statusCode}');
+        return null;
+      } else {
+        print('Error al obtener perfil: Código de estado ${resp.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión al obtener perfil: $e');
+      return null;
+    }
+  }
+
   Future<void> getPerfiles() async {
     isLoading = true;
     notifyListeners();
@@ -59,7 +82,8 @@ class PerfilProvider with ChangeNotifier {
         perfiles.add(createdPerfil);
         notifyListeners();
       } else {
-        print('Error al crear perfil en el servidor: Código de estado ${resp.statusCode}');
+        print(
+            'Error al crear perfil en el servidor: Código de estado ${resp.statusCode}');
         print('Respuesta del servidor: ${resp.body}');
       }
     } catch (e) {
@@ -95,13 +119,15 @@ class PerfilProvider with ChangeNotifier {
       );
 
       if (resp.statusCode == 200) {
-        final index = perfiles.indexWhere((perfil) => perfil.idPerfil == updatedPerfil.idPerfil);
+        final index = perfiles
+            .indexWhere((perfil) => perfil.idPerfil == updatedPerfil.idPerfil);
         if (index != -1) {
           perfiles[index] = updatedPerfil;
           notifyListeners();
         }
       } else {
-        print('Error al actualizar el perfil en el servidor: ${resp.statusCode}');
+        print(
+            'Error al actualizar el perfil en el servidor: ${resp.statusCode}');
       }
     } catch (e) {
       print('Error de conexión al actualizar el perfil: $e');

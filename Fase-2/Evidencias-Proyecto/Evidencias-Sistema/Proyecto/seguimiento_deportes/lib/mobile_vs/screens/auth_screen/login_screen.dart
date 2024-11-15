@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/datos_screen_google.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -179,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               children: [
                 SizedBox(height: 300),
                 Text(
-                  'Iniciar sesión',
+                  S.current.Log_In,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
@@ -220,9 +221,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.black87, width: 1.5),
                                 ),
-                                hintText: 'Correo@gmail.com',
+                                hintText: S.current.emailsample,
                                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                                labelText: 'Correo electrónico',
+                                labelText: S.current.Email,
                                 labelStyle: TextStyle(color: Colors.black87, fontSize: 14),
                                 prefixIcon: Icon(Icons.email_outlined, color: Colors.black54),
                               ),
@@ -246,8 +247,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.black87, width: 1.5),
                                 ),
-                                hintText: 'Contraseña',
-                                labelText: 'Contraseña',
+                                hintText: S.current.Password,
+                                hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                labelText: S.current.Password,
                                 labelStyle: TextStyle(color: Colors.black87, fontSize: 14),
                                 prefixIcon: Icon(Icons.lock_outline, color: Colors.black54),
                               ),
@@ -268,20 +270,20 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   onPressed: _login,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 70, vertical: 16),
-                    child: Text('Ingresar', style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text(S.current.Enter, style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
                 SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("¿No tienes cuenta? ", style: TextStyle(color: Colors.black87)),
+                    Text(S.current.Dont_have_an_account, style: TextStyle(color: Colors.black87)),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, 'registro');
                       },
                       child: Text(
-                        "Regístrate",
+                        S.current.Sing_Up,
                         style: TextStyle(
                           color: Colors.blue[700],
                           fontWeight: FontWeight.bold,
@@ -293,7 +295,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ),
                 SizedBox(height: 5),
                 Text(
-                  'O iniciar sesión con Google',
+                  S.current.Or_log_in_with_Google,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.black54,

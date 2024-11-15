@@ -1,6 +1,7 @@
 // main_mobile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seguimiento_deportes/core/providers/idioma_provider.dart';
 import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/core/providers/publicaciones_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
@@ -48,6 +49,8 @@ class MobileMain extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LogroProvider()),
         ChangeNotifierProvider(create: (_) => PerfilProvider()),
         ChangeNotifierProvider(create: (_) => PublicacionesProvider()),
+        ChangeNotifierProvider(create: (_) => IdiomaProvider()),
+
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

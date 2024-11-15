@@ -13,6 +13,27 @@ export const getPerfiles = async (req, res) => {
     }
 };
 
+
+// Obtener un perfil por firebase_id
+export const getPerfilxfirebase = async (req, res) => {
+    const { firebase_id } = req.params;
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('firebase_id', sql.VarChar, firebase_id) 
+            .query('SELECT * FROM PERFIL WHERE firebase_id = @firebase_id');
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ message: "Perfil no encontrado" });
+        }
+        return res.json(result.recordset[0]);
+    } catch (error) {
+        console.error('Error al obtener perfil:', error);
+        res.status(500).json({ message: 'Error al obtener perfil' });
+    }
+};
+
+
 // Obtener un perfil por id
 export const getPerfil = async (req, res) => {
     try {

@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import {getPerfiles, 
         getPerfil, 
+        getPerfilxfirebase,
         createPerfil, 
         updatePerfil, 
         deletePerfil} from '../controllers/perfil.controller.js';
@@ -14,6 +15,9 @@ router.get("/perfil", getPerfiles);
 
 //Obtener perfil por id
 router.get("/perfil/:id", getPerfil);
+
+//Obtener perfil por firebase
+router.get("/perfil/usuario/:firebase_id", getPerfilxfirebase);
 
 //Creando perfil
 router.post("/perfil", createPerfil);

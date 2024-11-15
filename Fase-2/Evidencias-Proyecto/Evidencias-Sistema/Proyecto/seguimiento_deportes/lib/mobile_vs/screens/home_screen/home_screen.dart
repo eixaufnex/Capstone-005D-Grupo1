@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:seguimiento_deportes/core/providers/rutina_provider.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/list_ejercicios_screen.dart';
@@ -13,6 +14,8 @@ import 'package:seguimiento_deportes/core/providers/notificacion_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
+import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/rutinas_recomendadas.dart'; // Importa el archivo
+import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,12 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
   String usuario = "Cargando...";
   String fechaActual = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isRecommendedAdded = false;
+  List<bool> isRecommendedAddedList = [false, false, false];
+  String tipoNivel = ''; // Variable para almacenar el nivel del usuario
 
   @override
   void initState() {
     super.initState();
     _fetchUsername();
     _setFechaActual();
+    _fetchTipoNivel();
   }
 
   void _setFechaActual() {
@@ -47,6 +54,31 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         usuario = username;
       });
+    }
+  }
+
+  // Método para obtener el tipo de nivel desde el PerfilProvider
+  Future<void> _fetchTipoNivel() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      // Cargar el perfil del usuario usando el firebaseId (uid de Firebase)
+      final perfil = await Provider.of<PerfilProvider>(context, listen: false)
+          .getPerfil(
+              user.uid); // Suponiendo que el firebaseId es el uid de Firebase
+
+      if (perfil != null) {
+        setState(() {
+          tipoNivel = perfil.tipoNivel; // Asignamos el tipo de nivel del perfil
+        });
+
+      } else {
+        setState(() {
+          tipoNivel =
+              'Desconocido'; // Si no se encuentra el perfil, mostramos 'Desconocido'
+        });
+
+
+      }
     }
   }
 
@@ -75,6 +107,33 @@ class _HomeScreenState extends State<HomeScreen> {
         context,
         MaterialPageRoute(builder: (context) => PerfilScreen()),
       );
+    }
+  }
+
+  void _addRecommendedRoutine(int index, String nombreRutina, String emoji,
+      String tipoRutina, List<Map<String, String>> ejercicios) async {
+    String firebaseId = _auth.currentUser?.uid ?? '';
+    if (firebaseId.isEmpty) {
+      print('Error: No hay usuario autenticado');
+      return;
+    }
+
+    int? rutinaId = await Provider.of<RutinaProvider>(context, listen: false)
+        .postRutina(nombreRutina, emoji, firebaseId, tipoRutina: tipoRutina);
+
+    if (rutinaId != null) {
+      bool success = await Provider.of<RutinaProvider>(context, listen: false)
+          .apiService
+          .saveEjerciciosToRutina(rutinaId, ejercicios);
+
+      if (success) {
+        setState(() {
+          isRecommendedAddedList[index] =
+              true; // Actualiza solo la rutina agregada
+        });
+      } else {
+        print('Error al agregar los ejercicios a la rutina');
+      }
     }
   }
 
@@ -313,14 +372,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           SizedBox(height: 20),
-                          Expanded(
-                            child: ListView(
-                              children: [
-                                Listarecomendaciones(),
-                                Listarecomendaciones(),
-                                Listarecomendaciones(),
-                              ],
-                            ),
+                          RutinasRecomendadas(
+                            tipoNivel: tipoNivel,
+                            isRecommendedAddedList: isRecommendedAddedList,
+                            addRecommendedRoutine: _addRecommendedRoutine,
+                            isRoutineExists: isRoutineExists,
                           ),
                         ],
                       ),
@@ -390,6 +446,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  // Verifica si la rutina ya existe en las rutinas del usuario
+  bool isRoutineExists(String routineName) {
+    final rutinaProvider = Provider.of<RutinaProvider>(context, listen: false);
+    return rutinaProvider.rutinas
+        .any((rutina) => rutina.nombreRutina == routineName);
+  }
 }
 
 class EmojiColumn extends StatelessWidget {
@@ -450,7 +513,20 @@ class Emojis extends StatelessWidget {
 }
 
 class Listarecomendaciones extends StatelessWidget {
-  const Listarecomendaciones({Key? key}) : super(key: key);
+  final String nombre;
+  final String ejercicios;
+  final String emoji;
+  final String nivel; // Nuevo parámetro para el nivel de recomendación
+  final VoidCallback onAdd;
+
+  const Listarecomendaciones({
+    Key? key,
+    required this.nombre,
+    required this.ejercicios,
+    required this.emoji,
+    required this.nivel, // Inicializamos el nuevo parámetro
+    required this.onAdd,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -487,24 +563,32 @@ class Listarecomendaciones extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Recomendación N°1',
+                      nombre,
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16),
                     ),
                     Text(
-                      '10 Ejercicios',
+                      ejercicios,
                       style: TextStyle(color: Colors.black),
+                    ),
+                    Text(
+                      // Añadir el nivel de recomendación
+                      'Nivel: $nivel',
+                      style: TextStyle(color: Colors.grey[700]),
                     ),
                   ],
                 ),
               ],
             ),
-            Icon(
-              Icons.add,
-              size: 40,
-              color: Colors.black,
+            GestureDetector(
+              onTap: onAdd,
+              child: Icon(
+                Icons.add,
+                size: 40,
+                color: Colors.black,
+              ),
             ),
           ],
         ),

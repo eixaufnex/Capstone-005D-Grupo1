@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seguimiento_deportes/core/providers/idioma_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
+// Asegúrate de importar el archivo donde está `IdiomaProvider`
 
 class IdiomaScreen extends StatefulWidget {
   const IdiomaScreen({super.key});
@@ -8,19 +12,21 @@ class IdiomaScreen extends StatefulWidget {
 }
 
 class _IdiomaScreenState extends State<IdiomaScreen> {
-  String _selectedLanguage = 'Chileno';
+  String _selectedLanguage = 'Español';
 
   final List<Map<String, String>> languages = [
-    {'name': 'Chileno', 'flag': '🇨🇱'},
-    {'name': 'Español', 'flag': '🇪🇸'},
-    {'name': 'Inglés', 'flag': '🇺🇸'},
+    {'name': 'Español', 'flag': '🇪🇸', 'locale': 'es'},
+    {'name': 'Inglés', 'flag': '🇺🇸', 'locale': 'en'},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Idioma', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+        title: Text(
+          S.current.Email,
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -74,7 +80,8 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
+
             // Botón de aplicar
             Center(
               child: ElevatedButton(
@@ -86,10 +93,20 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
                   ),
                 ),
                 onPressed: () {
-                  // Acción al presionar "Aplicar"
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Idioma $_selectedLanguage seleccionado")),
-                  );
+                  final selectedLocale = languages.firstWhere(
+                    (lang) => lang['name'] == _selectedLanguage,
+                  )['locale'];
+
+                  if (selectedLocale != null) {
+                    Provider.of<IdiomaProvider>(context, listen: false)
+                        .setLocale(Locale(selectedLocale));
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Idioma $_selectedLanguage seleccionado"),
+                      ),
+                    );
+                  }
                 },
                 child: const Text("Aplicar", style: TextStyle(color: Colors.white)),
               ),
