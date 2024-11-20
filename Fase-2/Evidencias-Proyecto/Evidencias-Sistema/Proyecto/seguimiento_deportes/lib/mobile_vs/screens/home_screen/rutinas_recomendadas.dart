@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class RutinasRecomendadas extends StatelessWidget {
   final String tipoNivel; // El nivel del usuario
@@ -21,17 +22,17 @@ class RutinasRecomendadas extends StatelessWidget {
       child: ListView(
         children: [
           // Filtrar rutinas según el nivel del usuario
-          if (tipoNivel == 'Principiante' &&
-              !isRoutineExists('Rutina de Fuerza') &&
+          if ((tipoNivel == 'Principiante' || tipoNivel == 'Beginner') &&
+              (!isRoutineExists('Rutina de Fuerza') && !isRoutineExists('Strength Routine')) &&
               !isRecommendedAddedList[0])
             Listarecomendaciones(
-              nombre: 'Rutina de Fuerza',
-              ejercicios: '5 Ejercicios',
+              nombre: S.current.rutinafuerza1,
+              ejercicios: "5 ${S.current.ejercicios}",
               emoji: '💪',
-              nivel: 'Principiante',
+              nivel: S.current.label_intensity1,
               onAdd: () => addRecommendedRoutine(
                 0,
-                'Rutina de Fuerza',
+                S.current.rutinafuerza1, 
                 '💪',
                 'Fuerza',
                 [
@@ -44,17 +45,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Principiante' &&
-              !isRoutineExists('Rutina de Cardio') &&
+          if ((tipoNivel == 'Principiante' || tipoNivel == 'Beginner') &&
+              (!isRoutineExists('Rutina de Cardio') && !isRoutineExists('Cardio Routine')) &&
               !isRecommendedAddedList[1])
             Listarecomendaciones(
-              nombre: 'Rutina de Cardio',
-              ejercicios: '6 Ejercicios',
+              nombre: S.current.rutinacardio1,
+              ejercicios: "6 ${S.current.ejercicios}",
               emoji: '🏃‍♂️',
-              nivel: 'Principiante',
+              nivel: S.current.label_intensity1,
               onAdd: () => addRecommendedRoutine(
                 1,
-                'Rutina de Cardio',
+                S.current.rutinacardio1,
                 '🏃‍♂️',
                 'Cardio',
                 [
@@ -68,17 +69,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Principiante' &&
-              !isRoutineExists('Rutina de Flexibilidad') &&
+          if ((tipoNivel == 'Principiante' || tipoNivel == 'Beginner') &&
+              (!isRoutineExists('Rutina de Flexibilidad') && !isRoutineExists('Flexibility Routine')) &&
               !isRecommendedAddedList[2])
             Listarecomendaciones(
-              nombre: 'Rutina de Flexibilidad',
-              ejercicios: '6 Ejercicios',
+              nombre: S.current.rutinaflexibilidad1,
+              ejercicios: "6 ${S.current.ejercicios}",
               emoji: '🧘‍♂️',
-              nivel: 'Principiante',
+              nivel: S.current.label_intensity1,
               onAdd: () => addRecommendedRoutine(
                 2,
-                'Rutina de Flexibilidad',
+                S.current.rutinaflexibilidad1,
                 '🧘‍♂️',
                 'Flexibilidad',
                 [
@@ -92,17 +93,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Medio' &&
-              !isRoutineExists('Rutina de Fuerza') &&
+          if ((tipoNivel == 'Medio' ||  tipoNivel == 'Medium') &&
+              (!isRoutineExists('Rutina de Fuerza') && !isRoutineExists('Strength Routine')) &&
               !isRecommendedAddedList[0])
             Listarecomendaciones(
-              nombre: 'Rutina de Fuerza',
-              ejercicios: '7 Ejercicios',
+              nombre: S.current.rutinafuerza1,
+              ejercicios: "7 ${S.current.ejercicios}",
               emoji: '💪',
-              nivel: 'Intermedio',
+              nivel: S.current.label_intensity2,
               onAdd: () => addRecommendedRoutine(
                 0,
-                'Rutina de Fuerza',
+                S.current.rutinafuerza1,
                 '💪',
                 'Fuerza',
                 [
@@ -117,17 +118,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Medio' &&
-              !isRoutineExists('Rutina de Cardio') &&
+          if ((tipoNivel == 'Medio' ||  tipoNivel == 'Medium') &&
+              (!isRoutineExists('Rutina de Cardio') && !isRoutineExists('Cardio Routine')) &&
               !isRecommendedAddedList[1])
             Listarecomendaciones(
-              nombre: 'Rutina de Cardio',
-              ejercicios: '2 Ejercicios',
+              nombre: S.current.rutinacardio1,
+              ejercicios: "2 ${S.current.ejercicios}",
               emoji: '🏃‍♂️',
-              nivel: 'Intermedio',
+              nivel: S.current.label_intensity2,
               onAdd: () => addRecommendedRoutine(
                 1,
-                'Rutina de Cardio',
+                S.current.rutinacardio1,
                 '🏃‍♂️',
                 'Cardiovascular',
                 [
@@ -137,17 +138,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Medio' &&
-              !isRoutineExists('Rutina de Flexibilidad') &&
+          if ((tipoNivel == 'Medio' ||  tipoNivel == 'Medium') &&
+              (!isRoutineExists('Rutina de Flexibilidad') && !isRoutineExists('Flexibility Routine')) &&
               !isRecommendedAddedList[2])
             Listarecomendaciones(
-              nombre: 'Rutina de Flexibilidad',
-              ejercicios: '3 Ejercicios',
+              nombre: S.current.rutinaflexibilidad1,
+              ejercicios: "3 ${S.current.ejercicios}",
               emoji: '🧘‍♂️',
-              nivel: 'Intermedio',
+              nivel: S.current.label_intensity2,
               onAdd: () => addRecommendedRoutine(
                 2,
-                'Rutina de Flexibilidad',
+                S.current.rutinaflexibilidad1,
                 '🧘‍♂️',
                 'Flexibilidad',
                 [
@@ -158,17 +159,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Avanzado' &&
-              !isRoutineExists('Rutina de Fuerza') &&
+          if ((tipoNivel == 'Avanzado' || tipoNivel == 'Advanced') &&
+              (!isRoutineExists('Rutina de Fuerza') && !isRoutineExists('Strength Routine')) &&
               !isRecommendedAddedList[0])
             Listarecomendaciones(
-              nombre: 'Rutina de Fuerza',
-              ejercicios: '10 Ejercicios',
+              nombre: S.current.rutinafuerza1,
+              ejercicios: "10 ${S.current.ejercicios}",
               emoji: '💪',
-              nivel: 'Avanzado',
+              nivel: S.current.label_intensity3,
               onAdd: () => addRecommendedRoutine(
                 0,
-                'Rutina de Fuerza',
+                S.current.rutinafuerza1,
                 '💪',
                 'Fuerza',
                 [
@@ -186,17 +187,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Avanzado' &&
-              !isRoutineExists('Rutina de Cardio') &&
+          if ((tipoNivel == 'Avanzado' || tipoNivel == 'Advanced') &&
+              (!isRoutineExists('Rutina de Cardio') && !isRoutineExists('Cardio Routine')) &&
               !isRecommendedAddedList[1])
             Listarecomendaciones(
-              nombre: 'Rutina de Cardio',
-              ejercicios: '4 Ejercicios',
+              nombre: S.current.rutinacardio1,
+              ejercicios: "4 ${S.current.ejercicios}",
               emoji: '🏃‍♂️',
-              nivel: 'Avanzado',
+              nivel: S.current.label_intensity3,
               onAdd: () => addRecommendedRoutine(
                 1,
-                'Rutina de Cardio',
+                S.current.rutinacardio1,
                 '🏃‍♂️',
                 'Cardio',
                 [
@@ -208,17 +209,17 @@ class RutinasRecomendadas extends StatelessWidget {
               ),
             ),
 
-          if (tipoNivel == 'Avanzado' &&
-              !isRoutineExists('Rutina de Flexibilidad') &&
+          if ((tipoNivel == 'Avanzado' || tipoNivel == 'Advanced') &&
+              (!isRoutineExists('Rutina de Flexibilidad') && !isRoutineExists('Flexibility Routine')) &&
               !isRecommendedAddedList[2])
             Listarecomendaciones(
-              nombre: 'Rutina de Flexibilidad',
-              ejercicios: '8 Ejercicios',
+              nombre: S.current.rutinaflexibilidad1,
+              ejercicios: "8 ${S.current.ejercicios}",
               emoji: '🧘‍♂️',
-              nivel: 'Avanzado',
+              nivel: S.current.label_intensity3,
               onAdd: () => addRecommendedRoutine(
                 2,
-                'Rutina de Flexibilidad',
+                S.current.rutinaflexibilidad1,
                 '🧘‍♂️',
                 'Flexibilidad',
                 [
@@ -301,7 +302,8 @@ class Listarecomendaciones extends StatelessWidget {
                       style: TextStyle(color: Colors.black),
                     ),
                     Text(
-                      'Nivel: $nivel',
+                      // "8 ${S.current.ejercicios}"
+                      "${S.current.nivel}: $nivel",
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                   ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/idioma_provider.dart';
 import 'package:seguimiento_deportes/generated/l10n.dart';
-// Asegúrate de importar el archivo donde está `IdiomaProvider`
 
 class IdiomaScreen extends StatefulWidget {
   const IdiomaScreen({super.key});
@@ -20,11 +19,27 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadSelectedLanguage();
+  }
+
+  /// Carga el idioma seleccionado al iniciar
+  void _loadSelectedLanguage() {
+    final idiomaProvider = Provider.of<IdiomaProvider>(context, listen: false);
+    setState(() {
+      _selectedLanguage = idiomaProvider.locale.languageCode == 'es'
+          ? 'Español'
+          : 'Inglés';
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          S.current.Email,
+          S.of(context).change_language,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -64,7 +79,7 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
                               color: Colors.greenAccent,
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            child: Text(
+                            child: const Text(
                               "Seleccionado",
                               style: TextStyle(
                                   color: Colors.black, fontWeight: FontWeight.bold),
@@ -98,8 +113,9 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
                   )['locale'];
 
                   if (selectedLocale != null) {
+                    // Cambiar idioma usando IdiomaProvider
                     Provider.of<IdiomaProvider>(context, listen: false)
-                        .setLocale(Locale(selectedLocale));
+                        .cambiarIdioma(selectedLocale);
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -108,7 +124,7 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
                     );
                   }
                 },
-                child: const Text("Aplicar", style: TextStyle(color: Colors.white)),
+                child: Text(S.of(context).apply, style: const TextStyle(color: Colors.white)),
               ),
             ),
             const SizedBox(height: 88),

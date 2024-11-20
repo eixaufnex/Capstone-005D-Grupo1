@@ -10,6 +10,8 @@ import 'package:seguimiento_deportes/core/providers/ejercicio_provider.dart';
 import 'package:seguimiento_deportes/core/providers/rutina_detallada_provider.dart';
 import 'package:seguimiento_deportes/core/providers/objetivo_provider.dart';
 import 'package:seguimiento_deportes/core/providers/logro_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/datos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/datos_screen_google.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
@@ -48,85 +50,95 @@ class MobileMain extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LogroProvider()),
         ChangeNotifierProvider(create: (_) => PerfilProvider()),
         ChangeNotifierProvider(create: (_) => PublicacionesProvider()),
-        ChangeNotifierProvider(create: (_) => IdiomaProvider()),
-
+        ChangeNotifierProvider(create: (_) => IdiomaProvider()), // IdiomaProvider añadido
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'VitalityConnect',
-        initialRoute: 'login',
-        onGenerateRoute: (RouteSettings settings) {
-          final args = settings.arguments as Map<String, dynamic>? ?? {};
+      child: Consumer<IdiomaProvider>(
+        builder: (context, idiomaProvider, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'VitalityConnect',
+            locale: idiomaProvider.locale, // Idioma dinámico
+            localizationsDelegates: [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            initialRoute: 'login',
+            onGenerateRoute: (RouteSettings settings) {
+              final args = settings.arguments as Map<String, dynamic>? ?? {};
 
-          switch (settings.name) {
-            case 'creacion':
-              return MaterialPageRoute(
-                builder: (_) => CreacionRutinaScreen(
-                  rutinaId: args['rutinaId'] ?? 0,
-                  nombreRutina: args['nombreRutina'] ?? 'Rutina sin nombre',
-                  tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
-                ),
-              );
-            case 'seleccion':
-              return MaterialPageRoute(
-                builder: (_) => SeleccionScreen(
-                  rutinaId: args['rutinaId'] ?? 0,
-                  tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
-                  ejerciciosSeleccionados:
-                      args['ejerciciosSeleccionados'] ?? [],
-                ),
-              );
-            case 'rutina_extend':
-              return MaterialPageRoute(
-                builder: (_) => RutinaExtendScreen(
-                  rutinaId: args['rutinaId'] ?? 0,
-                  nombreRutina: args['nombreRutina'] ?? 'Rutina sin nombre',
-                  tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
-                ),
-              );
-            case 'seleccion_extend':
-              return MaterialPageRoute(
-                builder: (_) => SeleccionExtendScreen(
-                  rutinaId: args['rutinaId'] ?? 0,
-                  tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
-                  ejerciciosSeleccionados:
-                      args['ejerciciosSeleccionados'] ?? [],
-                ),
-              );
-            case 'rutina_detalle':
-              return MaterialPageRoute(
-                builder: (_) => RutinaDetalladaScreen(
-                  rutinaId: args['rutinaId'] ?? 0,
-                  idListaEjercicio: args['idListaEjercicio'] ?? 0,
-                       
-                ),
-              );
-            default:
-              return MaterialPageRoute(
-                builder: (_) => LoginScreen(),
-              );
-          }
-        },
-        routes: {
-          'login': (_) => LoginScreen(),
-          'registro': (_) => RegisterScreen(),
-          'datos': (_) => DatosScreen(),
-          'datos_google': (_) => DatosGoogleScreen(),
-          'home': (_) => HomeScreen(),
-          'rutinas': (_) => RutinaScreen(),
-          'list_ejercicios': (_) => Lista_EjercicioScreen(),
-          'perfil': (_) => PerfilScreen(),
-          'publicaciones': (_) => PublicacionesScreen(),
-          'notificaciones': (_) => NotificacionesScreen(),
-          'idioma': (_) => IdiomaScreen(),
-          'unidades': (_) => UnidadesScreen(),
-          'tema': (_) => TemaScreen(),
-          'privacidad': (_) => PrivacidadDatosScreen(),
-          'about': (_) => AcercaScreen(),
-          'objetivos': (_) => ObjetivosScreen(),
-          'logros': (_) => LogrosScreen(),
-          'graficos': (_) => GraficosScreen(),
-          'glosario': (_) => GlosarioScreen(),
+              switch (settings.name) {
+                case 'creacion':
+                  return MaterialPageRoute(
+                    builder: (_) => CreacionRutinaScreen(
+                      rutinaId: args['rutinaId'] ?? 0,
+                      nombreRutina: args['nombreRutina'] ?? 'Rutina sin nombre',
+                      tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
+                    ),
+                  );
+                case 'seleccion':
+                  return MaterialPageRoute(
+                    builder: (_) => SeleccionScreen(
+                      rutinaId: args['rutinaId'] ?? 0,
+                      tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
+                      ejerciciosSeleccionados:
+                          args['ejerciciosSeleccionados'] ?? [],
+                    ),
+                  );
+                case 'rutina_extend':
+                  return MaterialPageRoute(
+                    builder: (_) => RutinaExtendScreen(
+                      rutinaId: args['rutinaId'] ?? 0,
+                      nombreRutina: args['nombreRutina'] ?? 'Rutina sin nombre',
+                      tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
+                    ),
+                  );
+                case 'seleccion_extend':
+                  return MaterialPageRoute(
+                    builder: (_) => SeleccionExtendScreen(
+                      rutinaId: args['rutinaId'] ?? 0,
+                      tipoRutina: args['tipoRutina'] ?? 'Tipo no especificado',
+                      ejerciciosSeleccionados:
+                          args['ejerciciosSeleccionados'] ?? [],
+                    ),
+                  );
+                case 'rutina_detalle':
+                  return MaterialPageRoute(
+                    builder: (_) => RutinaDetalladaScreen(
+                      rutinaId: args['rutinaId'] ?? 0,
+                      idListaEjercicio: args['idListaEjercicio'] ?? 0,
+                    ),
+                  );
+                default:
+                  return MaterialPageRoute(
+                    builder: (_) => LoginScreen(),
+                  );
+              }
+            },
+            routes: {
+              'login': (_) => LoginScreen(),
+              'registro': (_) => RegisterScreen(),
+              'datos': (_) => DatosScreen(),
+              'datos_google': (_) => DatosGoogleScreen(),
+              'home': (_) => HomeScreen(),
+              'rutinas': (_) => RutinaScreen(),
+              'list_ejercicios': (_) => Lista_EjercicioScreen(),
+              'perfil': (_) => PerfilScreen(),
+              'publicaciones': (_) => PublicacionesScreen(),
+              'notificaciones': (_) => NotificacionesScreen(),
+              'idioma': (_) => IdiomaScreen(),
+              'unidades': (_) => UnidadesScreen(),
+              'tema': (_) => TemaScreen(),
+              'privacidad': (_) => PrivacidadDatosScreen(),
+              'about': (_) => AcercaScreen(),
+              'objetivos': (_) => ObjetivosScreen(),
+              'logros': (_) => LogrosScreen(),
+              'graficos': (_) => GraficosScreen(),
+              'glosario': (_) => GlosarioScreen(),
+            },
+          );
         },
       ),
     );

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "753728087063-dg441u25a5s4v7a35bhiblv5oeq33aso.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.seguimiento_deportes",
+            "certificate_hash": "a5b0df1ea1b5d8093ea4fefc867d96e8ac6c11c3"
+          }
+        },
+        {
           "client_id": "753728087063-dg5q2f1b5dh0a2ng82ct6mh4v4fb4ae3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

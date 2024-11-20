@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -130,16 +131,16 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   focusedBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.black, width: 2),
                                   ),
-                                  hintText: 'Correo@gmail.com',
+                                  hintText: S.current.emailsample , 
                                   hintStyle: TextStyle(fontSize: 12),
-                                  labelText: 'E-mail',
+                                  labelText: S.current.Email,
                                   labelStyle: TextStyle(color: Colors.black, fontSize: 14),
                                   prefixIcon: Icon(Icons.email_outlined, color: Colors.black),
                                 ),
                                 validator: (value) {
                                   String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
                                   RegExp regExp = RegExp(pattern);
-                                  return regExp.hasMatch(value ?? '') ? null : '  El valor ingresado no es un correo';
+                                  return regExp.hasMatch(value ?? '') ? null : S.current.no_correo;
                                 },
                               ),
                               SizedBox(height: 10),
@@ -154,13 +155,13 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   focusedBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.black, width: 2),
                                   ),
-                                  hintText: 'Nombre de Usuario',
-                                  labelText: 'Nombre de Usuario',
+                                  hintText: S.current.label_name,
+                                  labelText: S.current.label_name,
                                   labelStyle: TextStyle(color: Colors.black, fontSize: 14),
                                   prefixIcon: Icon(Icons.person_outline, color: Colors.black),
                                 ),
                                 validator: (value) {
-                                  return (value != null && value.isNotEmpty) ? null : '  Ingresa un nombre de usuario';
+                                  return (value != null && value.isNotEmpty) ? null : S.current.nombreusuario;
                                 },
                               ),
                               SizedBox(height: 10),
@@ -177,12 +178,12 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                     borderSide: BorderSide(color: Colors.black, width: 2),
                                   ),
                                   hintText: '********',
-                                  labelText: 'Password',
+                                  labelText: S.current.Password,
                                   labelStyle: TextStyle(color: Colors.black, fontSize: 14),
                                   prefixIcon: Icon(Icons.lock_outline, color: Colors.black),
                                 ),
                                 validator: (value) {
-                                  return (value != null && value.length >= 6) ? null : '  6 o más caracteres';
+                                  return (value != null && value.length >= 6) ? null : S.current.min6;
                                 },
                               ),
                               SizedBox(height: 10),
@@ -199,12 +200,12 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                     borderSide: BorderSide(color: Colors.black, width: 2),
                                   ),
                                   hintText: '********',
-                                  labelText: 'Confirm Password',
+                                  labelText: S.current.confirmPassword,
                                   labelStyle: TextStyle(color: Colors.black, fontSize: 14),
                                   prefixIcon: Icon(Icons.lock_outline, color: Colors.black),
                                 ),
                                 validator: (value) {
-                                  return (value != null && value.length >= 6) ? null : '  6 o más caracteres';
+                                  return (value != null && value.length >= 6) ? null : S.current.min6;
                                 },
                               ),
                               SizedBox(height: 20),
@@ -214,19 +215,19 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                 color: Colors.black,
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 75, vertical: 20),
-                                  child: Text('Continuar', style: TextStyle(color: Colors.white)),
+                                  child: Text(S.current.continue_register, style: TextStyle(color: Colors.white)),
                                 ),
                                 onPressed: () async {
                                   if (txtCorreo.text.isEmpty || txtPassword.text.isEmpty || txtConfirmPassword.text.isEmpty || txtUsername.text.isEmpty) {
-                                    _showError('Por favor, complete todos los campos.');
+                                    _showError(S.current.login2);
                                     return;
                                   }
                                   if (txtPassword.text != txtConfirmPassword.text) {
-                                    _showError('Las contraseñas no coinciden.');
+                                    _showError(S.current.passwordmatch);
                                     return;
                                   }
                                   if (!_isValidEmail(txtCorreo.text)) {
-                                    _showError('El email no es válido.');
+                                    _showError(S.current.emailvalid);
                                     return;
                                   }
                                   // Intenta crear el usuario y verifica si el correo está en uso
@@ -238,7 +239,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   if (usuarioCreado) {
                                     Navigator.pushReplacementNamed(context, 'datos');
                                   } else {
-                                    _showError('El correo ya está en uso.');
+                                    _showError(S.current.emailused);
                                   }
                                 },
                               ),
@@ -263,9 +264,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                         color: Colors.black,
                       ),
                       children: [
-                        TextSpan(text: '¿Ya tienes una cuenta?'),
+                        TextSpan(text: S.current.yatienescuenta),
                         TextSpan(
-                          text: ' Iniciar Sesión',
+                          text: S.current.Log_In,
                           style: TextStyle(
                             color: Colors.blue[700],
                             decoration: TextDecoration.underline,
@@ -305,7 +306,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cerrar'),
+            child: Text(S.current.cerrar),
           ),
         ],
       ),

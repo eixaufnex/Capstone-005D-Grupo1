@@ -139,7 +139,7 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Container(
                             height: 80,
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 6.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),

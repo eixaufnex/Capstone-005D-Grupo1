@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:seguimiento_deportes/core/providers/rutina_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/list_ejercicios_screen.dart';
@@ -26,7 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  String usuario = "Cargando...";
+  String usuario = S.current.loading;
   String fechaActual = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isRecommendedAdded = false;
@@ -153,12 +154,12 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Dale con todo!"),
+          title: Text(S.current.home1),
           content: Text(
-              "Muchas gracias por compartirnos como te sientes. \n\n$mensaje"),
+              "${S.current.thanksuser}\n\n$mensaje"),
           actions: [
             TextButton(
-              child: Text("Cerrar"),
+              child: Text(S.current.cerrar),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -188,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      '$usuario',
+                      usuario,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -201,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: Icon(Icons.list),
-              title: Text('Lista de ejercicios'),
+              title: Text(S.current.listaejercicio1),
               onTap: () {
                 Navigator.push(
                     context,
@@ -211,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: Icon(Icons.emoji_events),
-              title: Text('Logros'),
+              title: Text(S.current.logros1),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LogrosScreen()));
@@ -219,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: Icon(Icons.flag),
-              title: Text('Objetivos'),
+              title: Text(S.current.objetivos1),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ObjetivosScreen()));
@@ -227,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: Icon(Icons.menu_book_rounded),
-              title: Text('Glosario'),
+              title: Text(S.current.glosario1),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => GlosarioScreen()));
@@ -243,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () async {
                   await _signOut();
                 },
-                child: Text('Cerrar sesión',
+                child: Text(S.current.cerrarsesion,
                     style: TextStyle(color: Colors.black)),
               ),
             ),
@@ -291,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        '¡Hola, $usuario!',
+                        "${S.current.hola} $usuario!",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 24,
@@ -312,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '¿Cómo te sientes hoy?',
+                        S.current.comotesientes,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -327,22 +328,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       EmojiColumn(
                         emoji: '☹',
-                        label: 'Triste',
+                        label: S.current.triste,
                         onTap: () => onEmojiSelected('Triste'),
                       ),
                       EmojiColumn(
                         emoji: '😐',
-                        label: 'Normal',
+                        label: S.current.normal,
                         onTap: () => onEmojiSelected('Normal'),
                       ),
                       EmojiColumn(
                         emoji: '😊',
-                        label: 'Bien',
+                        label: S.current.bien,
                         onTap: () => onEmojiSelected('Bien'),
                       ),
                       EmojiColumn(
                         emoji: '🥳',
-                        label: 'Superbién',
+                        label: S.current.Superbien,
                         onTap: () => onEmojiSelected('Superbién'),
                       ),
                     ],
@@ -362,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Recomendado',
+                              S.current.recomendado,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
@@ -412,11 +413,11 @@ class _HomeScreenState extends State<HomeScreen> {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_filled),
-                label: 'Home',
+                label: S.current.home,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.view_list_rounded),
-                label: 'Rutinas',
+                label: S.current.rutina,
               ),
               BottomNavigationBarItem(
                 icon: Transform.translate(
@@ -431,11 +432,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.stacked_line_chart_rounded),
-                label: 'Progreso',
+                label: S.current.Progreso,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
-                label: 'Perfil',
+                label: S.current.perfil,
               ),
             ],
           ),
@@ -572,7 +573,8 @@ class Listarecomendaciones extends StatelessWidget {
                     ),
                     Text(
                       // Añadir el nivel de recomendación
-                      'Nivel: $nivel',
+                      // "${S.current.thanksuser}\n\n$mensaje"
+                      "${S.current.nivel}: $nivel",
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                   ],

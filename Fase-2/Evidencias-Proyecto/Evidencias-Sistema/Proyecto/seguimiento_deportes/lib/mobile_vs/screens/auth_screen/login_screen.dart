@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   Future<void> _login() async {
     if (txtCorreo.text.isEmpty || txtPassword.text.isEmpty) {
-      _showDialog('Campos vacíos', 'Por favor, complete todos los campos.');
+      _showDialog(S.current.login1, S.current.login2);
       return;
     }
 
@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       setState(() {
         _errorMessage = e.message;
       });
-      _showDialog('Intentelo de nuevo!', _errorMessage ?? 'Email o Password incorrectos.');
+      _showDialog(S.current.tryagain, _errorMessage ?? S.current.tryagain2);
     }
   }
 
@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        _showDialog('Inicio de sesión cancelado', 'El usuario canceló el inicio de sesión.');
+        _showDialog(S.current.cancel, S.current.cancel2);
         return;
       }
 
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       final firebaseId = userCredential.user?.uid;
 
       if (firebaseId == null) {
-        _showDialog('Error', 'No se pudo obtener el ID de usuario.');
+        _showDialog('Error', S.current.error1);
         return;
       }
 
@@ -97,9 +97,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         );
       }
     } on FirebaseAuthException catch (e) {
-      _showDialog('Error de autenticación', e.message ?? 'Ocurrió un error al iniciar sesión con Google.');
+      _showDialog(S.current.error2, e.message ?? S.current.error3);
     } catch (e) {
-      _showDialog('Error', 'Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.');
+      _showDialog('Error', S.current.error4);
     }
   }
 
@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Aceptar'),
+              child: Text(S.current.aceptar),
             ),
           ],
         );
@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 String pattern =
                                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
                                 RegExp regExp = RegExp(pattern);
-                                return regExp.hasMatch(value ?? '') ? null : '  Ingrese un correo válido';
+                                return regExp.hasMatch(value ?? '') ? null : S.current.valid_email;
                               },
                             ),
                             SizedBox(height: 8),
@@ -254,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 prefixIcon: Icon(Icons.lock_outline, color: Colors.black54),
                               ),
                               validator: (value) {
-                                return (value != null && value.length >= 6) ? null : '  Mínimo 6 caracteres';
+                                return (value != null && value.length >= 6) ? null : S.current.min6;
                               },
                             ),
                           ],

@@ -80,6 +80,16 @@ class S {
     );
   }
 
+  /// `Confirm Password`
+  String get confirmPassword {
+    return Intl.message(
+      'Confirm Password',
+      name: 'confirmPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Enter`
   String get Enter {
     return Intl.message(
@@ -90,10 +100,10 @@ class S {
     );
   }
 
-  /// `Don't have an account?`
+  /// `¿Don't have an account?`
   String get Dont_have_an_account {
     return Intl.message(
-      'Don\'t have an account?',
+      '¿Don\'t have an account?',
       name: 'Dont_have_an_account',
       desc: '',
       args: [],
@@ -275,6 +285,476 @@ class S {
     return Intl.message(
       'Save and continue',
       name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Empty fields`
+  String get login1 {
+    return Intl.message(
+      'Empty fields',
+      name: 'login1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please complete all fields`
+  String get login2 {
+    return Intl.message(
+      'Please complete all fields',
+      name: 'login2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again!`
+  String get tryagain {
+    return Intl.message(
+      'Try again!',
+      name: 'tryagain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Incorrect email or password.`
+  String get tryagain2 {
+    return Intl.message(
+      'Incorrect email or password.',
+      name: 'tryagain2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login canceled`
+  String get cancel {
+    return Intl.message(
+      'Login canceled',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The user canceled the login.`
+  String get cancel2 {
+    return Intl.message(
+      'The user canceled the login.',
+      name: 'cancel2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The user ID could not be obtained.`
+  String get error1 {
+    return Intl.message(
+      'The user ID could not be obtained.',
+      name: 'error1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authentication error`
+  String get error2 {
+    return Intl.message(
+      'Authentication error',
+      name: 'error2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An error occurred while logging in with Google.`
+  String get error3 {
+    return Intl.message(
+      'An error occurred while logging in with Google.',
+      name: 'error3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error logging in with Google. Please try again.`
+  String get error4 {
+    return Intl.message(
+      'Error logging in with Google. Please try again.',
+      name: 'error4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accept`
+  String get aceptar {
+    return Intl.message(
+      'Accept',
+      name: 'aceptar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `  Minimum 6 characters`
+  String get min6 {
+    return Intl.message(
+      '  Minimum 6 characters',
+      name: 'min6',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `  Enter a valid email address`
+  String get valid_email {
+    return Intl.message(
+      '  Enter a valid email address',
+      name: 'valid_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `  The value entered is not an email`
+  String get no_correo {
+    return Intl.message(
+      '  The value entered is not an email',
+      name: 'no_correo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `  Enter a user name`
+  String get nombreusuario {
+    return Intl.message(
+      '  Enter a user name',
+      name: 'nombreusuario',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue`
+  String get continue_register {
+    return Intl.message(
+      'Continue',
+      name: 'continue_register',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Passwords do not match.`
+  String get passwordmatch {
+    return Intl.message(
+      'Passwords do not match.',
+      name: 'passwordmatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The email is not valid.`
+  String get emailvalid {
+    return Intl.message(
+      'The email is not valid.',
+      name: 'emailvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The email is already in use.`
+  String get emailused {
+    return Intl.message(
+      'The email is already in use.',
+      name: 'emailused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `¿Do you already have an account?`
+  String get yatienescuenta {
+    return Intl.message(
+      '¿Do you already have an account?',
+      name: 'yatienescuenta',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close`
+  String get cerrar {
+    return Intl.message(
+      'Close',
+      name: 'cerrar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading...`
+  String get loading {
+    return Intl.message(
+      'Loading...',
+      name: 'loading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Give it all you've got!`
+  String get home1 {
+    return Intl.message(
+      'Give it all you\'ve got!',
+      name: 'home1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thank you very much for sharing with us how you feel.`
+  String get thanksuser {
+    return Intl.message(
+      'Thank you very much for sharing with us how you feel.',
+      name: 'thanksuser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `List of exercises`
+  String get listaejercicio1 {
+    return Intl.message(
+      'List of exercises',
+      name: 'listaejercicio1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Achievements`
+  String get logros1 {
+    return Intl.message(
+      'Achievements',
+      name: 'logros1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Objectives`
+  String get objetivos1 {
+    return Intl.message(
+      'Objectives',
+      name: 'objetivos1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Glossary`
+  String get glosario1 {
+    return Intl.message(
+      'Glossary',
+      name: 'glosario1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign out`
+  String get cerrarsesion {
+    return Intl.message(
+      'Sign out',
+      name: 'cerrarsesion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `¡Hello,`
+  String get hola {
+    return Intl.message(
+      '¡Hello,',
+      name: 'hola',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `¿How are you feeling today?`
+  String get comotesientes {
+    return Intl.message(
+      '¿How are you feeling today?',
+      name: 'comotesientes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sad`
+  String get triste {
+    return Intl.message(
+      'Sad',
+      name: 'triste',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Normal`
+  String get normal {
+    return Intl.message(
+      'Normal',
+      name: 'normal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good`
+  String get bien {
+    return Intl.message(
+      'Good',
+      name: 'bien',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Super Good`
+  String get Superbien {
+    return Intl.message(
+      'Super Good',
+      name: 'Superbien',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recommended`
+  String get recomendado {
+    return Intl.message(
+      'Recommended',
+      name: 'recomendado',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home`
+  String get home {
+    return Intl.message(
+      'Home',
+      name: 'home',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Routines`
+  String get rutina {
+    return Intl.message(
+      'Routines',
+      name: 'rutina',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Progress`
+  String get Progreso {
+    return Intl.message(
+      'Progress',
+      name: 'Progreso',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get perfil {
+    return Intl.message(
+      'Profile',
+      name: 'perfil',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Level`
+  String get nivel {
+    return Intl.message(
+      'Level',
+      name: 'nivel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strength Routine`
+  String get rutinafuerza1 {
+    return Intl.message(
+      'Strength Routine',
+      name: 'rutinafuerza1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cardio Routine`
+  String get rutinacardio1 {
+    return Intl.message(
+      'Cardio Routine',
+      name: 'rutinacardio1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flexibility Routine`
+  String get rutinaflexibilidad1 {
+    return Intl.message(
+      'Flexibility Routine',
+      name: 'rutinaflexibilidad1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exercises`
+  String get ejercicios {
+    return Intl.message(
+      'Exercises',
+      name: 'ejercicios',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apply`
+  String get apply {
+    return Intl.message(
+      'Apply',
+      name: 'apply',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Language`
+  String get change_language {
+    return Intl.message(
+      'Change Language',
+      name: 'change_language',
       desc: '',
       args: [],
     );

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/models/perfil.dart';
 import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class DatosScreen extends StatefulWidget {
   @override
@@ -39,7 +40,7 @@ class _DatosScreenState extends State<DatosScreen> {
             children: [
               SizedBox(height: size.height * 0.1),
               Text(
-                "Completa los campos para una mejor experiencia de usuario",
+                S.current.datos_google,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
@@ -48,23 +49,23 @@ class _DatosScreenState extends State<DatosScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              buildTextField(nombreController, "Nombre", Icons.person),
+              buildTextField(nombreController, S.current.label_name, Icons.person),
               SizedBox(height: 20),
-              buildTextField(apellidoController, "Apellido", Icons.person_outline),
+              buildTextField(apellidoController, S.current.label_lastname, Icons.person_outline),
               SizedBox(height: 20),
-              buildNumericTextField(edadController, "Edad", Icons.cake),
+              buildNumericTextField(edadController, S.current.label_age, Icons.cake),
               SizedBox(height: 20),
-              buildNumericTextField(pesoController, "Peso (kg)", Icons.fitness_center),
+              buildNumericTextField(pesoController, S.current.label_weight, Icons.fitness_center),
               SizedBox(height: 20),
-              buildNumericTextField(estaturaController, "Estatura (cm)", Icons.height),
+              buildNumericTextField(estaturaController, S.current.label_height, Icons.height),
               SizedBox(height: 20),
-              buildDropdownField("Selecciona tu género", ["Hombre", "Mujer"], selectedGender, (value) {
+              buildDropdownField(S.current.label_gender, [S.current.label_man, S.current.label_woman], selectedGender, (value) {
                 setState(() {
                   selectedGender = value;
                 });
               }),
               SizedBox(height: 20),
-              buildDropdownField("Nivel de intensidad", ["Principiante", "Medio", "Avanzado"], selectedIntensity, (value) {
+              buildDropdownField(S.current.label_intensity, [S.current.label_intensity1, S.current.label_intensity2, S.current.label_intensity3], selectedIntensity, (value) {
                 setState(() {
                   selectedIntensity = value;
                 });
@@ -80,7 +81,7 @@ class _DatosScreenState extends State<DatosScreen> {
                   ),
                 ),
                 child: Text(
-                  'Guardar y continuar',
+                  S.current.save,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
