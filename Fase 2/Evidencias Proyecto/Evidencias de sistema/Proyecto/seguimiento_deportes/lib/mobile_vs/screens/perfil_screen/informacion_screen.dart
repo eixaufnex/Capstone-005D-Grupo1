@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/core/models/perfil.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class InformacionScreen extends StatefulWidget {
   const InformacionScreen({Key? key}) : super(key: key);
@@ -62,22 +63,22 @@ class _InformacionScreenState extends State<InformacionScreen> {
 
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text("Información de Usuario")),
+        appBar: AppBar(title: Text(S.current.info_usuario)),
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (perfil.firebaseId == 'N/A') {
       return Scaffold(
-        appBar: AppBar(title: Text("Información de Usuario")),
-        body: Center(child: Text("No hay información de perfil disponible.")),
+        appBar: AppBar(title: Text(S.current.info_usuario)),
+        body: Center(child: Text(S.current.no_info)),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Información de Usuario',
+          S.current.info_usuario,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.grey[900],
@@ -137,15 +138,15 @@ class _InformacionScreenState extends State<InformacionScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildInfoRow("Nombre completo", "${perfil.nombre} ${perfil.apellido}"),
+                      _buildInfoRow(S.current.nombre_completo, "${perfil.nombre} ${perfil.apellido}"),
                       Divider(color: Colors.grey[300], thickness: 1),
-                      _buildInfoRow("Edad", "${perfil.edad} años"),
+                      _buildInfoRow(S.current.label_age, "${perfil.edad} ${S.current.anios}"),
                       Divider(color: Colors.grey[300], thickness: 1),
-                      _buildInfoRow("Género", perfil.genero),
+                      _buildInfoRow(S.current.genero, perfil.genero),
                       Divider(color: Colors.grey[300], thickness: 1),
-                      _buildInfoRow("Peso", "${perfil.peso} kg"),
+                      _buildInfoRow(S.current.peso, "${perfil.peso} kg"),
                       Divider(color: Colors.grey[300], thickness: 1),
-                      _buildInfoRow("Estatura", "${perfil.estatura} m"),
+                      _buildInfoRow(S.current.Estatura, "${perfil.estatura} cm"),
                     ],
                   ),
                 ),

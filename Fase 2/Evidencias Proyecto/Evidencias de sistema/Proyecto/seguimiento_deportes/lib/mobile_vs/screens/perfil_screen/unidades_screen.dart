@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class UnidadesScreen extends StatelessWidget {
   const UnidadesScreen({super.key});
@@ -8,7 +9,7 @@ class UnidadesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Unidades',
+          S.current.unidades,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,

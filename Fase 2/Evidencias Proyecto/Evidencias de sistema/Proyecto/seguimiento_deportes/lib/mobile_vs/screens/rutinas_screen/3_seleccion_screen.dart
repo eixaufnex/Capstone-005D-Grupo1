@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/ejercicio_provider.dart';
 import 'package:seguimiento_deportes/core/models/ejercicio.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class SeleccionScreen extends StatefulWidget {
   final int rutinaId;
@@ -37,28 +38,32 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
           // Filtramos los ejercicios que ya están seleccionados
           final principianteExercises = filteredExercises
               .where((ejercicio) =>
-                  ejercicio.dificultadEjercicio == 'Principiante' &&
+                  (ejercicio.dificultadEjercicio == 'Principiante' || 
+                   ejercicio.dificultadEjercicio == 'Beginner') &&
                   !widget.ejerciciosSeleccionados
                       .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
               .toList();
 
           final intermedioExercises = filteredExercises
               .where((ejercicio) =>
-                  ejercicio.dificultadEjercicio == 'Intermedio' &&
+                  (ejercicio.dificultadEjercicio == 'Intermedio' ||
+                  ejercicio.dificultadEjercicio == 'Intermediate')&&
                   !widget.ejerciciosSeleccionados
                       .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
               .toList();
 
           final avanzadoExercises = filteredExercises
               .where((ejercicio) =>
-                  ejercicio.dificultadEjercicio == 'Avanzado' &&
+                  (ejercicio.dificultadEjercicio == 'Avanzado' ||
+                  ejercicio.dificultadEjercicio == 'Advanced')
+                   &&
                   !widget.ejerciciosSeleccionados
                       .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
               .toList();
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Lista de Ejercicios', style: TextStyle(color: Colors.black)),
+              title: Text(S.current.listaejercicio1, style: const TextStyle(color: Colors.black)),
               centerTitle: true,
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -74,9 +79,9 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
                   Expanded(
                     child: ListView(
                       children: [
-                        _buildDifficultySection('Principiante', principianteExercises),
-                        _buildDifficultySection('Intermedio', intermedioExercises),
-                        _buildDifficultySection('Avanzado', avanzadoExercises),
+                        _buildDifficultySection(S.current.label_intensity1, principianteExercises),
+                        _buildDifficultySection(S.current.intermedio, intermedioExercises),
+                        _buildDifficultySection(S.current.label_intensity3, avanzadoExercises),
                       ],
                     ),
                   ),
@@ -91,7 +96,7 @@ class _SeleccionScreenState extends State<SeleccionScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: const Text('Confirmar'),
+                      child: Text(S.current.Enter),
                     ),
                   ),
                 ],

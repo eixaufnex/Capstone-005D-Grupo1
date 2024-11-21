@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart';
@@ -22,7 +23,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
   String? selectedEjercicio;
 
   int _selectedIndex = 3;
-  String _selectedTab = 'Diario';
+  String _selectedTab = S.current.Diario;
 
   @override
   void initState() {
@@ -82,7 +83,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
   }
 
   List<BarChartGroupData> _getBarChartGroups() {
-    if (_selectedTab == 'Diario') {
+    if (_selectedTab == S.current.Diario) {
       Map<int, List<double>> tiempoPorDia = {
         0: [],
         1: [],
@@ -120,7 +121,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
           barRods: [BarChartRodData(toY: promedio)],
         );
       }).toList();
-    } else if (_selectedTab == 'Mensual') {
+    } else if (_selectedTab == S.current.Mensual) {
       Map<int, List<double>> tiempoPorMes = {
         1: [],
         2: [],
@@ -169,7 +170,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
   }
 
   List<FlSpot> _getLineChartSpots() {
-    Map<int, List<double>> pesoPorDiaOMes = (_selectedTab == 'Diario')
+    Map<int, List<double>> pesoPorDiaOMes = (_selectedTab == S.current.Diario)
         ? {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
         : {
             1: [],
@@ -196,7 +197,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
             DateTime fecha = DateTime.parse(ejercicio['fecha_rutina']);
             double peso = ejercicio['peso']?.toDouble() ?? 0;
             int index =
-                (_selectedTab == 'Diario') ? fecha.weekday - 1 : fecha.month;
+                (_selectedTab == S.current.Diario) ? fecha.weekday - 1 : fecha.month;
             pesoPorDiaOMes[index]?.add(peso);
           }
         }
@@ -217,9 +218,9 @@ class _GraficosScreenState extends State<GraficosScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Rendimiento Físico',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          S.current.rendimiento_fisico,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Container(
@@ -242,21 +243,21 @@ class _GraficosScreenState extends State<GraficosScreen> {
                       showTitles: true,
                       reservedSize: 25,
                       getTitlesWidget: (double value, TitleMeta meta) {
-                        if (_selectedTab == 'Diario') {
-                          const days = [
-                            'Lun',
-                            'Mar',
-                            'Mié',
-                            'Jue',
-                            'Vie',
-                            'Sáb',
-                            'Dom'
+                        if (_selectedTab == S.current.Diario) {
+                          var days = [
+                            S.current.Lun,
+                            S.current.Mar,
+                            S.current.Mie,
+                            S.current.Jue,
+                            S.current.Vie,
+                            S.current.Sab,
+                            S.current.Dom
                           ];
                           return SideTitleWidget(
                             axisSide: meta.axisSide,
                             child: Text(days[value.toInt() % 7]),
                           );
-                        } else if (_selectedTab == 'Mensual') {
+                        } else if (_selectedTab == S.current.Mensual) {
                           return SideTitleWidget(
                             axisSide: meta.axisSide,
                             child: Text((value.toInt() + 1).toString()),
@@ -273,9 +274,9 @@ class _GraficosScreenState extends State<GraficosScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
-          'Progreso de Entrenamiento',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          S.current.progreso_entrenamiento,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         Container(
@@ -298,21 +299,21 @@ class _GraficosScreenState extends State<GraficosScreen> {
                       showTitles: true,
                       reservedSize: 25,
                       getTitlesWidget: (double value, TitleMeta meta) {
-                        if (_selectedTab == 'Diario') {
-                          const days = [
-                            'Lun',
-                            'Mar',
-                            'Mié',
-                            'Jue',
-                            'Vie',
-                            'Sáb',
-                            'Dom'
+                        if (_selectedTab == S.current.Diario) {
+                          var days = [
+                            S.current.Lun,
+                            S.current.Mar,
+                            S.current.Mie,
+                            S.current.Jue,
+                            S.current.Vie,
+                            S.current.Sab,
+                            S.current.Dom
                           ];
                           return SideTitleWidget(
                             axisSide: meta.axisSide,
                             child: Text(days[value.toInt() % 7]),
                           );
-                        } else if (_selectedTab == 'Mensual') {
+                        } else if (_selectedTab == S.current.Mensual) {
                           return SideTitleWidget(
                             axisSide: meta.axisSide,
                             child: Text((value.toInt() + 1).toString()),
@@ -343,13 +344,13 @@ class _GraficosScreenState extends State<GraficosScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Filtrar"),
+          title: Text(S.current.filtrar),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
                 value: selectedRutina,
-                hint: const Text("Seleccionar Rutina"),
+                hint: Text(S.current.Seleccionar_rutina),
                 onChanged: (value) {
                   setState(() {
                     selectedRutina = value;
@@ -365,7 +366,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
               ),
               DropdownButtonFormField<String>(
                 value: selectedEjercicio,
-                hint: const Text("Seleccionar Ejercicio"),
+                hint: Text(S.current.Seleccionar_ejercicio),
                 onChanged: (value) {
                   setState(() {
                     selectedEjercicio = value;
@@ -390,13 +391,13 @@ class _GraficosScreenState extends State<GraficosScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("Cancelar"),
+              child: Text(S.current.cancelar),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("Aplicar"),
+              child: Text(S.current.apply),
             ),
           ],
         );
@@ -436,7 +437,7 @@ class _GraficosScreenState extends State<GraficosScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Gráficos',
+          S.current.graficos,
           style: Theme.of(context)
               .textTheme
               .headlineMedium
@@ -458,8 +459,8 @@ class _GraficosScreenState extends State<GraficosScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildTabButton('Diario'),
-                _buildTabButton('Mensual'),
+                _buildTabButton(S.current.Diario),
+                _buildTabButton(S.current.Mensual),
               ],
             ),
             const SizedBox(height: 20),
@@ -493,10 +494,10 @@ class _GraficosScreenState extends State<GraficosScreen> {
             showSelectedLabels: true,
             showUnselectedLabels: true,
             items: [
-              const BottomNavigationBarItem(
-                  icon: Icon(Icons.home_filled), label: 'Home'),
-              const BottomNavigationBarItem(
-                  icon: Icon(Icons.view_list_rounded), label: 'Rutinas'),
+              BottomNavigationBarItem(
+                  icon: const Icon(Icons.home_filled), label: S.current.home),
+              BottomNavigationBarItem(
+                  icon: const Icon(Icons.view_list_rounded), label: S.current.rutina),
               BottomNavigationBarItem(
                 icon: Transform.translate(
                   offset: Offset(0, 10),
@@ -508,11 +509,11 @@ class _GraficosScreenState extends State<GraficosScreen> {
                 ),
                 label: '',
               ),
-              const BottomNavigationBarItem(
-                  icon: Icon(Icons.stacked_line_chart_rounded),
-                  label: 'Progreso'),
-              const BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle), label: 'Perfil'),
+              BottomNavigationBarItem(
+                  icon: const Icon(Icons.stacked_line_chart_rounded),
+                  label: S.current.progreso),
+              BottomNavigationBarItem(
+                  icon: const Icon(Icons.account_circle), label: S.current.perfil),
             ],
           ),
         ),

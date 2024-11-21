@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/models/rutina_detallada.dart';
 import 'package:seguimiento_deportes/core/providers/rutina_detallada_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class Series {
   int reps;
@@ -105,7 +106,7 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content: Text(
-              'Datos guardados exitosamente para el ejercicio específico')),
+              S.current.datos_guardados)),
     );
   }
 
@@ -116,9 +117,9 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: const Text(
-            'Progreso',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          title: Text(
+            S.current.Progreso,
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
@@ -132,8 +133,8 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
           bottom: TabBar(
             labelColor: Colors.black,
             tabs: [
-              Tab(text: "Rutina Actual"),
-              Tab(text: "Historial de Progreso"),
+              Tab(text: S.current.rutina_actual),
+              Tab(text: S.current.rutina_historial),
             ],
           ),
         ),
@@ -153,7 +154,7 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCounterRow('Series', sets, _updateSets),
+          _buildCounterRow(S.current.series, sets, _updateSets),
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -163,16 +164,16 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
             },
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Observaciones',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Text(
+            S.current.Observaciones,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           TextFormField(
             controller: _commentsController,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: 'Añade tus sensaciones en la rutina',
+              hintText: S.current.Observaciones1,
               fillColor: Colors.orange[200],
               filled: true,
               border: OutlineInputBorder(
@@ -190,7 +191,7 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               ),
-              child: const Text('Guardar', style: TextStyle(fontSize: 16)),
+              child: Text(S.current.guardar, style: const TextStyle(fontSize: 16)),
             ),
           ),
         ],
@@ -205,7 +206,7 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
         _buildCalculationCard(
             Icons.show_chart, 'E1RM', e1rm.toStringAsFixed(1)),
         _buildCalculationCard(
-            Icons.fitness_center, 'Tonelaje', tonelaje.toString()),
+            Icons.fitness_center, S.current.tonelaje, tonelaje.toString()),
       ],
     );
   }
@@ -246,7 +247,7 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
             .toList();
 
         if (historial.isEmpty) {
-          return Center(child: Text("No hay historial disponible."));
+          return Center(child: Text(S.current.no_historial));
         }
 
         final Map<String, List<RutinaDetallada>> groupedByDate = {};
@@ -266,15 +267,15 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
             final comentario = routinesOnDate.first.comentarios;
 
             return ExpansionTile(
-              title: Text("Progreso del: $date"),
+              title: Text("${S.current.progreso_historial}: $date"),
               subtitle: comentario != null && comentario.isNotEmpty
-                  ? Text("Comentarios: $comentario")
+                  ? Text("${S.current.comentarios}: $comentario")
                   : null,
               children: routinesOnDate.map((rutina) {
                 return ListTile(
-                  title: Text("Serie ${rutina.series}"),
+                  title: Text("${S.current.Serie} ${rutina.series}"),
                   subtitle: Text(
-                      "Reps: ${rutina.repeticiones}, Peso: ${rutina.peso} kg, RPE: ${rutina.rpe}"),
+                      "Reps: ${rutina.repeticiones}, ${S.current.peso}: ${rutina.peso} kg, RPE: ${rutina.rpe}"),
                 );
               }).toList(),
             );
@@ -296,7 +297,7 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Serie ${index + 1}',
+                '${S.current.Serie} ${index + 1}',
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
@@ -318,7 +319,7 @@ class _RutinaDetalladaScreenState extends State<RutinaDetalladaScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _buildTextField(
-                      label: 'Peso (kg)',
+                      label: S.current.label_weight,
                       initialValue: seriesList[index].weight.toString(),
                       onChanged: (value) {
                         setState(() {

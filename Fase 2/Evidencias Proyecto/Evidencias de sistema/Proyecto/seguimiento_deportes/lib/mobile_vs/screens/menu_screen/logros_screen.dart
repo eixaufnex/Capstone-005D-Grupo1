@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/logro_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
@@ -126,7 +127,7 @@ class _LogrosScreenState extends State<LogrosScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Logros',
+          S.current.logros1,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -135,8 +136,8 @@ class _LogrosScreenState extends State<LogrosScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'Logros Globales'),
-            Tab(text: 'Logros Obtenidos'),
+            Tab(text: S.current.logros_globales),
+            Tab(text: S.current.logros_obtenidos),
           ],
           indicatorColor: Colors.blue,
           labelColor: Colors.black,
@@ -184,7 +185,7 @@ class _LogrosScreenState extends State<LogrosScreen>
           ),
           ListTile(
             leading: Icon(Icons.home),
-            title: Text('Inicio'),
+            title: Text(S.current.home),
             onTap: () {
               Navigator.push(
                 context,
@@ -194,7 +195,7 @@ class _LogrosScreenState extends State<LogrosScreen>
           ),
           ListTile(
             leading: Icon(Icons.list),
-            title: Text('Lista de ejercicios'),
+            title: Text(S.current.listaejercicio1),
             onTap: () {
               Navigator.push(
                   context,
@@ -204,7 +205,7 @@ class _LogrosScreenState extends State<LogrosScreen>
           ),
           ListTile(
             leading: Icon(Icons.flag),
-            title: Text('Objetivos'),
+            title: Text(S.current.objetivos1),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ObjetivosScreen()));
@@ -212,7 +213,7 @@ class _LogrosScreenState extends State<LogrosScreen>
           ),
           ListTile(
             leading: Icon(Icons.menu_book_rounded),
-            title: Text('Glosario'),
+            title: Text(S.current.glosario1),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => GlosarioScreen()));
@@ -229,7 +230,7 @@ class _LogrosScreenState extends State<LogrosScreen>
                 await _signOut();
               },
               child:
-                  Text('Cerrar sesión', style: TextStyle(color: Colors.black)),
+                  Text(S.current.cerrarsesion, style: TextStyle(color: Colors.black)),
             ),
           ),
         ],

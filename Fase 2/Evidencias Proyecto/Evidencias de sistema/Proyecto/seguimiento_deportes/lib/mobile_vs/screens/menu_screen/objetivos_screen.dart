@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/objetivo_provider.dart';
 import 'package:seguimiento_deportes/core/models/objetivo.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
@@ -54,7 +55,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Objetivos',
+          S.current.objetivos1,
           style: Theme.of(context)
               .textTheme
               .headlineMedium
@@ -91,7 +92,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
             ),
             ListTile(
               leading: Icon(Icons.home),
-              title: Text('Inicio'),
+              title: Text(S.current.home),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => HomeScreen()));
@@ -99,7 +100,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
             ),
             ListTile(
               leading: Icon(Icons.list),
-              title: Text('Lista de ejercicios'),
+              title: Text(S.current.listaejercicio1),
               onTap: () {
                 Navigator.push(
                     context,
@@ -109,7 +110,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
             ),
             ListTile(
               leading: Icon(Icons.emoji_events),
-              title: Text('Logros'),
+              title: Text(S.current.logros1),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LogrosScreen()));
@@ -117,7 +118,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
             ),
             ListTile(
               leading: Icon(Icons.menu_book_rounded),
-              title: Text('Glosario'),
+              title: Text(S.current.glosario1),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => GlosarioScreen()));
@@ -133,7 +134,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                 onPressed: () async {
                   await _signOut();
                 },
-                child: Text('Cerrar sesión',
+                child: Text(S.current.cerrarsesion,
                     style: TextStyle(color: Colors.black)),
               ),
             ),
@@ -151,9 +152,9 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
               unselectedLabelColor:
                   Colors.black54, // Color para las pestañas no seleccionadas
               tabs: [
-                Tab(text: "En progreso"),
-                Tab(text: "Completadas"),
-                Tab(text: "Sin comenzar"),
+                Tab(text: S.current.En_progreso ),
+                Tab(text: S.current.Completadas ),
+                Tab(text: S.current.Sin_comenzar),
               ],
             ),
             Expanded(
@@ -207,14 +208,14 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  'Descripción: ${objetivo.descripcionObjetivo ?? "Sin descripción"}'),
+                                                  '${S.current.descripcion}: ${objetivo.descripcionObjetivo ?? S.current.sin_descripcion}'),
                                               Text(
-                                                  'Valor inicial: ${objetivo.valorInicial}'),
+                                                  '${S.current.valor_inicial}: ${objetivo.valorInicial}'),
                                               Text(
-                                                  'Valor actual: ${objetivo.valorActual}'),
+                                                  '${S.current.valor_actual}: ${objetivo.valorActual}'),
                                               Text(
-                                                  'Valor final: ${objetivo.valorObjetivo}'),
-                                              Text('Progreso: $porcentaje%'),
+                                                  '${S.current.valor_final}: ${objetivo.valorObjetivo}'),
+                                              Text('${S.current.progreso}: $porcentaje%'),
                                             ],
                                           ),
                                         ),
@@ -343,14 +344,14 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  'Descripción: ${objetivo.descripcionObjetivo ?? "Sin descripción"}'),
+                                                  '${S.current.descripcion}: ${objetivo.descripcionObjetivo ?? S.current.sin_descripcion}'),
                                               Text(
-                                                  'Valor inicial: ${objetivo.valorInicial}'),
+                                                  '${S.current.valor_inicial}: ${objetivo.valorInicial}'),
                                               Text(
-                                                  'Valor actual: ${objetivo.valorActual}'),
+                                                  '${S.current.valor_actual}: ${objetivo.valorActual}'),
                                               Text(
-                                                  'Valor final: ${objetivo.valorObjetivo}'),
-                                              Text('Progreso: 100%'),
+                                                  '${S.current.valor_final}: ${objetivo.valorObjetivo}'),
+                                              Text('${S.current.progreso}: 100%'),
                                             ],
                                           ),
                                         ),
@@ -473,14 +474,14 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  'Descripción: ${objetivo.descripcionObjetivo ?? "Sin descripción"}'),
+                                                  '${S.current.descripcion}: ${objetivo.descripcionObjetivo ?? S.current.sin_descripcion}'),
                                               Text(
-                                                  'Valor inicial: ${objetivo.valorInicial}'),
+                                                  '${S.current.valor_inicial}: ${objetivo.valorInicial}'),
                                               Text(
-                                                  'Valor actual: ${objetivo.valorActual}'),
+                                                  '${S.current.valor_actual}: ${objetivo.valorActual}'),
                                               Text(
-                                                  'Valor final: ${objetivo.valorObjetivo}'),
-                                              Text('Progreso: 0%'),
+                                                  '${S.current.valor_final}: ${objetivo.valorObjetivo}'),
+                                              Text('${S.current.progreso}: 0%'),
                                             ],
                                           ),
                                         ),
@@ -527,24 +528,24 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                 await showDialog<bool>(
                                               context: context,
                                               builder: (context) => AlertDialog(
-                                                title: const Text(
-                                                    "Eliminar Objetivo"),
-                                                content: const Text(
-                                                    "¿Estás seguro de que deseas eliminar este objetivo?"),
+                                                title: Text(
+                                                    S.current.eliminar_objetivo),
+                                                content: Text(
+                                                    S.current.estas_seguro),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () =>
                                                         Navigator.of(context)
                                                             .pop(false),
                                                     child:
-                                                        const Text("Cancelar"),
+                                                        Text(S.current.cancelar),
                                                   ),
                                                   TextButton(
                                                     onPressed: () =>
                                                         Navigator.of(context)
                                                             .pop(true),
                                                     child:
-                                                        const Text("Eliminar"),
+                                                        Text(S.current.eliminar),
                                                   ),
                                                 ],
                                               ),
@@ -597,14 +598,14 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text("Editar Valor Actual"),
+          title: Text(S.current.Editar_valor),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TextField(
                   controller: valorActualController,
-                  decoration: const InputDecoration(labelText: "Valor Actual"),
+                  decoration: InputDecoration(labelText: S.current.valor_actual),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
@@ -614,7 +615,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text("Cancelar"),
+              child: Text(S.current.cancelar),
             ),
             ElevatedButton(
               onPressed: () {
@@ -626,12 +627,12 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                   Navigator.pop(dialogContext);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Por favor, ingresa un valor válido.")),
+                    SnackBar(
+                        content: Text(S.current.valor_valido)),
                   );
                 }
               },
-              child: const Text("Actualizar"),
+              child: Text(S.current.Actualizar),
             ),
           ],
         );
@@ -647,14 +648,14 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
     final valorActualController = TextEditingController();
     final valorObjetivoController = TextEditingController();
     DateTime? fechaLimite;
-    String tipoObjetivo = 'Dieta';
+    String tipoObjetivo = S.current.Dieta;
 
     final user = FirebaseAuth.instance.currentUser;
     final firebaseId = user?.uid;
 
     if (firebaseId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error: Usuario no autenticado")),
+        SnackBar(content: Text(S.current.error_usuario)),
       );
       return;
     }
@@ -663,7 +664,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Crear nuevo objetivo"),
+          title: Text(S.current.crear_objetivo),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -671,13 +672,13 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                 DropdownButtonFormField<String>(
                   value: tipoObjetivo,
                   decoration:
-                      const InputDecoration(labelText: "Tipo de objetivo"),
+                      InputDecoration(labelText: S.current.tipo_objetivo),
                   items: [
-                    'Dieta',
-                    'Nuevos pesos',
-                    'Nuevo porcentaje',
-                    'Aumento de repeticiones',
-                    'Reducción de tiempos'
+                    S.current.Dieta,
+                    S.current.nuevos_pesos,
+                    S.current.nuevos_porcentaje,
+                    S.current.Aumento_rep,
+                    S.current.Reduccion_tiempo
                   ]
                       .map((tipo) =>
                           DropdownMenuItem(value: tipo, child: Text(tipo)))
@@ -687,25 +688,25 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                 TextField(
                   controller: nombreController,
                   decoration:
-                      const InputDecoration(labelText: "Título del objetivo"),
+                      InputDecoration(labelText: S.current.Titulo_objetivo),
                 ),
                 TextField(
                   controller: descripcionController,
-                  decoration: const InputDecoration(labelText: "Descripción"),
+                  decoration: InputDecoration(labelText: S.current.descripcion),
                 ),
                 TextField(
                   controller: valorInicialController,
-                  decoration: const InputDecoration(labelText: "Valor inicial"),
+                  decoration: InputDecoration(labelText: S.current.valor_inicial),
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
                   controller: valorActualController,
-                  decoration: const InputDecoration(labelText: "Valor actual"),
+                  decoration:  InputDecoration(labelText: S.current.valor_actual),
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
                   controller: valorObjetivoController,
-                  decoration: const InputDecoration(labelText: "Valor final"),
+                  decoration:  InputDecoration(labelText: S.current.valor_final),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
@@ -719,8 +720,8 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                     );
                   },
                   child: Text(fechaLimite == null
-                      ? "Seleccionar fecha límite"
-                      : "Fecha límite: ${fechaLimite!.toLocal()}"
+                      ? S.current.seleccionar_fecha
+                      : "${S.current.fecha_limite}: ${fechaLimite!.toLocal()}"
                           .split(' ')[0]),
                 ),
               ],
@@ -731,7 +732,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("Cancelar"),
+              child: Text(S.current.cancelar),
             ),
             ElevatedButton(
               onPressed: () {
@@ -752,7 +753,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                 provider.createObjetivo(nuevoObjetivo);
                 Navigator.pop(context);
               },
-              child: const Text("Guardar objetivo"),
+              child: Text(S.current.guardar_objetivo),
             ),
           ],
         );

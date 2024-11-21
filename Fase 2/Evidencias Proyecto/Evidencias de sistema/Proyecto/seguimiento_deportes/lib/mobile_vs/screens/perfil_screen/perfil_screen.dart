@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/perfil_screen/informacion_screen.dart';
@@ -145,7 +146,7 @@ class _PerfilScreenState extends State<PerfilScreen>
               padding: const EdgeInsets.only(top: 40, bottom: 10),
               alignment: Alignment.center,
               child: Text(
-                'Perfil',
+                S.current.perfil,
                 style: Theme.of(context)
                     .textTheme
                     .headlineMedium
@@ -184,14 +185,14 @@ class _PerfilScreenState extends State<PerfilScreen>
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Correo',
+                      S.current.Email,
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall
                           ?.copyWith(color: Colors.black87),
                     ),
                     Text(
-                      userEmail ?? 'correo@gmail.com',
+                      userEmail ?? S.current.emailsample,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
                     ),
                     const SizedBox(height: 20),
@@ -214,9 +215,9 @@ class _PerfilScreenState extends State<PerfilScreen>
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: const Text(
-                          'Ver Información',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        child: Text(
+                          S.current.ver_info,
+                          style: const TextStyle(color: Colors.white, fontSize: 14),
                         ),
                       ),
                     ),
@@ -228,42 +229,42 @@ class _PerfilScreenState extends State<PerfilScreen>
             const Divider(),
             const SizedBox(height: 10),
             perfil_widget(
-              title: "Idioma",
+              title: S.current.idioma,
               icon: Icons.language,
               onPress: () {
                 Navigator.pushReplacementNamed(context, 'idioma');
               },
             ),
             perfil_widget(
-              title: "Notificaciones",
+              title: S.current.notificaciones,
               icon: Icons.notifications,
               onPress: () {
                 Navigator.pushReplacementNamed(context, 'notificaciones');
               },
             ),
             perfil_widget(
-              title: "Tema    (Próximamente...)",
+              title: S.current.tema,
               icon: Icons.dark_mode,
               onPress: () {
                 Navigator.pushReplacementNamed(context, 'tema');
               },
             ),
+            // perfil_widget(
+            //   title: S.current.unidades,
+            //   icon: Icons.build_rounded,
+            //   onPress: () {
+            //     Navigator.pushReplacementNamed(context, 'unidades');
+            //   },
+            // ),
             perfil_widget(
-              title: "Unidades",
-              icon: Icons.build_rounded,
-              onPress: () {
-                Navigator.pushReplacementNamed(context, 'unidades');
-              },
-            ),
-            perfil_widget(
-              title: "Privacidad de datos",
+              title: S.current.privacidad_datos,
               icon: Icons.security,
               onPress: () {
                 Navigator.pushReplacementNamed(context, 'privacidad');
               },
             ),
             perfil_widget(
-              title: "Acerca de...",
+              title: S.current.acerca_de,
               icon: Icons.info,
               onPress: () {
                 Navigator.pushReplacementNamed(context, 'about');
@@ -299,11 +300,11 @@ class _PerfilScreenState extends State<PerfilScreen>
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_filled),
-                label: 'Home',
+                label: S.current.home,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.view_list_rounded),
-                label: 'Rutinas',
+                label: S.current.rutina,
               ),
               BottomNavigationBarItem(
                 icon: Transform.translate(
@@ -314,11 +315,11 @@ class _PerfilScreenState extends State<PerfilScreen>
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.stacked_line_chart_rounded),
-                label: 'Progreso',
+                label: S.current.Progreso,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
-                label: 'Perfil',
+                label: S.current.perfil,
               ),
             ],
           ),

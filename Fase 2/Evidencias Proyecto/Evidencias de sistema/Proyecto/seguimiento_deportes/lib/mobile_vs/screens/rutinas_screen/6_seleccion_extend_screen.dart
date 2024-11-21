@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/ejercicio_provider.dart';
 import 'package:seguimiento_deportes/core/models/ejercicio.dart';
 import 'package:seguimiento_deportes/core/services/rutina_ejercicio_service.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class SeleccionExtendScreen extends StatefulWidget {
   final int rutinaId;
@@ -30,32 +31,37 @@ class _SeleccionExtendScreenState extends State<SeleccionExtendScreen> {
       child: Consumer<EjercicioProvider>(
         builder: (context, ejercicioProvider, _) {
           final tipoRutina = widget.tipoRutina;
-          final filteredExercises = ejercicioProvider.getExercisesByType(tipoRutina);
+          final filteredExercises =
+              ejercicioProvider.getExercisesByType(tipoRutina);
 
           final principianteExercises = filteredExercises
               .where((ejercicio) =>
-                  ejercicio.dificultadEjercicio == 'Principiante' &&
-                  !widget.ejerciciosSeleccionados
-                      .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
+                  (ejercicio.dificultadEjercicio == 'Principiante' ||
+                      ejercicio.dificultadEjercicio == 'Beginner') &&
+                  !widget.ejerciciosSeleccionados.any((selected) =>
+                      selected['id'] == ejercicio.idListaEjercicio.toString()))
               .toList();
 
           final intermedioExercises = filteredExercises
               .where((ejercicio) =>
-                  ejercicio.dificultadEjercicio == 'Intermedio' &&
-                  !widget.ejerciciosSeleccionados
-                      .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
+                  (ejercicio.dificultadEjercicio == 'Intermedio' ||
+                      ejercicio.dificultadEjercicio == 'Intermediate') &&
+                  !widget.ejerciciosSeleccionados.any((selected) =>
+                      selected['id'] == ejercicio.idListaEjercicio.toString()))
               .toList();
 
           final avanzadoExercises = filteredExercises
               .where((ejercicio) =>
-                  ejercicio.dificultadEjercicio == 'Avanzado' &&
-                  !widget.ejerciciosSeleccionados
-                      .any((selected) => selected['id'] == ejercicio.idListaEjercicio.toString()))
+                  (ejercicio.dificultadEjercicio == 'Avanzado' ||
+                      ejercicio.dificultadEjercicio == 'Advanced') &&
+                  !widget.ejerciciosSeleccionados.any((selected) =>
+                      selected['id'] == ejercicio.idListaEjercicio.toString()))
               .toList();
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Lista de Ejercicios', style: TextStyle(color: Colors.black)),
+              title: Text(S.current.listaejercicio1,
+                  style: const TextStyle(color: Colors.black)),
               centerTitle: true,
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -71,16 +77,20 @@ class _SeleccionExtendScreenState extends State<SeleccionExtendScreen> {
                   Expanded(
                     child: ListView(
                       children: [
-                        _buildDifficultySection('Principiante', principianteExercises),
-                        _buildDifficultySection('Intermedio', intermedioExercises),
-                        _buildDifficultySection('Avanzado', avanzadoExercises),
+                        _buildDifficultySection(
+                            S.current.label_intensity1, principianteExercises),
+                        _buildDifficultySection(
+                            S.current.intermedio, intermedioExercises),
+                        _buildDifficultySection(
+                            S.current.label_intensity3, avanzadoExercises),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () => _confirmSelection(filteredExercises), // Pasa filteredExercises aquí
+                      onPressed: () => _confirmSelection(
+                          filteredExercises), // Pasa filteredExercises aquí
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.black,
                         backgroundColor: const Color(0xFFF5ECE3),
@@ -88,7 +98,7 @@ class _SeleccionExtendScreenState extends State<SeleccionExtendScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: const Text('Confirmar'),
+                      child: Text(S.current.Enter),
                     ),
                   ),
                 ],
@@ -155,7 +165,8 @@ class _SeleccionExtendScreenState extends State<SeleccionExtendScreen> {
                 children: [
                   Text(
                     name_ejercicio,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     muscleGroup,
@@ -179,17 +190,16 @@ class _SeleccionExtendScreenState extends State<SeleccionExtendScreen> {
   }
 
   Future<void> _confirmSelection(List<Ejercicio> filteredExercises) async {
-    final selectedExercisesData = selectedExercises.entries
-        .where((entry) => entry.value)
-        .map((entry) {
-          final ejercicio = filteredExercises.firstWhere(
-            (ejercicio) => ejercicio.idListaEjercicio == entry.key,
-          );
-          return {
-            'id': ejercicio.idListaEjercicio.toString(),
-            'nombre': ejercicio.nombreEjercicio,
-          };
-        }).toList();
+    final selectedExercisesData =
+        selectedExercises.entries.where((entry) => entry.value).map((entry) {
+      final ejercicio = filteredExercises.firstWhere(
+        (ejercicio) => ejercicio.idListaEjercicio == entry.key,
+      );
+      return {
+        'id': ejercicio.idListaEjercicio.toString(),
+        'nombre': ejercicio.nombreEjercicio,
+      };
+    }).toList();
 
     final success = await ApiService().saveEjerciciosToRutina(
       widget.rutinaId,
@@ -208,4 +218,3 @@ class _SeleccionExtendScreenState extends State<SeleccionExtendScreen> {
     }
   }
 }
-

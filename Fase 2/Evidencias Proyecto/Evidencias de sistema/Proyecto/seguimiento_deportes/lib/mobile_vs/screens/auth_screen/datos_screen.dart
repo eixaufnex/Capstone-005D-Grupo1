@@ -49,23 +49,30 @@ class _DatosScreenState extends State<DatosScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              buildTextField(nombreController, S.current.label_name, Icons.person),
+              buildTextField(nombreController, S.current.label_name, Icons.person, r'^[a-zA-Z]+$'),
               SizedBox(height: 20),
-              buildTextField(apellidoController, S.current.label_lastname, Icons.person_outline),
+              buildTextField(apellidoController, S.current.label_lastname, Icons.person_outline, r'^[a-zA-Z]+$'),
               SizedBox(height: 20),
-              buildNumericTextField(edadController, S.current.label_age, Icons.cake),
+              buildNumericTextField(edadController, S.current.label_age, Icons.cake, 1, 100),
               SizedBox(height: 20),
-              buildNumericTextField(pesoController, S.current.label_weight, Icons.fitness_center),
+              buildNumericTextField(pesoController, S.current.label_weight, Icons.fitness_center, 1, 165),
               SizedBox(height: 20),
-              buildNumericTextField(estaturaController, S.current.label_height, Icons.height),
+              buildNumericTextField(estaturaController, S.current.label_height, Icons.height, 1, 200),
               SizedBox(height: 20),
-              buildDropdownField(S.current.label_gender, [S.current.label_man, S.current.label_woman], selectedGender, (value) {
+              buildDropdownField(S.current.label_gender, [
+                S.current.label_man,
+                S.current.label_woman
+              ], selectedGender, (value) {
                 setState(() {
                   selectedGender = value;
                 });
               }),
               SizedBox(height: 20),
-              buildDropdownField(S.current.label_intensity, [S.current.label_intensity1, S.current.label_intensity2, S.current.label_intensity3], selectedIntensity, (value) {
+              buildDropdownField(S.current.label_intensity, [
+                S.current.label_intensity1,
+                S.current.label_intensity2,
+                S.current.label_intensity3
+              ], selectedIntensity, (value) {
                 setState(() {
                   selectedIntensity = value;
                 });
@@ -107,7 +114,8 @@ class _DatosScreenState extends State<DatosScreen> {
     );
   }
 
-  Widget buildTextField(TextEditingController controller, String label, IconData icon) {
+  Widget buildTextField(
+      TextEditingController controller, String label, IconData icon, String regexPattern) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -124,10 +132,18 @@ class _DatosScreenState extends State<DatosScreen> {
         filled: true,
         fillColor: Colors.white24,
       ),
+      onChanged: (value) {
+        if (!RegExp(regexPattern).hasMatch(value)) {
+          controller.text = value.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+          controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: controller.text.length));
+        }
+      },
     );
   }
 
-  Widget buildNumericTextField(TextEditingController controller, String label, IconData icon) {
+  Widget buildNumericTextField(TextEditingController controller, String label, IconData icon,
+      int min, int max) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
@@ -145,6 +161,14 @@ class _DatosScreenState extends State<DatosScreen> {
         filled: true,
         fillColor: Colors.white24,
       ),
+      onChanged: (value) {
+        final parsedValue = int.tryParse(value) ?? min;
+        if (parsedValue < min || parsedValue > max) {
+          controller.text = parsedValue.clamp(min, max).toString();
+          controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: controller.text.length));
+        }
+      },
     );
   }
 

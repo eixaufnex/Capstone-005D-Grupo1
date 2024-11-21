@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seguimiento_deportes/core/services/rutina_ejercicio_service.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/6_seleccion_extend_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/5_rutina_detallada_screen.dart';
 
@@ -46,8 +47,8 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
     final confirmDelete = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirmar eliminación'),
-        content: Text('¿Estás seguro que deseas eliminar este ejercicio?'),
+        title: Text(S.current.confimar_eliminacion),
+        content: Text(S.current.confimar_eliminacion1),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -55,7 +56,7 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Sí'),
+            child: Text(S.current.si),
           ),
         ],
       ),
@@ -71,11 +72,11 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
           ejercicios.removeWhere((ej) => ej['id'] == ejercicioId);
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ejercicio eliminado exitosamente')),
+          SnackBar(content: Text(S.current.eliminacion_ejercicio)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al eliminar el ejercicio')),
+          SnackBar(content: Text(S.current.eliminacion_ejercicio1)),
         );
       }
     }
@@ -124,7 +125,7 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Tipo rutina: ${widget.tipoRutina}',
+              '${S.current.tipo_rutina}: ${widget.tipoRutina}',
               style: TextStyle(fontSize: 18),
             ),
             SizedBox(height: 16),
@@ -185,11 +186,7 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
                                           style: TextStyle(
                                               color: Colors.grey[600]),
                                         ),
-                                        Text(
-                                          '03 Series | 12 Reps',
-                                          style: TextStyle(
-                                              color: Colors.grey[600]),
-                                        ),
+                                        
                                       ],
                                     ),
                                   ],
@@ -228,7 +225,7 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
                       },
                     ),
                   )
-                : Text('No hay ejercicios en esta rutina.'),
+                : Text(S.current.no_ejercicios_rutina),
             SizedBox(height: 16),
             Center(
               child: ElevatedButton(
@@ -241,7 +238,7 @@ class _RutinaExtendScreenState extends State<RutinaExtendScreen> {
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 54, vertical: 12),
                 ),
-                child: Text('Agrega un nuevo ejercicio'),
+                child: Text(S.current.agrega_nuevo_ejercicio),
               ),
             ),
           ],

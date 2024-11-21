@@ -100,7 +100,7 @@ class RutinasRecomendadas extends StatelessWidget {
               nombre: S.current.rutinafuerza1,
               ejercicios: "7 ${S.current.ejercicios}",
               emoji: '💪',
-              nivel: S.current.label_intensity2,
+              nivel: S.current.intermedio,
               onAdd: () => addRecommendedRoutine(
                 0,
                 S.current.rutinafuerza1,
@@ -125,7 +125,7 @@ class RutinasRecomendadas extends StatelessWidget {
               nombre: S.current.rutinacardio1,
               ejercicios: "2 ${S.current.ejercicios}",
               emoji: '🏃‍♂️',
-              nivel: S.current.label_intensity2,
+              nivel: S.current.intermedio,
               onAdd: () => addRecommendedRoutine(
                 1,
                 S.current.rutinacardio1,
@@ -145,7 +145,7 @@ class RutinasRecomendadas extends StatelessWidget {
               nombre: S.current.rutinaflexibilidad1,
               ejercicios: "3 ${S.current.ejercicios}",
               emoji: '🧘‍♂️',
-              nivel: S.current.label_intensity2,
+              nivel: S.current.intermedio,
               onAdd: () => addRecommendedRoutine(
                 2,
                 S.current.rutinaflexibilidad1,

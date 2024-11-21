@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class TemaScreen extends StatefulWidget {
   const TemaScreen({super.key});
@@ -8,11 +9,11 @@ class TemaScreen extends StatefulWidget {
 }
 
 class _TemaScreenState extends State<TemaScreen> {
-  String _selectedTheme = 'Claro';
+  String _selectedTheme = S.current.Claro;
 
   void _applyTheme() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Tema '$_selectedTheme' aplicado")),
+      SnackBar(content: Text("${S.current.tema} '$_selectedTheme' ${S.current.aplicado}")),
     );
   }
 
@@ -47,7 +48,7 @@ class _TemaScreenState extends State<TemaScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Tema', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),),
+          S.current.tema, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),),
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -69,16 +70,16 @@ class _TemaScreenState extends State<TemaScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Tema',
+                S.current.tema,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
 
 
             SizedBox(height: 40),
-            _buildThemeOption('Claro', Icons.wb_sunny),
-            _buildThemeOption('Oscuro', Icons.nights_stay),
-            _buildThemeOption('Defecto del Sistema', Icons.settings),
+            _buildThemeOption(S.current.Claro, Icons.wb_sunny),
+            _buildThemeOption(S.current.Oscuro, Icons.nights_stay),
+            // _buildThemeOption('Defecto del Sistema', Icons.settings),
 
 
             SizedBox(height: 268), // Separación del boton
@@ -92,7 +93,7 @@ class _TemaScreenState extends State<TemaScreen> {
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
-              child: const Text("Aplicar", style: TextStyle(color: Colors.white)),
+              child: Text(S.current.apply, style: const TextStyle(color: Colors.white)),
             ),
           ],
         ),

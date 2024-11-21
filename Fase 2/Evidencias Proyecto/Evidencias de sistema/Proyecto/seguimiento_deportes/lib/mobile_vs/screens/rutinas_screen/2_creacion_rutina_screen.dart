@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seguimiento_deportes/core/services/rutina_ejercicio_service.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/3_seleccion_screen.dart';
 
 class CreacionRutinaScreen extends StatefulWidget {
@@ -65,12 +66,12 @@ class _CreacionRutinaScreenState extends State<CreacionRutinaScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('¿Estás seguro?'),
-          content: const Text('¿Deseas guardar esta rutina?'),
+          title: Text(S.current.estas_seguro_rutina),
+          content: Text(S.current.deseas_guardar),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(true), // Opción "Sí"
-              child: const Text('Sí'),
+              child: Text(S.current.si),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(false), // Opción "No"
@@ -104,13 +105,13 @@ class _CreacionRutinaScreenState extends State<CreacionRutinaScreen> {
     // Mostrar mensaje según si la operación fue exitosa o no
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Rutina guardada exitosamente')),
+        SnackBar(content: Text(S.current.rutina_guardada)),
       );
       // Redirigir a la pantalla de rutinas automáticamente después de guardar
       Navigator.pop(context);  // Regresa a la pantalla anterior (Rutinas)
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hubo un error al guardar la rutina')),
+        SnackBar(content: Text(S.current.rutina_guardada1)),
       );
     }
   }
@@ -146,14 +147,14 @@ class _CreacionRutinaScreenState extends State<CreacionRutinaScreen> {
             const SizedBox(height: 10),
             Center(
               child: Text(
-                "¡Rellena tu rutina a tu manera!",
+                S.current.rellena_manera,
                 style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              'ID de Rutina: ${widget.rutinaId}',
+              '${S.current.id_rutina}: ${widget.rutinaId}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
@@ -161,7 +162,7 @@ class _CreacionRutinaScreenState extends State<CreacionRutinaScreen> {
               child: ejercicios.isEmpty
                   ? Center(
                       child: Text(
-                        "Tienes que agregar tus ejercicios",
+                        S.current.agrega_ejercicios,
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
@@ -234,7 +235,7 @@ class _CreacionRutinaScreenState extends State<CreacionRutinaScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   ),
-                  child: const Text('Guardar'),
+                  child: Text(S.current.guardar),
                 ),
                 ElevatedButton(
                   onPressed: _navigateAndAddExercises,
@@ -246,7 +247,7 @@ class _CreacionRutinaScreenState extends State<CreacionRutinaScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   ),
-                  child: const Text('Agrega un nuevo ejercicio'),
+                  child: Text(S.current.agrega_nuevo_ejercicio),
                 ),
               ],
             ),

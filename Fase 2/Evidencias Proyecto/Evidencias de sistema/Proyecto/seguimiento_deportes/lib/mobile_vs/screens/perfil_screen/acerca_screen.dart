@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class AcercaScreen extends StatefulWidget {
   const AcercaScreen({super.key});
@@ -71,7 +72,7 @@ class _AcercaScreenState extends State<AcercaScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "Explora cómo VitalityConnect puede ayudarte a mejorar tu bienestar físico y mental. Descubre nuestra misión y visión para inspirarte a alcanzar tus objetivos.",
+                    S.current.acercade,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[700],
@@ -87,21 +88,21 @@ class _AcercaScreenState extends State<AcercaScreen> {
                     children: [
                       _buildExpansionTile(
                         icon: Icons.info_outline,
-                        title: '¿Qué es VitalityConnect?',
+                        title: S.current.acercade1,
                         content:
-                            'VitalityConnect es una aplicación dedicada a ayudar a los usuarios a realizar un seguimiento de su actividad física y mejorar su salud general. Con funcionalidades personalizadas, puedes crear rutinas adaptadas a tus necesidades y unirte a una comunidad que te motivará a alcanzar tus objetivos.',
+                            S.current.acercade2,
                       ),
                       _buildExpansionTile(
                         icon: Icons.flag_outlined,
-                        title: 'Nuestra Misión',
+                        title: S.current.acercade3,
                         content:
-                            'Nuestra misión es empoderar a las personas a llevar un estilo de vida saludable a través de la actividad física, ofreciendo herramientas y recursos que faciliten su progreso y bienestar.',
+                            S.current.acercade4,
                       ),
                       _buildExpansionTile(
                         icon: Icons.visibility_outlined,
-                        title: 'Nuestra Visión',
+                        title: S.current.acercade5,
                         content:
-                            'Nuestra visión es ser la aplicación líder en el ámbito del fitness, promoviendo la salud y el bienestar en todo el mundo mediante la tecnología y la comunidad.',
+                            S.current.acercade6,
                       ),
                     ],
                   ),

@@ -5,6 +5,7 @@ import 'package:seguimiento_deportes/core/models/perfil.dart';
 import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/generated/l10n.dart';
+
 class DatosGoogleScreen extends StatefulWidget {
   @override
   _DatosGoogleState createState() => _DatosGoogleState();
@@ -50,25 +51,32 @@ class _DatosGoogleState extends State<DatosGoogleScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              buildTextField(usernameController, S.current.label_username, Icons.person),
+              buildTextField(usernameController, S.current.label_username, Icons.person, r'^[a-zA-Z]+$'),
               SizedBox(height: 20),
-              buildTextField(nombreController, S.current.label_name, Icons.person),
+              buildTextField(nombreController, S.current.label_name, Icons.person, r'^[a-zA-Z]+$'),
               SizedBox(height: 20),
-              buildTextField(apellidoController, S.current.label_lastname, Icons.person_outline),
+              buildTextField(apellidoController, S.current.label_lastname, Icons.person_outline, r'^[a-zA-Z]+$'),
               SizedBox(height: 20),
-              buildNumericTextField(edadController, S.current.label_age, Icons.cake),
+              buildNumericTextField(edadController, S.current.label_age, Icons.cake, 1, 100),
               SizedBox(height: 20),
-              buildNumericTextField(pesoController, S.current.label_weight, Icons.fitness_center),
+              buildNumericTextField(pesoController, S.current.label_weight, Icons.fitness_center, 1, 165),
               SizedBox(height: 20),
-              buildNumericTextField(estaturaController, S.current.label_height, Icons.height),
+              buildNumericTextField(estaturaController, S.current.label_height, Icons.height, 1, 200),
               SizedBox(height: 20),
-              buildDropdownField(S.current.label_gender, [S.current.label_man, S.current.label_woman], selectedGender, (value) {
+              buildDropdownField(S.current.label_gender, [
+                S.current.label_man,
+                S.current.label_woman
+              ], selectedGender, (value) {
                 setState(() {
                   selectedGender = value;
                 });
               }),
               SizedBox(height: 20),
-              buildDropdownField(S.current.label_intensity, [S.current.label_intensity1, S.current.label_intensity2, S.current.label_intensity3], selectedIntensity, (value) {
+              buildDropdownField(S.current.label_intensity, [
+                S.current.label_intensity1,
+                S.current.label_intensity2,
+                S.current.label_intensity3
+              ], selectedIntensity, (value) {
                 setState(() {
                   selectedIntensity = value;
                 });
@@ -110,7 +118,8 @@ class _DatosGoogleState extends State<DatosGoogleScreen> {
     );
   }
 
-  Widget buildTextField(TextEditingController controller, String label, IconData icon) {
+  Widget buildTextField(
+      TextEditingController controller, String label, IconData icon, String regexPattern) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -127,10 +136,18 @@ class _DatosGoogleState extends State<DatosGoogleScreen> {
         filled: true,
         fillColor: Colors.white24,
       ),
+      onChanged: (value) {
+        if (!RegExp(regexPattern).hasMatch(value)) {
+          controller.text = value.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+          controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: controller.text.length));
+        }
+      },
     );
   }
 
-  Widget buildNumericTextField(TextEditingController controller, String label, IconData icon) {
+  Widget buildNumericTextField(TextEditingController controller, String label, IconData icon,
+      int min, int max) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
@@ -148,6 +165,14 @@ class _DatosGoogleState extends State<DatosGoogleScreen> {
         filled: true,
         fillColor: Colors.white24,
       ),
+      onChanged: (value) {
+        final parsedValue = int.tryParse(value) ?? min;
+        if (parsedValue < min || parsedValue > max) {
+          controller.text = parsedValue.clamp(min, max).toString();
+          controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: controller.text.length));
+        }
+      },
     );
   }
 
@@ -189,7 +214,6 @@ class _DatosGoogleState extends State<DatosGoogleScreen> {
     }
 
     try {
-      // Primero guardar firebase_id y username en la base de datos
       final username = usernameController.text;
       final firebaseId = user.uid;
 
@@ -199,7 +223,6 @@ class _DatosGoogleState extends State<DatosGoogleScreen> {
         return;
       }
 
-      // Después guardar el perfil si el usuario fue guardado con éxito
       final edad = int.tryParse(edadController.text) ?? 0;
       final peso = double.tryParse(pesoController.text) ?? 0.0;
       final estatura = double.tryParse(estaturaController.text) ?? 0.0;

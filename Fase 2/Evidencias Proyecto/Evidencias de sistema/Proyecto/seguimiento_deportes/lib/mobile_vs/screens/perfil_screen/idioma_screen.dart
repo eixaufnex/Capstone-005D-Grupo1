@@ -79,9 +79,9 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
                               color: Colors.greenAccent,
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            child: const Text(
-                              "Seleccionado",
-                              style: TextStyle(
+                            child: Text(
+                              S.current.Seleccionado,
+                              style: const TextStyle(
                                   color: Colors.black, fontWeight: FontWeight.bold),
                             ),
                           )
@@ -119,7 +119,7 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Idioma $_selectedLanguage seleccionado"),
+                        content: Text("${S.current.idioma} $_selectedLanguage ${S.current.Seleccionado}"),
                       ),
                     );
                   }

@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/rutina_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/2_creacion_rutina_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
@@ -63,7 +64,7 @@ class _RutinaScreenState extends State<RutinaScreen> {
   void _showCreateRutinaDialog() {
     String nombreRutina = '';
     String selectedEmoji = '🏋️';
-    String selectedTipoRutina = 'Fuerza';
+    String selectedTipoRutina = S.current.Fuerza;
     List<String> emojis = [
       '🏋️',
       '🤸',
@@ -77,11 +78,11 @@ class _RutinaScreenState extends State<RutinaScreen> {
       '🤾'
     ];
     List<String> tiposRutina = [
-      'Fuerza',
-      'Cardiovascular',
-      'Deporte en equipo',
-      'Elongación',
-      'Flexibilidad'
+      S.current.Fuerza,
+      S.current.Cardiovascular,
+      S.current.Deporte_equipo,
+      S.current.Elongacion,
+      S.current.Flexibilidad
     ];
 
     final rutinaProvider = Provider.of<RutinaProvider>(context, listen: false);
@@ -92,7 +93,7 @@ class _RutinaScreenState extends State<RutinaScreen> {
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Center(child: Text('Crea tu nueva rutina')),
+          title: Center(child: Text(S.current.crea_rutina)),
           content: StatefulBuilder(
             builder: (context, setState) {
               return Column(
@@ -103,12 +104,12 @@ class _RutinaScreenState extends State<RutinaScreen> {
                       nombreRutina = value;
                     },
                     decoration: InputDecoration(
-                      labelText: 'Nombre de tu Rutina',
+                      labelText: S.current.Nombre_rutina,
                       border: OutlineInputBorder(),
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text('Elige tu Icono',
+                  Text(S.current.elige_icono,
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Wrap(
@@ -131,7 +132,7 @@ class _RutinaScreenState extends State<RutinaScreen> {
                     }).toList(),
                   ),
                   SizedBox(height: 20),
-                  Text('Tipo de Rutina',
+                  Text(S.current.tipo_rutina,
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   DropdownButton<String>(
@@ -179,16 +180,16 @@ class _RutinaScreenState extends State<RutinaScreen> {
                     );
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Rutina creada exitosamente')),
+                      SnackBar(content: Text(S.current.crea_rutina1)),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error al crear la rutina')),
+                      SnackBar(content: Text(S.current.crea_rutina2)),
                     );
                   }
                 }
               },
-              child: Text('Crear', style: TextStyle(color: Colors.green)),
+              child: Text(S.current.crear, style: TextStyle(color: Colors.green)),
             ),
           ],
         );
@@ -205,7 +206,7 @@ class _RutinaScreenState extends State<RutinaScreen> {
       appBar: AppBar(
         title: Center(
           child: Text(
-            'Selecciona tu rutina',
+            S.current.seleccion_rutina,
             style: Theme.of(context)
                 .textTheme
                 .headlineMedium
@@ -219,7 +220,7 @@ class _RutinaScreenState extends State<RutinaScreen> {
         child: rutinaProvider.rutinas.isEmpty
             ? Center(
                 child: Text(
-                  "No tienes rutinas creadas",
+                  S.current.no_rutinas,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 ),
               )
@@ -289,11 +290,11 @@ class _RutinaScreenState extends State<RutinaScreen> {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_filled),
-                label: 'Home',
+                label: S.current.home,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.view_list_rounded),
-                label: 'Rutinas',
+                label: S.current.rutina,
               ),
               BottomNavigationBarItem(
                 icon: Transform.translate(
@@ -308,11 +309,11 @@ class _RutinaScreenState extends State<RutinaScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.stacked_line_chart_rounded),
-                label: 'Progreso',
+                label: S.current.progreso,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
-                label: 'Perfil',
+                label: S.current.perfil,
               ),
             ],
           ),
@@ -320,7 +321,7 @@ class _RutinaScreenState extends State<RutinaScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateRutinaDialog,
-        label: Text('Crear rutina', style: TextStyle(color: Colors.white)),
+        label: Text(S.current.crear_rutina, style: TextStyle(color: Colors.white)),
         icon: Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.red,
       ),

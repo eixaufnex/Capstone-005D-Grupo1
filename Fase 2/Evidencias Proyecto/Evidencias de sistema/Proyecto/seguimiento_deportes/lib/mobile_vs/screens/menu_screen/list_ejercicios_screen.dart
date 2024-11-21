@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/ejercicio_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/menu_screen/glosario_screen.dart';
@@ -65,17 +66,25 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
     final ejercicioProvider = Provider.of<EjercicioProvider>(context);
 
     // Filtrar los ejercicios según la dificultad seleccionada
-    final ejerciciosFiltrados = selectedDificultad == null
-        ? ejercicioProvider.ejercicios
-        : selectedDificultad == 'Todas'
+    final ejerciciosFiltrados =
+        selectedDificultad == null || selectedDificultad?.toLowerCase() == 'all'
             ? ejercicioProvider.ejercicios
-                .where((ejercicio) => ['Principiante', 'Intermedio', 'Avanzado']
+                .where((ejercicio) => ['Beginner', 'Intermediate', 'Advanced']
                     .contains(ejercicio.dificultadEjercicio))
                 .toList()
-            : ejercicioProvider.ejercicios
-                .where((ejercicio) =>
-                    ejercicio.dificultadEjercicio == selectedDificultad)
-                .toList();
+            : selectedDificultad?.toLowerCase() == 'todas'
+                ? ejercicioProvider.ejercicios
+                    .where((ejercicio) => [
+                          'Principiante',
+                          'Intermedio',
+                          'Avanzado'
+                        ].contains(ejercicio.dificultadEjercicio))
+                    .toList()
+                : ejercicioProvider.ejercicios
+                    .where((ejercicio) =>
+                        ejercicio.dificultadEjercicio.toLowerCase() ==
+                        selectedDificultad?.toLowerCase())
+                    .toList();
 
     if (selectedEjercicioId != null) {
       final ejercicio =
@@ -116,18 +125,18 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Dificultad: ${ejercicio.dificultadEjercicio}',
+                  '${S.current.dificultad}: ${ejercicio.dificultadEjercicio}',
                   style: TextStyle(fontSize: 16, color: Colors.blueAccent),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Grupo Muscular: ${ejercicio.grupoMuscular}',
+                  '${S.current.grupo}: ${ejercicio.grupoMuscular}',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 SizedBox(height: 16),
                 if (ejercicio.detalle != null) ...[
                   Text(
-                    'Descripción:',
+                    '${S.current.descripcion}:',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
@@ -136,7 +145,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Instrucciones:',
+                    '${S.current.instrucciones1}:',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
@@ -158,7 +167,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Lista de Ejercicios',
+            S.current.listaejercicio1,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
@@ -192,7 +201,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.home),
-                title: Text('Inicio'),
+                title: Text(S.current.home),
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => HomeScreen()));
@@ -200,7 +209,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.emoji_events),
-                title: Text('Logros'),
+                title: Text(S.current.logros1),
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => LogrosScreen()));
@@ -208,7 +217,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.flag),
-                title: Text('Objetivos'),
+                title: Text(S.current.objetivos1),
                 onTap: () {
                   Navigator.push(
                       context,
@@ -218,7 +227,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.menu_book_rounded),
-                title: Text('Glosario'),
+                title: Text(S.current.glosario1),
                 onTap: () {
                   Navigator.push(
                       context,
@@ -236,7 +245,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
                   onPressed: () async {
                     await _signOut();
                   },
-                  child: Text('Cerrar sesión',
+                  child: Text(S.current.cerrarsesion,
                       style: TextStyle(color: Colors.black)),
                 ),
               ),
@@ -251,10 +260,10 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
               child: Wrap(
                 spacing: 10.0,
                 children: [
-                  _buildFilterButton("Todas"),
-                  _buildFilterButton("Principiante"),
-                  _buildFilterButton("Intermedio"),
-                  _buildFilterButton("Avanzado"),
+                  _buildFilterButton(S.current.todas),
+                  _buildFilterButton(S.current.label_intensity1),
+                  _buildFilterButton(S.current.intermedio),
+                  _buildFilterButton(S.current.label_intensity3),
                 ],
               ),
             ),
@@ -273,7 +282,7 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
                       ),
                       title: Text(ejercicio.nombreEjercicio),
                       subtitle: Text(
-                        'Dificultad: ${ejercicio.dificultadEjercicio} - Grupo: ${ejercicio.grupoMuscular}',
+                        '${S.current.dificultad}: ${ejercicio.dificultadEjercicio} - ${S.current.grupo}: ${ejercicio.grupoMuscular}',
                       ),
                       onTap: () => selectEjercicio(ejercicio.idListaEjercicio),
                     ),
@@ -288,7 +297,10 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
   }
 
   Widget _buildFilterButton(String dificultad) {
-    final isSelected = (dificultad == "Todas" && selectedDificultad == null) ||
+    final isSelected = (dificultad.toLowerCase() == "todas" &&
+            selectedDificultad?.toLowerCase() == "todas") ||
+        (dificultad.toLowerCase() == "all" &&
+            selectedDificultad?.toLowerCase() == "all") ||
         selectedDificultad == dificultad;
 
     return ElevatedButton(
@@ -300,7 +312,10 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
       ),
       onPressed: () {
         setState(() {
-          selectedDificultad = dificultad == "Todas" ? null : dificultad;
+          selectedDificultad = (dificultad.toLowerCase() == "todas" ||
+                  dificultad.toLowerCase() == "all")
+              ? dificultad.toLowerCase()
+              : dificultad;
         });
       },
       child: Text(

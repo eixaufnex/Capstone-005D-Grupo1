@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seguimiento_deportes/generated/l10n.dart';
 
 class NotificacionesScreen extends StatelessWidget {
   const NotificacionesScreen({super.key});
@@ -7,7 +8,7 @@ class NotificacionesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notificaciones', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+        title: Text(S.current.notificaciones, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -26,18 +27,18 @@ class NotificacionesScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
-            const Text(
-              "Seleccione las notificaciones que desee recibir en su teléfono, recuerde que antes tiene que aceptar los permisos",
-              style: TextStyle(fontSize: 20),
+            Text(
+              S.current.notificaciones1,
+              style: const TextStyle(fontSize: 20),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 80),
             
             // Lista de opciones de notificación
-            _buildNotificationOption("Mensajes motivacionales"),
-            _buildNotificationOption("Recordatorios"),
-            _buildNotificationOption("Temporizador"),
-            _buildNotificationOption("Ayuda"),
+            _buildNotificationOption(S.current.notificaciones2),
+            _buildNotificationOption(S.current.notificaciones3),
+            _buildNotificationOption(S.current.notificaciones4),
+            _buildNotificationOption(S.current.notificaciones5),
             const SizedBox(height: 142), // Espacio antes del botón
             // Botón de aplicar
             Center(
@@ -52,10 +53,10 @@ class NotificacionesScreen extends StatelessWidget {
                 onPressed: () {
                   // Acción al presionar "Aplicar"
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Unidades aplicadas")),
+                    SnackBar(content: Text(S.current.notificaciones6)),
                   );
                 },
-                child: const Text("Aplicar", style: TextStyle(color: Colors.white)),
+                child: Text(S.current.apply, style: const TextStyle(color: Colors.white)),
               ),
             ),
             const SizedBox(height: 50), // Espacio después del botón
