@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/logro_provider.dart';
+import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
@@ -32,10 +33,27 @@ class _LogrosScreenState extends State<LogrosScreen>
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabChange);
     _fetchAchievements();
+    _fetchUserAvatar();
 
     // Verificar logro si aún no se ha verificado
     if (!logroVerificado) {
       _verificarLogro();
+    }
+  }
+
+  String avatarUrl = 'assets/av9.png';
+
+  Future<void> _fetchUserAvatar() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final perfilProvider =
+          Provider.of<PerfilProvider>(context, listen: false);
+      final perfil = await perfilProvider.getPerfil(user.uid);
+      if (perfil != null && perfil.fotoPerfil != null) {
+        setState(() {
+          avatarUrl = perfil.fotoPerfil!;
+        });
+      }
     }
   }
 
@@ -168,7 +186,10 @@ class _LogrosScreenState extends State<LogrosScreen>
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/av9.png'),
+                    backgroundImage: avatarUrl.startsWith('http')
+                        ? NetworkImage(avatarUrl)
+                        : AssetImage(avatarUrl)
+                            as ImageProvider, // Mostrar desde la BD o local
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -229,8 +250,8 @@ class _LogrosScreenState extends State<LogrosScreen>
               onPressed: () async {
                 await _signOut();
               },
-              child:
-                  Text(S.current.cerrarsesion, style: TextStyle(color: Colors.black)),
+              child: Text(S.current.cerrarsesion,
+                  style: TextStyle(color: Colors.black)),
             ),
           ),
         ],

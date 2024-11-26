@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/objetivo_provider.dart';
 import 'package:seguimiento_deportes/core/models/objetivo.dart';
+import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
@@ -26,6 +27,23 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
   void initState() {
     super.initState();
     _fetchUsername();
+    _fetchUserAvatar();
+  }
+
+  String avatarUrl = 'assets/av9.png';
+
+  Future<void> _fetchUserAvatar() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final perfilProvider =
+          Provider.of<PerfilProvider>(context, listen: false);
+      final perfil = await perfilProvider.getPerfil(user.uid);
+      if (perfil != null && perfil.fotoPerfil != null) {
+        setState(() {
+          avatarUrl = perfil.fotoPerfil!;
+        });
+      }
+    }
   }
 
   Future<void> _fetchUsername() async {
@@ -74,8 +92,11 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      radius: 40, // Tamaño de la imagen
-                      backgroundImage: AssetImage('assets/av9.png'),
+                      radius: 40,
+                      backgroundImage: avatarUrl.startsWith('http')
+                          ? NetworkImage(avatarUrl)
+                          : AssetImage(avatarUrl)
+                              as ImageProvider, // Mostrar desde la BD o local
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -152,8 +173,8 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
               unselectedLabelColor:
                   Colors.black54, // Color para las pestañas no seleccionadas
               tabs: [
-                Tab(text: S.current.En_progreso ),
-                Tab(text: S.current.Completadas ),
+                Tab(text: S.current.En_progreso),
+                Tab(text: S.current.Completadas),
                 Tab(text: S.current.Sin_comenzar),
               ],
             ),
@@ -215,7 +236,8 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                   '${S.current.valor_actual}: ${objetivo.valorActual}'),
                                               Text(
                                                   '${S.current.valor_final}: ${objetivo.valorObjetivo}'),
-                                              Text('${S.current.progreso}: $porcentaje%'),
+                                              Text(
+                                                  '${S.current.progreso}: $porcentaje%'),
                                             ],
                                           ),
                                         ),
@@ -254,9 +276,6 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                             _showEditModal(context, objetivo);
                                           },
                                         ),
-
-
-
                                         IconButton(
                                           icon: const Icon(Icons.delete,
                                               color: Colors.red),
@@ -293,9 +312,6 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                             }
                                           },
                                         ),
-
-
-                                        
                                       ],
                                     ),
                                   ],
@@ -351,7 +367,8 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                   '${S.current.valor_actual}: ${objetivo.valorActual}'),
                                               Text(
                                                   '${S.current.valor_final}: ${objetivo.valorObjetivo}'),
-                                              Text('${S.current.progreso}: 100%'),
+                                              Text(
+                                                  '${S.current.progreso}: 100%'),
                                             ],
                                           ),
                                         ),
@@ -485,25 +502,17 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(
-                                            width:
-                                                20), 
+                                        const SizedBox(width: 20),
                                         Padding(
                                           padding: const EdgeInsets.only(
-                                              right: 36.0,
-                                              top:
-                                                  8.0), 
+                                              right: 36.0, top: 8.0),
                                           child: SizedBox(
-                                            width:
-                                                50, 
-                                            height:
-                                                50,
+                                            width: 50,
+                                            height: 50,
                                             child: CircularProgressIndicator(
                                               value: 0.0,
-                                              strokeWidth:
-                                                  8, 
-                                              color: Colors
-                                                  .red, 
+                                              strokeWidth: 8,
+                                              color: Colors.red,
                                             ),
                                           ),
                                         ),
@@ -528,8 +537,8 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                 await showDialog<bool>(
                                               context: context,
                                               builder: (context) => AlertDialog(
-                                                title: Text(
-                                                    S.current.eliminar_objetivo),
+                                                title: Text(S
+                                                    .current.eliminar_objetivo),
                                                 content: Text(
                                                     S.current.estas_seguro),
                                                 actions: [
@@ -537,15 +546,15 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                                                     onPressed: () =>
                                                         Navigator.of(context)
                                                             .pop(false),
-                                                    child:
-                                                        Text(S.current.cancelar),
+                                                    child: Text(
+                                                        S.current.cancelar),
                                                   ),
                                                   TextButton(
                                                     onPressed: () =>
                                                         Navigator.of(context)
                                                             .pop(true),
-                                                    child:
-                                                        Text(S.current.eliminar),
+                                                    child: Text(
+                                                        S.current.eliminar),
                                                   ),
                                                 ],
                                               ),
@@ -605,7 +614,8 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
               children: [
                 TextField(
                   controller: valorActualController,
-                  decoration: InputDecoration(labelText: S.current.valor_actual),
+                  decoration:
+                      InputDecoration(labelText: S.current.valor_actual),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
@@ -627,8 +637,7 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                   Navigator.pop(dialogContext);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(S.current.valor_valido)),
+                    SnackBar(content: Text(S.current.valor_valido)),
                   );
                 }
               },
@@ -696,17 +705,19 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
                 ),
                 TextField(
                   controller: valorInicialController,
-                  decoration: InputDecoration(labelText: S.current.valor_inicial),
+                  decoration:
+                      InputDecoration(labelText: S.current.valor_inicial),
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
                   controller: valorActualController,
-                  decoration:  InputDecoration(labelText: S.current.valor_actual),
+                  decoration:
+                      InputDecoration(labelText: S.current.valor_actual),
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
                   controller: valorObjetivoController,
-                  decoration:  InputDecoration(labelText: S.current.valor_final),
+                  decoration: InputDecoration(labelText: S.current.valor_final),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),

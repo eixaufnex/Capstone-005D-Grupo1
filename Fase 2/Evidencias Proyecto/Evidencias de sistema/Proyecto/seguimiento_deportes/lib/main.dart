@@ -7,6 +7,7 @@ import 'package:seguimiento_deportes/web_vs/main_web.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
 
   // Inicializa Firebase con las opciones adecuadas según la plataforma
   if (kIsWeb) {

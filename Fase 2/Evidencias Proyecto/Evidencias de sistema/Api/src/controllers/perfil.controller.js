@@ -103,15 +103,36 @@ export const createPerfil = async (req, res) => {
     }
 };
 
-// Actualizar un perfil
+// Actualizar un perfil por firebase_id
 export const updatePerfil = async (req, res) => {
-    const { id } = req.params;
-    const { nombre, apellido, edad, peso, estatura, genero, tipo_nivel, foto_perfil, biografia, firebase_id } = req.body;
+    const { firebase_id } = req.params; // Utilizamos firebase_id como identificador
+    const { foto_perfil } = req.body; // Solo se espera actualizar foto_perfil
 
     try {
         const pool = await getConnection();
+
+        // Recuperar los valores existentes del perfil
+        const existingPerfil = await pool.request()
+            .input('firebase_id', sql.VarChar, firebase_id)
+            .query('SELECT * FROM PERFIL WHERE firebase_id = @firebase_id');
+
+        if (existingPerfil.rowsAffected[0] === 0) {
+            return res.status(404).json({ message: "Perfil no encontrado" });
+        }
+
+        // Conservar los valores existentes
+        const perfil = existingPerfil.recordset[0];
+        const nombre = perfil.nombre;
+        const apellido = perfil.apellido;
+        const edad = perfil.edad;
+        const peso = perfil.peso;
+        const estatura = perfil.estatura;
+        const genero = perfil.genero;
+        const tipo_nivel = perfil.tipo_nivel;
+        const biografia = perfil.biografia;
+
+        // Realizar la actualización de foto_perfil y conservar los demás valores
         const result = await pool.request()
-            .input('id_perfil', sql.Int, id)
             .input('firebase_id', sql.VarChar, firebase_id)
             .input('nombre', sql.VarChar, nombre)
             .input('apellido', sql.VarChar, apellido)
@@ -131,31 +152,21 @@ export const updatePerfil = async (req, res) => {
                     genero = @genero, 
                     tipo_nivel = @tipo_nivel, 
                     foto_perfil = @foto_perfil, 
-                    biografia = @biografia, 
-                    firebase_id = @firebase_id 
-                    WHERE id_perfil = @id_perfil`);
+                    biografia = @biografia 
+                    WHERE firebase_id = @firebase_id`);
 
         if (result.rowsAffected[0] === 0) {
             return res.status(404).json({ message: "Perfil no encontrado" });
         }
-        res.json({
-            id_perfil: id,
-            nombre,
-            apellido,
-            edad,
-            peso,
-            estatura,
-            genero,
-            tipo_nivel,
-            foto_perfil,
-            biografia,
-            firebase_id
-        });
+
+        res.json({ message: "Perfil actualizado correctamente", foto_perfil });
     } catch (error) {
         console.error('Error al actualizar el perfil:', error);
         res.status(500).json({ message: 'Error al actualizar el perfil' });
     }
 };
+
+
 
 // Eliminar un perfil
 export const deletePerfil = async (req, res) => {

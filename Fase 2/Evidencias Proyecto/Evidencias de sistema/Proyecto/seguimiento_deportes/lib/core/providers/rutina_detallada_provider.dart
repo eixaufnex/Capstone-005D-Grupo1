@@ -14,7 +14,7 @@ class RutinaDetalladaProvider with ChangeNotifier {
   }
 
   Future<void> getRutinasDetalladas() async {
-    final url = Uri.http(urlapi, 'rutinas_detalladas_ejercicios');
+    final url = Uri.https(urlapi, 'rutinas_detalladas_ejercicios');
     try {
       final resp = await http.get(url, headers: {
         'Content-type': 'application/json',
@@ -42,7 +42,7 @@ class RutinaDetalladaProvider with ChangeNotifier {
   }
 
   Future<RutinaDetallada?> getRutinaDetalladaById(int id) async {
-    final url = Uri.http(urlapi, 'rutinas_detalladas/$id');
+    final url = Uri.https(urlapi, 'rutinas_detalladas/$id');
     try {
       final resp = await http.get(url, headers: {
         'Content-type': 'application/json',
@@ -61,7 +61,7 @@ class RutinaDetalladaProvider with ChangeNotifier {
   }
 
   Future<bool> postRutinaDetallada(RutinaDetallada rutinaDetallada) async {
-    final url = Uri.http(urlapi, 'rutinas_detalladas');
+    final url = Uri.https(urlapi, 'rutinas_detalladas');
     try {
       final resp = await http.post(
         url,
@@ -86,7 +86,7 @@ class RutinaDetalladaProvider with ChangeNotifier {
   }
 
   Future<bool> updateRutinaDetallada(int id, RutinaDetallada rutinaDetallada) async {
-    final url = Uri.http(urlapi, 'rutinas_detalladas/$id');
+    final url = Uri.https(urlapi, 'rutinas_detalladas/$id');
     try {
       final resp = await http.put(
         url,
@@ -111,7 +111,7 @@ class RutinaDetalladaProvider with ChangeNotifier {
   }
 
   Future<bool> deleteRutinaDetallada(int id) async {
-    final url = Uri.http(urlapi, 'rutinas_detalladas/$id');
+    final url = Uri.https(urlapi, 'rutinas_detalladas/$id');
     try {
       final resp = await http.delete(url, headers: {
         'Content-type': 'application/json',

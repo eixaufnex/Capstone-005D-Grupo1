@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seguimiento_deportes/core/providers/ejercicio_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/auth_screen/login_screen.dart';
@@ -27,6 +28,23 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
   void initState() {
     super.initState();
     _fetchUsername();
+    _fetchUserAvatar();
+  }
+
+  String avatarUrl = 'assets/av9.png';
+
+  Future<void> _fetchUserAvatar() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final perfilProvider =
+          Provider.of<PerfilProvider>(context, listen: false);
+      final perfil = await perfilProvider.getPerfil(user.uid);
+      if (perfil != null && perfil.fotoPerfil != null) {
+        setState(() {
+          avatarUrl = perfil.fotoPerfil!;
+        });
+      }
+    }
   }
 
   Future<void> _fetchUsername() async {
@@ -67,18 +85,15 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
 
     // Filtrar los ejercicios según la dificultad seleccionada
     final ejerciciosFiltrados =
-        selectedDificultad == null || selectedDificultad?.toLowerCase() == 'all'
+        selectedDificultad == null || selectedDificultad?.toLowerCase() == 'todas'
             ? ejercicioProvider.ejercicios
-                .where((ejercicio) => ['Beginner', 'Intermediate', 'Advanced']
-                    .contains(ejercicio.dificultadEjercicio))
+                .where((ejercicio) => ['Principiante', 'Intermedio', 'Avanzado']
+                .contains(ejercicio.dificultadEjercicio))
                 .toList()
-            : selectedDificultad?.toLowerCase() == 'todas'
+            : selectedDificultad?.toLowerCase() == 'all'
                 ? ejercicioProvider.ejercicios
-                    .where((ejercicio) => [
-                          'Principiante',
-                          'Intermedio',
-                          'Avanzado'
-                        ].contains(ejercicio.dificultadEjercicio))
+                    .where((ejercicio) => ['Beginner', 'Intermediate', 'Advanced']
+                    .contains(ejercicio.dificultadEjercicio))
                     .toList()
                 : ejercicioProvider.ejercicios
                     .where((ejercicio) =>
@@ -183,8 +198,11 @@ class _ListaEjercicioScreenState extends State<Lista_EjercicioScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 40, // Tamaño de la imagen
-                        backgroundImage: AssetImage('assets/av9.png'),
+                        radius: 40,
+                        backgroundImage: avatarUrl.startsWith('http')
+                            ? NetworkImage(avatarUrl)
+                            : AssetImage(avatarUrl)
+                                as ImageProvider, // Mostrar desde la BD o local
                       ),
                       SizedBox(height: 10),
                       Text(

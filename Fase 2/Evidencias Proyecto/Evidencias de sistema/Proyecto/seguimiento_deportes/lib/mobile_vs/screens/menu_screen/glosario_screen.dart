@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/core/providers/usuario_provider.dart';
 import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
@@ -24,6 +25,23 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
   void initState() {
     super.initState();
     _fetchUsername();
+    _fetchUserAvatar();
+  }
+
+  String avatarUrl = 'assets/av9.png';
+
+  Future<void> _fetchUserAvatar() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final perfilProvider =
+          Provider.of<PerfilProvider>(context, listen: false);
+      final perfil = await perfilProvider.getPerfil(user.uid);
+      if (perfil != null && perfil.fotoPerfil != null) {
+        setState(() {
+          avatarUrl = perfil.fotoPerfil!;
+        });
+      }
+    }
   }
 
   Future<void> _fetchUsername() async {
@@ -47,12 +65,14 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
   }
 
   final Map<String, String> _glosario = {
-    S.current.oneRM_One_Repetition_Maximum: S.current.oneRM_One_Repetition_Maximum_definition,
+    S.current.oneRM_One_Repetition_Maximum:
+        S.current.oneRM_One_Repetition_Maximum_definition,
     S.current.Grip: S.current.Grip_definition,
     S.current.Aerobic: S.current.Aerobic_definition,
     S.current.Isolation: S.current.Isolation_definition,
     S.current.Range_of_Motion_ROM: S.current.Range_of_Motion_ROM_definition,
-    S.current.AMRAP_As_Many_Reps_As_Possible: S.current.AMRAP_As_Many_Reps_As_Possible_definition,
+    S.current.AMRAP_As_Many_Reps_As_Possible:
+        S.current.AMRAP_As_Many_Reps_As_Possible_definition,
     S.current.Swinging: S.current.Swinging_definition,
     S.current.Biceps: S.current.Biceps_definition,
     S.current.Biomechanics: S.current.Biomechanics_definition,
@@ -62,8 +82,10 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
     S.current.Core: S.current.Core_definition,
     S.current.Pull_Ups: S.current.Pull_Ups_definition,
     S.current.Drop_Set: S.current.Drop_Set_definition,
-    S.current.e1RM_Estimated_One_Repetition_Maximum: S.current.e1RM_Estimated_One_Repetition_Maximum_definition,
-    S.current.EMOM_Every_Minute_On_the_Minute: S.current.EMOM_Every_Minute_On_the_Minute_definition,
+    S.current.e1RM_Estimated_One_Repetition_Maximum:
+        S.current.e1RM_Estimated_One_Repetition_Maximum_definition,
+    S.current.EMOM_Every_Minute_On_the_Minute:
+        S.current.EMOM_Every_Minute_On_the_Minute_definition,
     S.current.Strength_Training: S.current.Strength_Training_definition,
     S.current.Stretching: S.current.Stretching_definition,
     S.current.Compound_Exercise: S.current.Compound_Exercise_definition,
@@ -80,7 +102,8 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
     S.current.Olympic_Lifting: S.current.Olympic_Lifting_definition,
     S.current.Lunge: S.current.Lunge_definition,
     S.current.Dumbbell: S.current.Dumbbell_definition,
-    S.current.Maximum_Repetition_OneRM: S.current.Maximum_Repetition_OneRM_definition,
+    S.current.Maximum_Repetition_OneRM:
+        S.current.Maximum_Repetition_OneRM_definition,
     S.current.Bodybuilding: S.current.Bodybuilding_definition,
     S.current.Deadlift: S.current.Deadlift_definition,
     S.current.Plank: S.current.Plank_definition,
@@ -88,7 +111,8 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
     S.current.Press: S.current.Press_definition,
     S.current.Repetitions_Reps: S.current.Repetitions_Reps_definition,
     S.current.RM_Repetition_Maximum: S.current.RM_Repetition_Maximum_definition,
-    S.current.RPE_Rate_of_Perceived_Exertion: S.current.RPE_Rate_of_Perceived_Exertion_definition,
+    S.current.RPE_Rate_of_Perceived_Exertion:
+        S.current.RPE_Rate_of_Perceived_Exertion_definition,
     S.current.Sets: S.current.Sets_definition,
     S.current.Submaximal: S.current.Submaximal_definition,
     S.current.Superset: S.current.Superset_definition,
@@ -174,7 +198,10 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/av9.png'),
+                    backgroundImage: avatarUrl.startsWith('http')
+                        ? NetworkImage(avatarUrl)
+                        : AssetImage(avatarUrl)
+                            as ImageProvider, // Mostrar desde la BD o local
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -201,7 +228,8 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
           ),
           ListTile(
             leading: Icon(Icons.list),
-            title: Text(S.current.listaejercicio1), // Localización para "Lista de ejercicios"
+            title: Text(S.current
+                .listaejercicio1), // Localización para "Lista de ejercicios"
             onTap: () {
               Navigator.push(
                   context,
@@ -235,8 +263,10 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
               onPressed: () async {
                 await _signOut();
               },
-              child:
-                  Text(S.current.cerrarsesion, style: TextStyle(color: Colors.black)), // Localización para "Cerrar sesión"
+              child: Text(S.current.cerrarsesion,
+                  style: TextStyle(
+                      color:
+                          Colors.black)), // Localización para "Cerrar sesión"
             ),
           ),
         ],
@@ -244,8 +274,3 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
     );
   }
 }
-
-
-
-
-

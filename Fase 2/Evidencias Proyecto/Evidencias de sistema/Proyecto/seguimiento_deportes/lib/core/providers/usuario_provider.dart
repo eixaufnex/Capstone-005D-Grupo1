@@ -15,7 +15,7 @@ class UsuarioProvider with ChangeNotifier {
   }
 
   Future<void> getUsuarios() async {
-    final url1 = Uri.http(urlapi, 'usuario');
+    final url1 = Uri.https(urlapi, 'usuario');
     try {
       final resp = await http.get(url1, headers: {
         "Access-Control-Allow-Origin": "*",
@@ -36,7 +36,7 @@ class UsuarioProvider with ChangeNotifier {
   }
 
   Future<String> getUsername(String firebaseId) async {
-    final url = Uri.http(urlapi, 'usuario/$firebaseId');
+    final url = Uri.https(urlapi, 'usuario/$firebaseId');
 
     try {
       final resp = await http.get(url, headers: {
@@ -66,7 +66,7 @@ class UsuarioProvider with ChangeNotifier {
   // Método para crear un nuevo usuario
   Future<bool> postUsuario(
       String email, String password, String username) async {
-    final url = Uri.http(urlapi, 'usuario');
+    final url = Uri.https(urlapi, 'usuario');
 
     try {
       // Crear usuario en Firebase
@@ -114,7 +114,7 @@ class UsuarioProvider with ChangeNotifier {
 
 //función para guardar el firbase_id y el username de google.
   Future<bool> guardarUsuario(String firebaseId, String username) async {
-    final url = Uri.http(urlapi, 'usuario');
+    final url = Uri.https(urlapi, 'usuario');
 
     try {
       final resp = await http.post(
@@ -150,7 +150,7 @@ class UsuarioProvider with ChangeNotifier {
   }
 
   Future<bool> checkIfUserExists(String firebaseId) async {
-    final url = Uri.http(urlapi, 'usuario/$firebaseId');
+    final url = Uri.https(urlapi, 'usuario/$firebaseId');
     try {
       final resp = await http.get(url, headers: {
         "Access-Control-Allow-Origin": "*",

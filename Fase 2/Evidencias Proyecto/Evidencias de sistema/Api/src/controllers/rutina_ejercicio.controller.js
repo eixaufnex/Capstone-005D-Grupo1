@@ -20,6 +20,8 @@ export const getRutinasAndEjerciciosByUser = async (req, res) => {
                 SELECT 
                     r.id_rutina,
                     r.nombre_rutina,
+                    r.tipo_rutina,
+					r.emoji,
                     le.id_lista_ejercicio,
                     le.nombre_ejercicio,
                     rd.series,
@@ -65,7 +67,7 @@ export const addEjerciciosToRutina = async (req, res) => {
 
     try {
         const pool = await getConnection();
-        
+
         // Iniciar una transacción
         transaction = new sql.Transaction(pool);
         await transaction.begin();

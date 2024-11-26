@@ -2,13 +2,15 @@ import sql from 'mssql';
 
 // Configuración principal
 const dbSettings1 = {
-    user: 'newuser',
-    password: 'dangeurus 12',
-    server: 'DESKTOP-R1HNFO0',
-    database: 'pr_capstone',
+    user: 'sqlserver',          
+    password: 'admin',          
+    server: '34.176.231.209',   
+    database: 'pr_capstone',    
     options: {
-        encrypt: false,
-        enableArithAbort: true,
+        encrypt: true,          
+        enableArithAbort: true, 
+        trustServerCertificate: true, 
+        port: 1433,             
     },
 };
 
@@ -45,3 +47,21 @@ export const getConnection = async () => {
         }
     }
 };
+
+
+
+
+/*
+const dbSettings1 = {
+    user: 'newuser',
+    password: 'dangeurus 12',
+    server: 'DESKTOP-R1HNFO0',
+    database: 'pr_capstone',
+    options: {
+        encrypt: false,
+        enableArithAbort: true,
+    },
+};
+
+
+*/

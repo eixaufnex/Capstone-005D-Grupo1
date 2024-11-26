@@ -23,7 +23,7 @@ router.get("/perfil/usuario/:firebase_id", getPerfilxfirebase);
 router.post("/perfil", createPerfil);
 
 //Actualizando perfil
-router.put("/perfil/:id", updatePerfil);
+router.put("/perfil/usuario/:firebase_id", updatePerfil);
 
 //Eliminando perfil
 router.delete("/perfil/:id", deletePerfil);

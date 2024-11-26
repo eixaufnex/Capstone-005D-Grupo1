@@ -18,7 +18,7 @@ class ObjetivoProvider with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final urlUsuario = Uri.http(urlapi, 'objetivo/usuario/$firebaseId');
+    final urlUsuario = Uri.https(urlapi, 'objetivo/usuario/$firebaseId');
     try {
       final resp = await http.get(urlUsuario, headers: {
         'Content-type': 'application/json',
@@ -48,7 +48,7 @@ class ObjetivoProvider with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final url1 = Uri.http(urlapi, 'objetivo');
+    final url1 = Uri.https(urlapi, 'objetivo');
     try {
       final resp = await http.get(url1, headers: {
         'Content-type': 'application/json',
@@ -97,7 +97,7 @@ class ObjetivoProvider with ChangeNotifier {
   }
 
   Future<void> createObjetivo(Objetivo nuevoObjetivo) async {
-    final urlCreate = Uri.http(urlapi, 'objetivo');
+    final urlCreate = Uri.https(urlapi, 'objetivo');
     try {
       final resp = await http.post(
         urlCreate,
@@ -122,7 +122,7 @@ class ObjetivoProvider with ChangeNotifier {
   }
 
   Future<void> deleteObjetivo(int idObjetivo) async {
-    final urlDelete = Uri.http(urlapi, 'objetivo/$idObjetivo');
+    final urlDelete = Uri.https(urlapi, 'objetivo/$idObjetivo');
     try {
       final resp = await http.delete(urlDelete);
       if (resp.statusCode == 200) {
@@ -142,7 +142,7 @@ class ObjetivoProvider with ChangeNotifier {
     objetivo.valorActual = nuevoValor;
     notifyListeners();
 
-    final urlUpdate = Uri.http(urlapi, 'objetivo/$idObjetivo');
+    final urlUpdate = Uri.https(urlapi, 'objetivo/$idObjetivo');
     try {
       final resp = await http.put(
         urlUpdate,

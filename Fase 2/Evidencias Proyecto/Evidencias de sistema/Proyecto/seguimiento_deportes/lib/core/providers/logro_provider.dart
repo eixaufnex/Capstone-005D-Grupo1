@@ -20,7 +20,7 @@ class LogroProvider with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final url = Uri.http(urlapi, 'logros-globales');
+    final url = Uri.https(urlapi, 'logros-globales');
     try {
       final resp = await http.get(url, headers: {
         'Content-type': 'application/json',
@@ -46,7 +46,7 @@ class LogroProvider with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final url = Uri.http(urlapi, 'logros-obtenidos/$firebaseId');
+    final url = Uri.https(urlapi, 'logros-obtenidos/$firebaseId');
     print("Fetching logros obtenidos for user: $firebaseId"); // Debugging
     try {
       final resp = await http.get(url, headers: {
@@ -72,7 +72,7 @@ class LogroProvider with ChangeNotifier {
 
   // Crear un logro global
   Future<void> createLogroGlobal(LogroGlobal nuevoLogroGlobal) async {
-    final urlCreate = Uri.http(urlapi, 'logros-globales');
+    final urlCreate = Uri.https(urlapi, 'logros-globales');
     try {
       final resp = await http.post(
         urlCreate,
@@ -98,7 +98,7 @@ class LogroProvider with ChangeNotifier {
 
   // Eliminar un logro global
   Future<void> deleteLogroGlobal(int idLogroGlobal) async {
-    final urlDelete = Uri.http(urlapi, 'logros-globales/$idLogroGlobal');
+    final urlDelete = Uri.https(urlapi, 'logros-globales/$idLogroGlobal');
     try {
       final resp = await http.delete(urlDelete);
 
@@ -116,7 +116,7 @@ class LogroProvider with ChangeNotifier {
 
   // Registrar logro obtenido por el usuario
   Future<void> registrarLogroObtenido(LogroObtenido nuevoLogroObtenido) async {
-    final urlCreate = Uri.http(urlapi, 'logros-obtenidos');
+    final urlCreate = Uri.https(urlapi, 'logros-obtenidos');
     try {
       final resp = await http.post(
         urlCreate,

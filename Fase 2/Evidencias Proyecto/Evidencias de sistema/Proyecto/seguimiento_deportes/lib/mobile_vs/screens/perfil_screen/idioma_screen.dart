@@ -11,12 +11,7 @@ class IdiomaScreen extends StatefulWidget {
 }
 
 class _IdiomaScreenState extends State<IdiomaScreen> {
-  String _selectedLanguage = 'Español';
-
-  final List<Map<String, String>> languages = [
-    {'name': 'Español', 'flag': '🇪🇸', 'locale': 'es'},
-    {'name': 'Inglés', 'flag': '🇺🇸', 'locale': 'en'},
-  ];
+  String _selectedLanguage = S.current.espaniol;
 
   @override
   void initState() {
@@ -29,108 +24,124 @@ class _IdiomaScreenState extends State<IdiomaScreen> {
     final idiomaProvider = Provider.of<IdiomaProvider>(context, listen: false);
     setState(() {
       _selectedLanguage = idiomaProvider.locale.languageCode == 'es'
-          ? 'Español'
-          : 'Inglés';
+          ? S.current.espaniol
+          : S.current.ingles;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          S.of(context).change_language,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, 'perfil');
-          },
-          color: Colors.black,
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 50.0, right: 50.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
+    // Mueve la definición de languages aquí para que se actualice dinámicamente
+    final List<Map<String, String>> languages = [
+      {'name': S.current.espaniol, 'flag': '🇪🇸', 'locale': 'es'},
+      {'name': S.current.ingles, 'flag': '🇺🇸', 'locale': 'en'},
+    ];
 
-            // Lista de idiomas
-            Expanded(
-              child: ListView(
-                children: languages.map((language) {
-                  return ListTile(
-                    leading: Text(
-                      language['flag']!,
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    title: Text(language['name']!),
-                    trailing: _selectedLanguage == language['name']
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 8.0),
-                            decoration: BoxDecoration(
-                              color: Colors.greenAccent,
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: Text(
-                              S.current.Seleccionado,
-                              style: const TextStyle(
-                                  color: Colors.black, fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : null,
-                    onTap: () {
-                      setState(() {
-                        _selectedLanguage = language['name']!;
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
+    return Consumer<IdiomaProvider>(
+      builder: (context, idiomaProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              S.of(context).change_language,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 50),
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, 'perfil');
+              },
+              color: Colors.black,
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
 
-            // Botón de aplicar
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
+                // Lista de idiomas
+                Expanded(
+                  child: ListView(
+                    children: languages.map((language) {
+                      return ListTile(
+                        leading: Text(
+                          language['flag']!,
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        title: Text(language['name']!),
+                        trailing: _selectedLanguage == language['name']
+                            ? Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.greenAccent,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Text(
+                                  S.current.Seleccionado,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : null,
+                        onTap: () {
+                          setState(() {
+                            _selectedLanguage = language['name']!;
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
                 ),
-                onPressed: () {
-                  final selectedLocale = languages.firstWhere(
-                    (lang) => lang['name'] == _selectedLanguage,
-                  )['locale'];
+                const SizedBox(height: 50),
 
-                  if (selectedLocale != null) {
-                    // Cambiar idioma usando IdiomaProvider
-                    Provider.of<IdiomaProvider>(context, listen: false)
-                        .cambiarIdioma(selectedLocale);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("${S.current.idioma} $_selectedLanguage ${S.current.Seleccionado}"),
+                // Botón de aplicar
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 100, vertical: 16),
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
                       ),
-                    );
-                  }
-                },
-                child: Text(S.of(context).apply, style: const TextStyle(color: Colors.white)),
-              ),
+                    ),
+                    onPressed: () {
+                      final selectedLocale = languages.firstWhere(
+                        (lang) => lang['name'] == _selectedLanguage,
+                      )['locale'];
+
+                      if (selectedLocale != null) {
+                        // Cambiar idioma usando IdiomaProvider
+                        idiomaProvider.cambiarIdioma(selectedLocale);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                "${S.current.idioma} $_selectedLanguage ${S.current.Seleccionado}"),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(S.of(context).apply,
+                        style: const TextStyle(color: Colors.white)),
+                  ),
+                ),
+                const SizedBox(height: 88),
+              ],
             ),
-            const SizedBox(height: 88),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

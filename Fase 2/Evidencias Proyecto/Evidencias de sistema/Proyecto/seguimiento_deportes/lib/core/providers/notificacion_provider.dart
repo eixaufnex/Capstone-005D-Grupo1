@@ -6,7 +6,7 @@ const urlapi = url;
 
 // Método para obtener un mensaje motivacional aleatorio según el tipo de notificación
 Future<String> getMensajeMotivacional(String tipoNotificacion) async {
-  final uri = Uri.http(urlapi, 'notificacion', {'tipo_notificacion': tipoNotificacion});
+  final uri = Uri.https(urlapi, 'notificacion', {'tipo_notificacion': tipoNotificacion});
 
   try {
     final response = await http.get(uri, headers: {

@@ -2370,10 +2370,10 @@ class S {
     );
   }
 
-  /// `Theme`
+  /// `Theme (Coming soon...)`
   String get tema {
     return Intl.message(
-      'Theme',
+      'Theme (Coming soon...)',
       name: 'tema',
       desc: '',
       args: [],
@@ -3330,10 +3330,10 @@ class S {
     );
   }
 
-  /// `Add advice`
+  /// `Publish  advice`
   String get consejo {
     return Intl.message(
-      'Add advice',
+      'Publish  advice',
       name: 'consejo',
       desc: '',
       args: [],
@@ -3425,6 +3425,286 @@ class S {
     return Intl.message(
       'Are you sure you want to delete this post?',
       name: 'eliminar_publi1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forgot your password?`
+  String get recuperar {
+    return Intl.message(
+      'Forgot your password?',
+      name: 'recuperar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A recovery link has been sent to `
+  String get recuperar1 {
+    return Intl.message(
+      'A recovery link has been sent to ',
+      name: 'recuperar1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An error occurred`
+  String get recuperar2 {
+    return Intl.message(
+      'An error occurred',
+      name: 'recuperar2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No user was found with that email.`
+  String get recuperar3 {
+    return Intl.message(
+      'No user was found with that email.',
+      name: 'recuperar3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recover Password`
+  String get recuperar4 {
+    return Intl.message(
+      'Recover Password',
+      name: 'recuperar4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter the email address associated with your account. We will send you a link to reset your password.`
+  String get recuperar5 {
+    return Intl.message(
+      'Please enter the email address associated with your account. We will send you a link to reset your password.',
+      name: 'recuperar5',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter an email address.`
+  String get recuperar6 {
+    return Intl.message(
+      'Please enter an email address.',
+      name: 'recuperar6',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid email address.`
+  String get recuperar7 {
+    return Intl.message(
+      'Please enter a valid email address.',
+      name: 'recuperar7',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Link`
+  String get recuperar8 {
+    return Intl.message(
+      'Send Link',
+      name: 'recuperar8',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back to login?`
+  String get recuperar9 {
+    return Intl.message(
+      'Back to login?',
+      name: 'recuperar9',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What do you want to publish?`
+  String get publicacion1 {
+    return Intl.message(
+      'What do you want to publish?',
+      name: 'publicacion1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select an option to continue:`
+  String get publicacion2 {
+    return Intl.message(
+      'Select an option to continue:',
+      name: 'publicacion2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Routines and Exercises`
+  String get publicacion3 {
+    return Intl.message(
+      'Routines and Exercises',
+      name: 'publicacion3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Publish routine`
+  String get publicacion4 {
+    return Intl.message(
+      'Publish routine',
+      name: 'publicacion4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share Routine`
+  String get publicacion5 {
+    return Intl.message(
+      'Share Routine',
+      name: 'publicacion5',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to share the routine`
+  String get publicacion6 {
+    return Intl.message(
+      'Do you want to share the routine',
+      name: 'publicacion6',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shared routine:`
+  String get publicacion7 {
+    return Intl.message(
+      'Shared routine:',
+      name: 'publicacion7',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Routine`
+  String get publicacion8 {
+    return Intl.message(
+      'Routine',
+      name: 'publicacion8',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Successfully shared.`
+  String get publicacion9 {
+    return Intl.message(
+      'Successfully shared.',
+      name: 'publicacion9',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error in sharing the routine.`
+  String get publicacion10 {
+    return Intl.message(
+      'Error in sharing the routine.',
+      name: 'publicacion10',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Routine saved successfully`
+  String get publicacion11 {
+    return Intl.message(
+      'Routine saved successfully',
+      name: 'publicacion11',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error when adding exercises to the routine`
+  String get publicacion12 {
+    return Intl.message(
+      'Error when adding exercises to the routine',
+      name: 'publicacion12',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error saving routine`
+  String get publicacion13 {
+    return Intl.message(
+      'Error saving routine',
+      name: 'publicacion13',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save routine`
+  String get publicacion14 {
+    return Intl.message(
+      'Save routine',
+      name: 'publicacion14',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to save this routine on your list?`
+  String get publicacion15 {
+    return Intl.message(
+      'Are you sure you want to save this routine on your list?',
+      name: 'publicacion15',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save routine`
+  String get publicacion16 {
+    return Intl.message(
+      'Save routine',
+      name: 'publicacion16',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spanish`
+  String get espaniol {
+    return Intl.message(
+      'Spanish',
+      name: 'espaniol',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get ingles {
+    return Intl.message(
+      'English',
+      name: 'ingles',
       desc: '',
       args: [],
     );

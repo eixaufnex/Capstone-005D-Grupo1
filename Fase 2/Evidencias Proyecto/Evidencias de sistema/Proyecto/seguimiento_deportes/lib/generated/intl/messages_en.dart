@@ -279,7 +279,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Are you sure you want to eliminate this exercise?"),
         "confirmPassword":
             MessageLookupByLibrary.simpleMessage("Confirm Password"),
-        "consejo": MessageLookupByLibrary.simpleMessage("Add advice"),
+        "consejo": MessageLookupByLibrary.simpleMessage("Publish  advice"),
         "consejo1":
             MessageLookupByLibrary.simpleMessage("Write your advice here..."),
         "continue_register": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -334,6 +334,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Error logging in with Google. Please try again."),
         "error_usuario": MessageLookupByLibrary.simpleMessage(
             "Error: User not authenticated"),
+        "espaniol": MessageLookupByLibrary.simpleMessage("Spanish"),
         "estas_seguro": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to remove this target?"),
         "estas_seguro_rutina":
@@ -356,6 +357,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "idioma": MessageLookupByLibrary.simpleMessage("Language"),
         "info_usuario":
             MessageLookupByLibrary.simpleMessage("User Information"),
+        "ingles": MessageLookupByLibrary.simpleMessage("English"),
         "instrucciones1": MessageLookupByLibrary.simpleMessage("Instructions"),
         "intermedio": MessageLookupByLibrary.simpleMessage("intermediate"),
         "label_age": MessageLookupByLibrary.simpleMessage("Age"),
@@ -504,7 +506,49 @@ class MessageLookup extends MessageLookupByLibrary {
         "progreso_historial":
             MessageLookupByLibrary.simpleMessage("Progress of"),
         "publi": MessageLookupByLibrary.simpleMessage("Publications"),
+        "publicacion1": MessageLookupByLibrary.simpleMessage(
+            "What do you want to publish?"),
+        "publicacion10": MessageLookupByLibrary.simpleMessage(
+            "Error in sharing the routine."),
+        "publicacion11":
+            MessageLookupByLibrary.simpleMessage("Routine saved successfully"),
+        "publicacion12": MessageLookupByLibrary.simpleMessage(
+            "Error when adding exercises to the routine"),
+        "publicacion13":
+            MessageLookupByLibrary.simpleMessage("Error saving routine"),
+        "publicacion14": MessageLookupByLibrary.simpleMessage("Save routine"),
+        "publicacion15": MessageLookupByLibrary.simpleMessage(
+            "Are you sure you want to save this routine on your list?"),
+        "publicacion16": MessageLookupByLibrary.simpleMessage("Save routine"),
+        "publicacion2": MessageLookupByLibrary.simpleMessage(
+            "Select an option to continue:"),
+        "publicacion3":
+            MessageLookupByLibrary.simpleMessage("Routines and Exercises"),
+        "publicacion4": MessageLookupByLibrary.simpleMessage("Publish routine"),
+        "publicacion5": MessageLookupByLibrary.simpleMessage("Share Routine"),
+        "publicacion6": MessageLookupByLibrary.simpleMessage(
+            "Do you want to share the routine"),
+        "publicacion7": MessageLookupByLibrary.simpleMessage("Shared routine:"),
+        "publicacion8": MessageLookupByLibrary.simpleMessage("Routine"),
+        "publicacion9":
+            MessageLookupByLibrary.simpleMessage("Successfully shared."),
         "recomendado": MessageLookupByLibrary.simpleMessage("Recommended"),
+        "recuperar":
+            MessageLookupByLibrary.simpleMessage("Forgot your password?"),
+        "recuperar1": MessageLookupByLibrary.simpleMessage(
+            "A recovery link has been sent to "),
+        "recuperar2": MessageLookupByLibrary.simpleMessage("An error occurred"),
+        "recuperar3": MessageLookupByLibrary.simpleMessage(
+            "No user was found with that email."),
+        "recuperar4": MessageLookupByLibrary.simpleMessage("Recover Password"),
+        "recuperar5": MessageLookupByLibrary.simpleMessage(
+            "Please enter the email address associated with your account. We will send you a link to reset your password."),
+        "recuperar6": MessageLookupByLibrary.simpleMessage(
+            "Please enter an email address."),
+        "recuperar7": MessageLookupByLibrary.simpleMessage(
+            "Please enter a valid email address."),
+        "recuperar8": MessageLookupByLibrary.simpleMessage("Send Link"),
+        "recuperar9": MessageLookupByLibrary.simpleMessage("Back to login?"),
         "rellena_manera":
             MessageLookupByLibrary.simpleMessage("Fill your routine your way!"),
         "rendimiento_fisico":
@@ -532,7 +576,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "si": MessageLookupByLibrary.simpleMessage("Yes"),
         "sin_descripcion":
             MessageLookupByLibrary.simpleMessage("No description"),
-        "tema": MessageLookupByLibrary.simpleMessage("Theme"),
+        "tema": MessageLookupByLibrary.simpleMessage("Theme (Coming soon...)"),
         "thanksuser": MessageLookupByLibrary.simpleMessage(
             "Thank you very much for sharing with us how you feel."),
         "tipo_objetivo": MessageLookupByLibrary.simpleMessage("Objetive Type"),

@@ -40,6 +40,23 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchUsername();
     _setFechaActual();
     _fetchTipoNivel();
+    _fetchUserAvatar();
+  }
+
+  String avatarUrl = 'assets/av9.png';
+
+  Future<void> _fetchUserAvatar() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final perfilProvider =
+          Provider.of<PerfilProvider>(context, listen: false);
+      final perfil = await perfilProvider.getPerfil(user.uid);
+      if (perfil != null && perfil.fotoPerfil != null) {
+        setState(() {
+          avatarUrl = perfil.fotoPerfil!;
+        });
+      }
+    }
   }
 
   void _setFechaActual() {
@@ -71,14 +88,11 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           tipoNivel = perfil.tipoNivel; // Asignamos el tipo de nivel del perfil
         });
-
       } else {
         setState(() {
           tipoNivel =
               'Desconocido'; // Si no se encuentra el perfil, mostramos 'Desconocido'
         });
-
-
       }
     }
   }
@@ -155,8 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(S.current.home1),
-          content: Text(
-              "${S.current.thanksuser}\n\n$mensaje"),
+          content: Text("${S.current.thanksuser}\n\n$mensaje"),
           actions: [
             TextButton(
               child: Text(S.current.cerrar),
@@ -185,7 +198,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage: AssetImage('assets/av9.png'),
+                      backgroundImage: avatarUrl.startsWith('http')
+                          ? NetworkImage(avatarUrl)
+                          : AssetImage(avatarUrl)
+                              as ImageProvider, // Mostrar desde la BD o local
                     ),
                     SizedBox(height: 10),
                     Text(

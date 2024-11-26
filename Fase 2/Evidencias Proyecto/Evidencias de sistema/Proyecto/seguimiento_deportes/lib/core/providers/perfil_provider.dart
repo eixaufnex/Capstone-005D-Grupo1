@@ -14,8 +14,49 @@ class PerfilProvider with ChangeNotifier {
     getPerfiles();
   }
 
+  Future<void> updateAvatar(String firebaseId, String avatarPath) async {
+    final urlUpdateAvatar = Uri.https(urlapi, 'perfil/usuario/$firebaseId');
+
+    try {
+      // Crear el JSON que será enviado al servidor
+      final body = json.encode({
+        'foto_perfil': avatarPath,
+      });
+
+      // Hacer la solicitud HTTP PUT
+      final resp = await http.put(
+        urlUpdateAvatar,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: body,
+      );
+
+      // Manejo de la respuesta
+      if (resp.statusCode == 200) {
+        final index =
+            perfiles.indexWhere((perfil) => perfil.firebaseId == firebaseId);
+        if (index != -1) {
+          // Actualizar el avatar localmente en la lista
+          perfiles[index].fotoPerfil = avatarPath;
+          notifyListeners(); // Notificar a los widgets dependientes
+          print('Avatar actualizado correctamente para $firebaseId');
+        } else {
+          print('Perfil no encontrado localmente para firebaseId: $firebaseId');
+        }
+      } else {
+        print(
+            'Error al actualizar el avatar en el servidor: ${resp.statusCode}');
+        print('Respuesta del servidor: ${resp.body}');
+      }
+    } catch (e) {
+      print('Error de conexión al actualizar el avatar: $e');
+    }
+  }
+
   Future<Perfil?> getPerfil(String firebaseId) async {
-     final urlGetPerfil = Uri.http(urlapi, 'perfil/usuario/$firebaseId');
+    final urlGetPerfil = Uri.https(urlapi, 'perfil/usuario/$firebaseId');
     try {
       final resp = await http.get(urlGetPerfil, headers: {
         'Content-Type': 'application/json',
@@ -41,7 +82,7 @@ class PerfilProvider with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final url1 = Uri.http(urlapi, 'perfil');
+    final url1 = Uri.https(urlapi, 'perfil');
     try {
       final resp = await http.get(url1, headers: {
         'Content-type': 'application/json',
@@ -62,7 +103,7 @@ class PerfilProvider with ChangeNotifier {
   }
 
   Future<void> createPerfil(Perfil nuevoPerfil) async {
-    final urlCreate = Uri.http(urlapi, 'perfil');
+    final urlCreate = Uri.https(urlapi, 'perfil');
     try {
       // JSON de los datos enviados para asegurarnos de que todos los campos tienen valores
       final jsonData = json.encode(nuevoPerfil.toJson());
@@ -92,7 +133,7 @@ class PerfilProvider with ChangeNotifier {
   }
 
   Future<void> deletePerfil(int idPerfil) async {
-    final urlDelete = Uri.http(urlapi, 'perfil/$idPerfil');
+    final urlDelete = Uri.https(urlapi, 'perfil/$idPerfil');
     try {
       final resp = await http.delete(urlDelete);
       if (resp.statusCode == 200) {
@@ -107,7 +148,7 @@ class PerfilProvider with ChangeNotifier {
   }
 
   Future<void> updatePerfil(Perfil updatedPerfil) async {
-    final urlUpdate = Uri.http(urlapi, 'perfil/${updatedPerfil.idPerfil}');
+    final urlUpdate = Uri.https(urlapi, 'perfil/${updatedPerfil.idPerfil}');
     try {
       final resp = await http.put(
         urlUpdate,

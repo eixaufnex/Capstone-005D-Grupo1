@@ -13,7 +13,8 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final txtCorreo = TextEditingController();
@@ -61,7 +62,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   Future<void> _signInWithGoogle() async {
-    final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
 
     try {
       await _googleSignIn.signOut();
@@ -72,13 +74,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
       final firebaseId = userCredential.user?.uid;
 
       if (firebaseId == null) {
@@ -216,22 +220,29 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               style: TextStyle(fontSize: 14),
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xffC0C0C0), width: 1.5),
+                                  borderSide: BorderSide(
+                                      color: Color(0xffC0C0C0), width: 1.5),
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black87, width: 1.5),
+                                  borderSide: BorderSide(
+                                      color: Colors.black87, width: 1.5),
                                 ),
                                 hintText: S.current.emailsample,
-                                hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                hintStyle:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                                 labelText: S.current.Email,
-                                labelStyle: TextStyle(color: Colors.black87, fontSize: 14),
-                                prefixIcon: Icon(Icons.email_outlined, color: Colors.black54),
+                                labelStyle: TextStyle(
+                                    color: Colors.black87, fontSize: 14),
+                                prefixIcon: Icon(Icons.email_outlined,
+                                    color: Colors.black54),
                               ),
                               validator: (value) {
                                 String pattern =
                                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
                                 RegExp regExp = RegExp(pattern);
-                                return regExp.hasMatch(value ?? '') ? null : S.current.valid_email;
+                                return regExp.hasMatch(value ?? '')
+                                    ? null
+                                    : S.current.valid_email;
                               },
                             ),
                             SizedBox(height: 8),
@@ -242,19 +253,26 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               obscureText: true,
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xffC0C0C0), width: 1.5),
+                                  borderSide: BorderSide(
+                                      color: Color(0xffC0C0C0), width: 1.5),
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black87, width: 1.5),
+                                  borderSide: BorderSide(
+                                      color: Colors.black87, width: 1.5),
                                 ),
                                 hintText: S.current.Password,
-                                hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                hintStyle:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                                 labelText: S.current.Password,
-                                labelStyle: TextStyle(color: Colors.black87, fontSize: 14),
-                                prefixIcon: Icon(Icons.lock_outline, color: Colors.black54),
+                                labelStyle: TextStyle(
+                                    color: Colors.black87, fontSize: 14),
+                                prefixIcon: Icon(Icons.lock_outline,
+                                    color: Colors.black54),
                               ),
                               validator: (value) {
-                                return (value != null && value.length >= 6) ? null : S.current.min6;
+                                return (value != null && value.length >= 6)
+                                    ? null
+                                    : S.current.min6;
                               },
                             ),
                           ],
@@ -263,21 +281,39 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     ],
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 15),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context,
+                        'recuperar'); 
+                  },
+                  child: Text(
+                    S.current.recuperar,
+                    style: TextStyle(
+                      color: Colors.blue[700],
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15),
                 MaterialButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50)),
                   color: Colors.black87,
                   onPressed: _login,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 70, vertical: 16),
-                    child: Text(S.current.Enter, style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text(S.current.Enter,
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
                 SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(S.current.Dont_have_an_account, style: TextStyle(color: Colors.black87)),
+                    Text(S.current.Dont_have_an_account,
+                        style: TextStyle(color: Colors.black87)),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, 'registro');
@@ -307,8 +343,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   children: [
                     MaterialButton(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(color: Colors.black87)),
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(color: Colors.black87)),
                       color: Colors.white,
                       child: Image.asset('assets/google-logo.png', height: 32),
                       onPressed: _signInWithGoogle,

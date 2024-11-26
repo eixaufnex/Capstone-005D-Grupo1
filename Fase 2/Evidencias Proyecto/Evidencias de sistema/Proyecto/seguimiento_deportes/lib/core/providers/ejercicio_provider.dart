@@ -18,7 +18,7 @@ class EjercicioProvider with ChangeNotifier {
 
   // Método para obtener la lista completa de ejercicios desde la API
   Future<void> getEjercicios() async {
-    final url1 = Uri.http(urlapi, 'lista_ejercicio');
+    final url1 = Uri.https(urlapi, 'lista_ejercicio');
     try {
       final resp = await http.get(url1, headers: {
         'Content-type': 'application/json',

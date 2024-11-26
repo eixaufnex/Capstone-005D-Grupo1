@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { addEjerciciosToRutina, 
+import { addEjerciciosToRutina,
     getEjerciciosByRutina, 
     deleteEjercicioFromRutina, 
     getRutinasAndEjerciciosByUser} from '../controllers/rutina_ejercicio.controller.js';
 
 const router = Router();
+
 
 // Agregar ejercicios a una rutina
 router.post('/rutina_ejercicio/agregar', addEjerciciosToRutina);

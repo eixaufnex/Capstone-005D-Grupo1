@@ -32,7 +32,7 @@ class RutinaProvider with ChangeNotifier {
 
   // Obtener las rutinas del usuario por firebaseId
   Future<void> getRutinaXUsuario(String firebaseId) async {
-    final url = Uri.http(urlapi, 'rutina/usuario/$firebaseId');
+    final url = Uri.https(urlapi, 'rutina/usuario/$firebaseId');
     try {
       final resp = await http.get(url, headers: {
         "Access-Control-Allow-Origin": "*",
@@ -63,7 +63,7 @@ class RutinaProvider with ChangeNotifier {
     String firebaseId, {
     String? tipoRutina,
   }) async {
-    final url = Uri.http(urlapi, 'rutina');
+    final url = Uri.https(urlapi, 'rutina');
     try {
       final resp = await http.post(
         url,

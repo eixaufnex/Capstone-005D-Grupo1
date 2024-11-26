@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:seguimiento_deportes/core/constants.dart';
+
+const urlapi = url; 
 
 class ApiService {
-  static const String apiUrl =
-      'http://10.0.2.2:3000'; // Cambia esto por la URL de tu API
+
+    
 
   // Método para guardar los ejercicios a una rutina
   Future<bool> saveEjerciciosToRutina(
       int rutinaId, List<Map<String, String>> ejercicios) async {
-    final uri = Uri.parse(
-        '$apiUrl/rutina_ejercicio/agregar'); // Endpoint para agregar ejercicios a la rutina
+    final uri = Uri.https(urlapi, 'rutina_ejercicio/agregar'); // Endpoint para agregar ejercicios a la rutina
 
     if (ejercicios.isEmpty) {
       print('Error: No hay ejercicios seleccionados');
@@ -50,7 +52,7 @@ class ApiService {
   // Método para obtener los ejercicios de una rutina por su ID
   Future<List<Map<String, dynamic>>?> getEjerciciosByRutina(
       int rutinaId) async {
-    final uri = Uri.parse('$apiUrl/rutina/$rutinaId/ejercicios');
+    final uri = Uri.https(urlapi, 'rutina/$rutinaId/ejercicios');
     try {
       final response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -73,8 +75,7 @@ class ApiService {
 
   // Método para eliminar un ejercicio de una rutina
   Future<bool> deleteEjercicioFromRutina(int rutinaId, int ejercicioId) async {
-    final uri = Uri.parse(
-        '$apiUrl/rutina/$rutinaId/ejercicio/$ejercicioId'); // Endpoint para eliminar el ejercicio de la rutina
+    final uri = Uri.https(urlapi, 'rutina/$rutinaId/ejercicio/$ejercicioId'); // Endpoint para eliminar el ejercicio de la rutina
 
     try {
       final response = await http.delete(uri);
@@ -97,8 +98,7 @@ class ApiService {
 // Método para obtener las rutinas y ejercicios de un usuario por su firebase_id
   Future<List<Map<String, dynamic>>?> getRutinasAndEjerciciosByUser(
       String firebaseId) async {
-    final uri = Uri.parse(
-        '$apiUrl/usuario/$firebaseId/rutinas'); // Endpoint para obtener rutinas y ejercicios por firebase_id
+    final uri = Uri.https(urlapi, 'usuario/$firebaseId/rutinas'); // Endpoint para obtener rutinas y ejercicios por firebase_id
 
     try {
       final response = await http.get(uri);

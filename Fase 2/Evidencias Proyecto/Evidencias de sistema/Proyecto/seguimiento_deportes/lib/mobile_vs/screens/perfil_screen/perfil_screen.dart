@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:seguimiento_deportes/core/providers/perfil_provider.dart';
 import 'package:seguimiento_deportes/generated/l10n.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/graficos_screen.dart';
 import 'package:seguimiento_deportes/mobile_vs/screens/home_screen/home_screen.dart';
@@ -9,7 +10,8 @@ import 'package:seguimiento_deportes/mobile_vs/screens/publicaciones_screen.dart
 import 'package:seguimiento_deportes/mobile_vs/screens/rutinas_screen/1_rutinas_screen.dart';
 
 // Notificador para actualizar el avatar en otras pantallas
-final ValueNotifier<String> avatarNotifier = ValueNotifier<String>('assets/av9.png');
+final ValueNotifier<String> avatarNotifier =
+    ValueNotifier<String>('assets/av9.png');
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -26,14 +28,14 @@ class _PerfilScreenState extends State<PerfilScreen>
   late Animation<double> _scaleAnimation;
 
   String selectedAvatar = 'assets/av9.png'; // Avatar por defecto
-  String? userId; // Almacena el UID del usuario actual
+   String? firebaseId; // Almacena el firebaseId del usuario actual
 
   @override
   void initState() {
     super.initState();
     final user = FirebaseAuth.instance.currentUser;
     userEmail = user?.email;
-    userId = user?.uid; // Obtener UID del usuario actual
+    firebaseId = user?.uid; // Obtener el firebaseId del usuario actual
 
     _animationController = AnimationController(
       vsync: this,
@@ -44,28 +46,20 @@ class _PerfilScreenState extends State<PerfilScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
-    _loadAvatarSelection(); // Cargar el avatar guardado del usuario actual desde Firebase
+    _loadUserAvatar(); // Cargar el avatar del usuario actual
   }
 
   // Función para cargar el avatar del usuario actual desde Firebase
-  Future<void> _loadAvatarSelection() async {
-    if (userId == null) return;
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    if (userDoc.exists) {
+  Future<void> _loadUserAvatar() async {
+    if (firebaseId == null) return;
+    final perfilProvider = Provider.of<PerfilProvider>(context, listen: false);
+    final perfil = await perfilProvider.getPerfil(firebaseId!);
+    if (perfil != null) {
       setState(() {
-        selectedAvatar = userDoc['avatarUrl'] ?? 'assets/av9.png';
+        selectedAvatar = perfil.fotoPerfil ?? 'assets/av9.png';
       });
-      avatarNotifier.value = selectedAvatar; // Notificar el avatar inicial
+      avatarNotifier.value = selectedAvatar; // Actualizar el notificador
     }
-  }
-
-  // Función para guardar la selección de avatar en Firebase
-  Future<void> _saveAvatarSelection(String avatarPath) async {
-    if (userId == null) return;
-    await FirebaseFirestore.instance.collection('users').doc(userId).set({
-      'avatarUrl': avatarPath,
-    }, SetOptions(merge: true));
-    avatarNotifier.value = avatarPath; // Notificar cambios de avatar
   }
 
   @override
@@ -110,30 +104,37 @@ class _PerfilScreenState extends State<PerfilScreen>
           children: [
             ListTile(
               leading: Image.asset('assets/av9.png', width: 40, height: 40),
-              title: Text('Avatar 1'),
-              onTap: () {
-                setState(() {
-                  selectedAvatar = 'assets/av9.png';
-                });
-                _saveAvatarSelection('assets/av9.png'); // Guardar y notificar selección
-                Navigator.pop(context);
-              },
+              title: const Text('Avatar 1'),
+              onTap: () => _updateAvatar('assets/av9.png'),
             ),
             ListTile(
               leading: Image.asset('assets/av10.webp', width: 40, height: 40),
-              title: Text('Avatar 2'),
-              onTap: () {
-                setState(() {
-                  selectedAvatar = 'assets/av10.webp';
-                });
-                _saveAvatarSelection('assets/av10.webp'); // Guardar y notificar selección
-                Navigator.pop(context);
-              },
+              title: const Text('Avatar 2'),
+              onTap: () => _updateAvatar('assets/av10.webp'),
             ),
           ],
         );
       },
     );
+  }
+
+
+    void _updateAvatar(String avatarPath) {
+    if (firebaseId == null) return; // Verifica que el firebaseId esté disponible
+
+    final perfilProvider = Provider.of<PerfilProvider>(context, listen: false);
+
+    perfilProvider.updateAvatar(firebaseId!, avatarPath).then((_) {
+      setState(() {
+        selectedAvatar =
+            avatarPath; // Actualiza el avatar seleccionado en la UI
+      });
+      avatarNotifier.value = avatarPath; // Notifica el cambio globalmente
+    }).catchError((error) {
+      print('Error al actualizar el avatar: $error');
+    });
+
+    Navigator.pop(context); // Cierra el modal después de la selección
   }
 
   @override
@@ -308,8 +309,12 @@ class _PerfilScreenState extends State<PerfilScreen>
               ),
               BottomNavigationBarItem(
                 icon: Transform.translate(
-                  offset: Offset(0, 8),
-                  child: Icon(Icons.add_circle, size: 45, color: Colors.black87),
+                  offset: Offset(0, 10),
+                  child: Image.asset(
+                    'assets/logoicon.png',
+                    width: 45,
+                    height: 45,
+                  ),
                 ),
                 label: '',
               ),
@@ -328,6 +333,7 @@ class _PerfilScreenState extends State<PerfilScreen>
     );
   }
 }
+
 
 // Clase perfil_widget para los elementos de perfil en el ListView
 class perfil_widget extends StatelessWidget {
