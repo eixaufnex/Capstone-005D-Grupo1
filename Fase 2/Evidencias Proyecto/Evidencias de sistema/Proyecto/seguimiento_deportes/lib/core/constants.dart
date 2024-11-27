@@ -2,6 +2,6 @@
 
 
 // const url = "10.0.2.2:3000"; 
-const String url = "106c-190-22-61-34.ngrok-free.app";
+const String url = "5cf8-186-104-127-241.ngrok-free.app";
 
 
