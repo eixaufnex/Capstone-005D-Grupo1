@@ -3360,10 +3360,10 @@ class S {
     );
   }
 
-  /// `Publications`
+  /// `Community`
   String get publi {
     return Intl.message(
-      'Publications',
+      'Community',
       name: 'publi',
       desc: '',
       args: [],

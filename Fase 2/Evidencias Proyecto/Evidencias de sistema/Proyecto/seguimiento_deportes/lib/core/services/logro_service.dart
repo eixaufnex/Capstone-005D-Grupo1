@@ -7,7 +7,7 @@ const urlapi = url; // Define la URL de la API aquí
 // Verificar si el usuario tiene al menos una rutina creada
 Future<void> verificarLogroCrearRutina(String firebaseId) async {
   try {
-    final url = Uri.http(urlapi, 'rutina/usuario/$firebaseId');
+    final url = Uri.https(urlapi, 'rutina/usuario/$firebaseId');
     final resp = await http.get(url, headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -36,7 +36,7 @@ Future<void> verificarLogroCrearRutina(String firebaseId) async {
 // Verificar si el usuario tiene al menos un objetivo creado
 Future<void> verificarLogroCrearObjetivo(String firebaseId) async {
   try {
-    final url = Uri.http(urlapi, 'objetivo/usuario/$firebaseId');
+    final url = Uri.https(urlapi, 'objetivo/usuario/$firebaseId');
     final resp = await http.get(url, headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -67,7 +67,7 @@ Future<void> verificarLogroCrearObjetivo(String firebaseId) async {
 
 Future<void> verificarLogroCrearPublicacion(String firebaseId) async {
   try {
-    final url = Uri.http(urlapi, 'publicacion/usuario/$firebaseId');
+    final url = Uri.https(urlapi, 'publicacion/usuario/$firebaseId');
     final resp = await http.get(url, headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -99,7 +99,7 @@ Future<void> verificarLogroCrearPublicacion(String firebaseId) async {
 
 // Verificar si el logro ya existe para el usuario en la base de datos
 Future<bool> existeLogro(String firebaseId, int idLogroGlobal) async {
-  final url = Uri.http(urlapi, 'logros-obtenidos/$firebaseId/$idLogroGlobal');
+  final url = Uri.https(urlapi, 'logros-obtenidos/$firebaseId/$idLogroGlobal');
 
   try {
     final resp = await http.get(url, headers: {
@@ -126,7 +126,7 @@ Future<bool> existeLogro(String firebaseId, int idLogroGlobal) async {
 
 // Registrar el logro obtenido en la base de datos
 Future<void> registrarLogro(String firebaseId, int idLogroGlobal) async {
-  final url = Uri.http(urlapi, 'logros-obtenidos');
+  final url = Uri.https(urlapi, 'logros-obtenidos');
 
   try {
     final resp = await http.post(

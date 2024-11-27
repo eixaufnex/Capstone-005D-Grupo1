@@ -505,7 +505,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Training Progress"),
         "progreso_historial":
             MessageLookupByLibrary.simpleMessage("Progress of"),
-        "publi": MessageLookupByLibrary.simpleMessage("Publications"),
+        "publi": MessageLookupByLibrary.simpleMessage("Community"),
         "publicacion1": MessageLookupByLibrary.simpleMessage(
             "What do you want to publish?"),
         "publicacion10": MessageLookupByLibrary.simpleMessage(
