@@ -591,9 +591,9 @@ class _ObjetivosScreenState extends State<ObjetivosScreen> {
         padding: EdgeInsets.all(4), // Espacio entre el borde y el botón
         child: FloatingActionButton(
           onPressed: () => _showCreateObjetivoModal(context, objetivoProvider),
-          backgroundColor: Color(0xFFF5ECE3), // Color interno del botón
-          child: const Icon(Icons.add),
-          elevation: 0, // Eliminar sombra si lo prefieres
+          backgroundColor: Color(0xFFF5ECE3),
+          elevation: 0, // Color interno del botón
+          child: const Icon(Icons.add), // Eliminar sombra si lo prefieres
         ),
       ),
     );

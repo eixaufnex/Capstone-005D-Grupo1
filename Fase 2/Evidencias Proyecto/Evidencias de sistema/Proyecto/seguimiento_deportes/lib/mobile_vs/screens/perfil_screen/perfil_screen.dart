@@ -237,7 +237,7 @@ class _PerfilScreenState extends State<PerfilScreen>
               },
             ),
             perfil_widget(
-              title: S.current.notificaciones,
+              title: S.current.notificaciones_prox,
               icon: Icons.notifications,
               onPress: () {
                 Navigator.pushReplacementNamed(context, 'notificaciones');

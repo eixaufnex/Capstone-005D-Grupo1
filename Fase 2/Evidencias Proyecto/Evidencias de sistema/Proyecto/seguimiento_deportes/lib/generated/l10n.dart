@@ -2380,6 +2380,16 @@ class S {
     );
   }
 
+  /// `Notifications (Coming soon...)`
+  String get notificaciones_prox {
+    return Intl.message(
+      'Notifications (Coming soon...)',
+      name: 'notificaciones_prox',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Units`
   String get unidades {
     return Intl.message(

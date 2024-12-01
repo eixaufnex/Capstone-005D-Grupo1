@@ -417,6 +417,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "notificaciones5": MessageLookupByLibrary.simpleMessage("Help"),
         "notificaciones6":
             MessageLookupByLibrary.simpleMessage("Units applied"),
+        "notificaciones_prox": MessageLookupByLibrary.simpleMessage(
+            "Notifications (Coming soon...)"),
         "nuevos_pesos": MessageLookupByLibrary.simpleMessage("New weights"),
         "nuevos_porcentaje":
             MessageLookupByLibrary.simpleMessage("New percentage"),
