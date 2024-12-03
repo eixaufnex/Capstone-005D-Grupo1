@@ -3,7 +3,9 @@ plugins {
     id "kotlin-android"
     // El plugin de Flutter debe ir después de los plugins de Android y Kotlin
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.firebase.firebase-perf'
     id 'com.google.gms.google-services' // Asegúrate de que este sea el último
+    
 }
 
 android {
@@ -47,6 +49,8 @@ dependencies {
     // Añade los productos de Firebase que vayas a usar
     implementation 'com.google.firebase:firebase-analytics'  // Firebase Analytics
     implementation 'com.google.firebase:firebase-auth'      // Firebase Authentication
+
+    implementation("com.google.firebase:firebase-perf")
     // Agrega más dependencias según lo que necesites
     // Por ejemplo, Firestore: implementation 'com.google.firebase:firebase-firestore'
 }
